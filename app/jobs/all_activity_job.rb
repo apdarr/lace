@@ -2,7 +2,8 @@ class AllActivityJob < ApplicationJob
   queue_as :default
 
   def perform(*args)
-    fetch_all_activities
+    batch_activities = fetch_all_activities
+    import_activities(batch_activities)
   end
 
   private
@@ -14,11 +15,11 @@ class AllActivityJob < ApplicationJob
     loop do
       begin
         activities = client.athlete_activities(per_page: 200, page: page)
-        rate_limit_r = activities.http_response.rate_limit.to_h
-        token_expired? = check_rate_limit(rate_limit_r)
+        # rate_limit_r = activities.http_response.rate_limit.to_h
+        # token_expired = check_rate_limit(rate_limit_r)
         activities.each do |activity|
           # If there's data is non empty, process it
-          if !activities.collection.empty? == nil? && !token_expired?
+          if !activities.collection.empty? == nil? # && !token_expired
             batch_activities << {
               strava_id: activity.id,
               distance: activity.distance,
@@ -39,7 +40,7 @@ class AllActivityJob < ApplicationJob
         puts "Error fetching activities: #{e.message}"
       end
     end
-    import_activities(batch_activities)
+    batch_activities
   end
 
   def import_activities(batch_activities)
