@@ -2,15 +2,29 @@
 
 <% content_for :title, "Activities" %>
 
-<h1>Activities</h1>
+<div class="container mx-auto p-4">
+  <h1 class="text-2xl font-bold mb-6">Activities</h1>
 
-<div id="activities">
-  <% @activities.each do |activity| %>
-    <%= render activity %>
-    <p>
-      <%= link_to "Show this activity", activity %>
-    </p>
-  <% end %>
+  <div class="mb-6">
+    <%= form_with(url: activities_path, method: :get, class: "flex gap-2") do |f| %>
+      <%= f.search_field :query, 
+          class: "flex-1 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+          placeholder: "Search activities..." %>
+      <%= f.submit "Search", 
+          class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" %>
+    <% end %>
+  </div>
+
+  <div id="activities" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @activities.each do |activity| %>
+      <div class="bg-white rounded-lg shadow-md border p-6 hover:shadow-lg transition-shadow">
+        <%= render activity %>
+        <div class="mt-4">
+          <%= link_to "Show this activity", activity, class: "text-blue-600 hover:text-blue-800" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%= link_to "New activity", new_activity_path, class: "mt-6 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" %>
 </div>
-
-<%= link_to "New activity", new_activity_path %>
