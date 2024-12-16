@@ -2,15 +2,42 @@
 
 <% content_for :title, "Activities" %>
 
-<h1>Activities</h1>
-
-<div id="activities">
-  <% @activities.each do |activity| %>
-    <%= render activity %>
-    <p>
-      <%= link_to "Show this activity", activity %>
-    </p>
-  <% end %>
+<div class="container">
+  <!-- Header and Search -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <h1 class="mb-4">Activities</h1>
+    </div>
+      <div class="row">
+        <div class="col-8">
+          <%= form_with url: activities_path, method: :get do |f| %>
+            <div class="d-flex">
+              <%= f.search_field :query, 
+                                class: "form-control me-2",
+                                placeholder: "Search activities..." %>
+              <%= f.submit "Search", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+  </div>
+  <!-- Activities Grid -->
+  <div class="row mb-4">
+    <% @activities.each do |activity| %>
+      <div class="col-md-4 mb-4">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <div class="card-title">
+              <h5 class="card-title"><%= activity.description %></h5>
+              <p class="card-subtitle"><%= activity.start_date_local %></p>
+            </div>
+            <p class="card-text">Distance: <%= activity.distance %></p>
+          </div>
+          <div class="card-footer">
+            <%= link_to "Show this activity", activity, class: "btn btn-outline-primary btn-sm" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>
-
-<%= link_to "New activity", new_activity_path %>
