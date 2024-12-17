@@ -12,20 +12,20 @@ class AllActivityJob < ApplicationJob
     client = Strava::Api::Client.new(access_token: ENV["STRAVA_TOKEN"])
     page = 1
     batch_activities = []
-    loop do
       begin
-        activities = client.athlete_activities(per_page: 200, page: page)
+        sleep 1
+        activities = client.athlete_activities(per_page: 30, page: page)
         # rate_limit_r = activities.http_response.rate_limit.to_h
         # token_expired = check_rate_limit(rate_limit_r)
         activities.each do |activity|
           # If there's data is non empty, process it
-          if !activities.collection.empty? == nil? # && !token_expired
+          if !activities.collection.empty? # && !token_expired
             batch_activities << {
               strava_id: activity.id,
               distance: activity.distance,
               elapsed_time: activity.elapsed_time,
               kudos_count: activity.kudos_count,
-              activity_type: activity.sports_type,
+              activity_type: activity.sport_type,
               average_heart_rate: activity.average_heartrate,
               max_heart_rate: activity.max_heartrate,
               start_date_local: activity.start_date_local
@@ -39,8 +39,6 @@ class AllActivityJob < ApplicationJob
       rescue StandardError => e
         puts "Error fetching activities: #{e.message}"
       end
-    end
-    debugger
     batch_activities
   end
 
