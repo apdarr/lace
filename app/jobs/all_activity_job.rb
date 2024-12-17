@@ -25,7 +25,7 @@ class AllActivityJob < ApplicationJob
               distance: activity.distance,
               elapsed_time: activity.elapsed_time,
               kudos_count: activity.kudos_count,
-              type: activity.type,
+              activity_type: activity.sports_type,
               average_heart_rate: activity.average_heartrate,
               max_heart_rate: activity.max_heartrate,
               start_date_local: activity.start_date_local
@@ -40,12 +40,13 @@ class AllActivityJob < ApplicationJob
         puts "Error fetching activities: #{e.message}"
       end
     end
+    debugger
     batch_activities
   end
 
   def import_activities(batch_activities)
     # Note that upsert_all or insert_all ignore validations and callbacks!
-    Activity.upsert_all(activities, unique_by: :strava_id)
+    Activity.insert_all(batch_activities)
   end
 
   def check_rate_limit(rate_limit_r)

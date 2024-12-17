@@ -17,7 +17,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create activity" do
     assert_difference("Activity.count") do
-      post activities_url, params: { activity: { average_heart_rate: @activity.average_heart_rate, description: @activity.description, distance: @activity.distance, elapsed_time: @activity.elapsed_time, kudos_count: @activity.kudos_count, max_heart_rate: @activity.max_heart_rate, type: @activity.type } }
+      post activities_url, params: { activity: { average_heart_rate: @activity.average_heart_rate, description: @activity.description, distance: @activity.distance, elapsed_time: @activity.elapsed_time, kudos_count: @activity.kudos_count, max_heart_rate: @activity.max_heart_rate, activity_type: @activity.activity_type } }
     end
 
     assert_redirected_to activity_url(Activity.last)
@@ -34,7 +34,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update activity" do
-    patch activity_url(@activity), params: { activity: { average_heart_rate: @activity.average_heart_rate, description: @activity.description, distance: @activity.distance, elapsed_time: @activity.elapsed_time, kudos_count: @activity.kudos_count, max_heart_rate: @activity.max_heart_rate, type: @activity.type } }
+    patch activity_url(@activity), params: { activity: { average_heart_rate: @activity.average_heart_rate, description: @activity.description, distance: @activity.distance, elapsed_time: @activity.elapsed_time, kudos_count: @activity.kudos_count, max_heart_rate: @activity.max_heart_rate, activity_type: @activity.activity_type } }
     assert_redirected_to activity_url(@activity)
   end
 

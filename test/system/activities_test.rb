@@ -20,7 +20,7 @@ class ActivitiesTest < ApplicationSystemTestCase
     fill_in "Elapsed time", with: @activity.elapsed_time
     fill_in "Kudos count", with: @activity.kudos_count
     fill_in "Max heart rate", with: @activity.max_heart_rate
-    fill_in "Type", with: @activity.type
+    fill_in "Activity Type", with: @activity.activity_type
     click_on "Create Activity"
 
     assert_text "Activity was successfully created"
@@ -37,7 +37,7 @@ class ActivitiesTest < ApplicationSystemTestCase
     fill_in "Elapsed time", with: @activity.elapsed_time
     fill_in "Kudos count", with: @activity.kudos_count
     fill_in "Max heart rate", with: @activity.max_heart_rate
-    fill_in "Type", with: @activity.type
+    fill_in "Activity Type", with: @activity.activity_type
     click_on "Update Activity"
 
     assert_text "Activity was successfully updated"

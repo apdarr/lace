@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_14_212948) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_17_123549) do
   create_table "activities", force: :cascade do |t|
     t.float "distance"
     t.integer "elapsed_time"
-    t.string "type"
+    t.string "activity_type"
     t.integer "kudos_count"
     t.float "average_heart_rate"
     t.float "max_heart_rate"
