@@ -1,26 +1,30 @@
 class CreateEmbeddingsJob < ApplicationJob
   queue_as :default
 
-  def perform(*args)
+  def perform
     # Do something later
     create_embeddings
   end
 
   private
     def create_embeddings
-      client = OpenAI::Client.new(access_token: ENV["OPENAI_TOKEN"])
+      begin
+        client = OpenAI::Client.new(access_token: ENV["OPENAI_TOKEN"])
 
-      activities = Activity.all
-      activities.each do |activity|
-        input = format_input(activity)
-        response = client.embeddings(
+        activities = Activity.all
+        activities.each do |activity|
+          input = format_input(activity)
+          response = client.embeddings(
           parameters: {
             model: "text-embedding-3-small",
             input: input
-          }
-        )
-        vector = response.dig("data", 0, "embedding")
-        activity.update(embedding: vector)
+        })
+          vector = response.dig("data", 0, "embedding")
+          activity.update!(embedding: vector)
+        end
+      rescue StandardError => e
+        Rails.logger.error "Failed to create embeddings: #{e.message}"
+        raise
       end
     end
 

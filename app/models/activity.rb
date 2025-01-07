@@ -1,3 +1,3 @@
 class Activity < ApplicationRecord
-  has_neighbors :embedding, dimensions: 7
+  has_neighbors :embedding
 end
