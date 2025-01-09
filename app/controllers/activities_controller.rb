@@ -3,11 +3,18 @@ class ActivitiesController < ApplicationController
 
   # GET /activities or /activities.json
   def index
-    @activities = Activity.all
+    if params[:query].present?
+      embedding = embed_query(params[:query])
+      @activities = Activity.nearest_neighbors(:embedding, embedding, distance: :cosine, limit: 10)
+    else
+      @activities = Activity.all
+    end
   end
 
   # GET /activities/1 or /activities/1.json
   def show
+    @activity = Activity.find(params[:id])
+    @nearest_activities = @activity.nearest_neighbors(:embedding, distance: "euclidean").first(5)
   end
 
   # GET /activities/new

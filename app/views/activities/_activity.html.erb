@@ -1,37 +1,39 @@
-<div id="<%= dom_id activity %>">
-  <p>
-    <strong>Distance:</strong>
-    <%= activity.distance %>
-  </p>
+<div id="<%= dom_id activity %>" class="activity-details">
+  <div class="activity-section">
+    <div class="activity-stat">
+      <span class="label">Distance:</span>
+      <span class="value"><%= meters_to_miles(activity.distance) %> miles</span>
+    </div>
 
-  <p>
-    <strong>Elapsed time:</strong>
-    <%= activity.elapsed_time %>
-  </p>
+    <div class="activity-stat">
+      <span class="label">Time:</span>
+      <span class="value"><%= activity.elapsed_time%></span>
+    </div>
 
-  <p>
-    <strong>Type:</strong>
-    <%= activity.activity_type %>
-  </p>
+    <div class="activity-stat">
+      <span class="label">Type:</span>
+      <span class="value"><%= activity.activity_type %></span>
+    </div>
+  </div>
 
-  <p>
-    <strong>Kudos count:</strong>
-    <%= activity.kudos_count %>
-  </p>
+  <div class="activity-section">
+    <div class="activity-stat">
+      <span class="label">Heart Rate:</span>
+      <span class="value">
+        <%= activity.average_heart_rate %> bpm <%= activity.max_heart_rate %> bpm)
+      </span>
+    </div>
 
-  <p>
-    <strong>Average heart rate:</strong>
-    <%= activity.average_heart_rate %>
-  </p>
+    <div class="activity-stat">
+      <span class="label">Kudos:</span>
+      <span class="value"><%= activity.kudos_count %></span>
+    </div>
+  </div>
 
-  <p>
-    <strong>Max heart rate:</strong>
-    <%= activity.max_heart_rate %>
-  </p>
-
-  <p>
-    <strong>Description:</strong>
-    <%= activity.description %>
-  </p>
-
+  <% if activity.description.present? %>
+    <div class="activity-description">
+      <h4>Description:</h4>
+      <p><%= simple_format(activity.description) %></p>
+    </div>
+  <% end %>
 </div>
