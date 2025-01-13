@@ -5,10 +5,11 @@ class CreateEmbeddingsJobTest < ActiveJob::TestCase
   #   assert true
   # end
 
+
   test "Job should update embeddings for all activities" do
     VCR.use_cassette("embeddings_job") do
       CreateEmbeddingsJob.perform_now
-      activities.each do |activity|
+      Activity.all.each do |activity|
         assert_not_nil activity.embedding
       end
     end
