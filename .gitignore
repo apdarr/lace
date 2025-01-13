@@ -19,9 +19,6 @@
 !/log/.keep
 !/tmp/.keep
 
-# Ignore VCR cassettes.
-/test/vcr_cassettes/*
-
 # Ignore pidfiles, but keep the directory.
 /tmp/pids/*
 !/tmp/pids/
