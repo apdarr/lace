@@ -1,19 +1,55 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  distance: 1.5
-  elapsed_time: 1
-  activity_type: "Run" 
-  kudos_count: 1
-  average_heart_rate: 1
-  max_heart_rate: 1
-  description: MyString
+one: 
+  distance: 6085.5
+  elapsed_time: 2102
+  activity_type: "Run"
+  kudos_count: 4
+  average_heart_rate: 132.9
+  max_heart_rate: 161.0
+  description: 
+  strava_id: 6219898629
+  start_date_local: 2021-11-06 13:40:37.000000000 +0000
 
 two:
-  distance: 1.5
-  elapsed_time: 1
-  activity_type: "Run" 
+  distance: 9694.5
+  elapsed_time: 3516
+  activity_type: "Run"
+  kudos_count: 3
+  average_heart_rate: 129.9
+  max_heart_rate: 153.0
+  description: 
+  strava_id: 7483852713
+  start_date_local: 2022-07-17 12:29:29.000000000 +0000
+
+three:
+  distance: 140.9
+  elapsed_time: 49
+  activity_type: "Run"
   kudos_count: 1
-  average_heart_rate: 1
-  max_heart_rate: 1
-  description: MyString
+  average_heart_rate: 81.1
+  max_heart_rate: 100.0
+  description: 
+  strava_id: 9045833389
+  start_date_local: 2023-05-10 11:26:01.000000000 +0000
+
+four:
+  distance: 17726.2
+  elapsed_time: 6176
+  activity_type: "Run"
+  kudos_count: 6
+  average_heart_rate: 142.1
+  max_heart_rate: 161.0
+  description: 
+  strava_id: 5781669242
+  start_date_local: 2021-08-12 14:51:23.000000000 +0000
+
+five:
+  distance: 21198.5
+  elapsed_time: 8446
+  activity_type: "Run"
+  kudos_count: 6
+  average_heart_rate: 147.1
+  max_heart_rate: 158.0
+  description: 
+  strava_id: 5944812968
+  start_date_local: 2021-09-11 16:49:41.000000000 +0000

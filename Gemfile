@@ -18,6 +18,13 @@ gem "stimulus-rails"
 gem "jbuilder"
 # API wrapper for Strava
 gem "strava-ruby-client"
+# Vector support for SQLite
+gem "sqlite-vec"
+# OpenAI wrapper
+gem "ruby-openai"
+
+# Nearest neighbor search
+gem "neighbor"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"

@@ -1,10 +1,27 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @activity %>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="flex justify-between items-center">
+      <%= link_to "Back to activities", activities_path, class: "mb-4 text-indigo-700" %>
+  </div>
 
-<div>
-  <%= link_to "Edit this activity", edit_activity_path(@activity) %> |
-  <%= link_to "Back to activities", activities_path %>
+  <div class="rounded-lg shadow-md border p-6 mb-6">
+    <%= render @activity %>
+  </div>
 
-  <%= button_to "Destroy this activity", @activity, method: :delete %>
+  <div id="activities" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @nearest_activities.each do |activity| %>
+      <div class="rounded-lg shadow-md border p-6 hover:shadow-lg transition-shadow">
+        <div class="mt-4">
+          <p class="text-gray-700 text-base"><strong>Distance:</strong> <%= meters_to_miles(activity.distance) %> miles</p>
+          <p class="text-gray-700 text-base"><strong>Strava ID:</strong> <%= activity.strava_id %></p>
+          <p class="text-gray-700 text-base"><strong>Description:</strong> <%= simple_format(activity.description) %></p>
+          <div class="mt-4 block">
+            <%= link_to "Show this activity", activity, class: "text-blue-600 hover:text-blue-800 block" %>
+            <%= link_to "Strava link", "https://strava.com/activities/#{activity.strava_id}", class: "text-orange-600 hover:text-orange-800 block" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>
