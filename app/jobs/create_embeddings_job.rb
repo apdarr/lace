@@ -23,7 +23,7 @@ class CreateEmbeddingsJob < ApplicationJob
           activity.update!(embedding: vector)
         end
       rescue StandardError => e
-        Rails.logger.error "Failed to create embeddings: #{e.message}"
+        Rails.logger.error "Failed to create embeddings for activity #{activity.id}: #{e.message}"
         raise
       end
     end
