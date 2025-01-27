@@ -8,6 +8,10 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.css" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Borel&display=swap" rel="stylesheet">
+
     <%= yield :head %>
 
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
@@ -24,6 +28,7 @@
   </head>
 
   <body>
+    <h1 class="font-borel text-4xl absolute top-0 left-4 p-4">lace</h1>
     <main class="container mx-auto mt-28 px-5 flex">
       <%= yield %>
     </main>
