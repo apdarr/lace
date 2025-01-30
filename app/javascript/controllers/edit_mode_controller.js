@@ -18,6 +18,7 @@ export default class extends Controller {
 
   updateUI() {
     this.buttonTarget.textContent = this.modeValue ? "Turn Edit Mode Off" : "Enable Edit Mode"
+    // Note that toggle here is a from the DOM API, and is distinct from the above toggle defintion
     this.buttonTarget.classList.toggle("bg-yellow-100", this.modeValue)
     this.buttonTarget.classList.toggle("bg-blue-100", !this.modeValue)
   }

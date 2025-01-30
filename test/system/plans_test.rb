@@ -34,6 +34,29 @@ class PlansTest < ApplicationSystemTestCase
     click_on "Back"
   end
 
+  test "should show Plan" do
+    visit plan_url(@plan)
+    assert_text "Length"
+
+    # Verify calendar elements
+    assert_selector "div[data-controller='edit-mode']"
+    assert_selector "button[data-edit-mode-target='button']", text: "Enable Edit Mode"
+
+    # Verify calendar grid headers
+    assert_selector "div.font-semibold", text: "M"
+    assert_selector "div.font-semibold", text: "Tu"
+    assert_selector "div.font-semibold", text: "W"
+    assert_selector "div.font-semibold", text: "Th"
+    assert_selector "div.font-semibold", text: "F"
+    assert_selector "div.font-semibold", text: "Sa"
+    assert_selector "div.font-semibold", text: "Su"
+
+    # Verify calendar cells exist
+    assert_selector "div[data-drag-target='container']"
+    assert_selector "div[data-cell-target='wrapper']"
+    assert_selector "div[data-cell-target='content']"
+  end
+
   test "should destroy Plan" do
     visit plan_url(@plan)
     click_on "Destroy this plan", match: :first
