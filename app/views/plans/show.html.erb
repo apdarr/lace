@@ -34,7 +34,9 @@
           <% 18.times do |week| %>
             <% week_start = training_start_date + (week * 7) %>
             <%# Date column - not draggable %>
-            <div class="font-medium text-sm py-2"><%= week_start.strftime("%m/%d") %></div>
+            <div class="h-24 flex items-center justify-end pr-4 font-medium text-sm">
+              <%= week_start.strftime("%m/%d") %>
+            </div>
             
             <%# Draggable cells container %>
             <div class="col-span-7" data-controller="drag">
@@ -42,7 +44,7 @@
                    data-drag-target="container"
                    data-week="<%= week %>">
                 <% 7.times do |day| %>
-                  <div class="h-24 aspect-square bg-gray-100 rounded-lg p-2 transition-all duration-200 ease-in-out" 
+                  <div class="h-24 aspect-square m-4 bg-gray-100 rounded-lg p-2 transition-all duration-200 ease-in-out" 
                        data-drag-target="item"
                        data-activity-cell
                        data-date="<%= (week_start + day.days).to_s %>">
@@ -50,6 +52,7 @@
                       <div class="flex-grow activity-content"></div>
                       <button type="button"
                               class="text-xs px-2 py-1 bg-gray-200 rounded mt-1 hover:bg-gray-300 opacity-50 hover:opacity-100 transition-opacity"
+                              data-activity-modal-date-value="<%= (week_start + day.days).to_s %>"
                               data-action="activity-modal#showModal">
                         Edit
                       </button>
@@ -67,7 +70,7 @@
   <%# Modal Template - inside the activity-modal controller scope %>
   <div id="activity-modal" 
        data-activity-modal-target="modal"
-       data-update-url="<%= activities_path %>"
+       data-activity-modal-update-url="<%= activities_path %>"
        class="hidden fixed inset-0 z-50">
     <div class="fixed inset-0 bg-gray-600 bg-opacity-50"></div>
     

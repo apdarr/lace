@@ -28,7 +28,14 @@ class ActivitiesController < ApplicationController
 
   # POST /activities or /activities.json
   def create
-    AllActivityJob.perform_later
+    debugger
+
+    ### 🧪 Reenable to get imports working again 🧪 ###
+
+    # AllActivityJob.perform_later
+
+    ### 🧪 Reenable to get imports working again 🧪 ###
+
     flash[:notice] = "Activity has been enqueued for processing."
     # @activity = Activity.new(activity_params)
 
