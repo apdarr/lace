@@ -47,7 +47,8 @@
                   <div class="h-24 aspect-square m-4 bg-gray-100 rounded-lg p-2 transition-all duration-200 ease-in-out" 
                        data-drag-target="item"
                        data-activity-cell
-                       data-date="<%= (week_start + day.days).to_s %>">
+                       data-date="<%= (week_start + day.days).to_s %>"
+                       data-activity-id="<%= Activity.find_by(date: (week_start + day.days).to_s, plan_id: @plan.id)&.id %>">
                     <div class="h-full w-full flex flex-col">
                       <div class="flex-grow activity-content"></div>
                       <button type="button"
