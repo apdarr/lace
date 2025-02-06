@@ -59,7 +59,8 @@
                       <button type="button"
                               class="text-xs px-2 py-1 bg-gray-200 rounded mt-1 hover:bg-gray-300 opacity-50 hover:opacity-100 transition-opacity"
                               data-activity-modal-date-value="<%= current_date.to_s %>"
-                              data-activity-modal-activity-value="<%= activity&.to_json %>"
+                              data-activity-modal-activity-value="<%= activity.to_json if activity %>"
+                              data-activity-modal-activity-id-value="<%= activity&.id %>"
                               data-action="activity-modal#showModal">
                         <%= activity ? 'Edit' : 'Add' %>
                       </button>
@@ -78,6 +79,7 @@
   <div id="activity-modal" 
        data-activity-modal-target="modal"
        data-activity-modal-update-url="<%= activities_path %>"
+       data-plan-id="<%= @plan.id %>"
        class="hidden fixed inset-0 z-50">
     <div class="fixed inset-0 bg-gray-600 bg-opacity-50"></div>
     

@@ -1,34 +1,38 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["modal", "dateInput", "activityInput"]
+  static targets = ["modal", "dateInput", "distanceInput", "descriptionInput"]
   static values = {
-    date: String
+    date: String,
+    activity: Object,
+    activityId: Number
   }
 
   connect() {
-    console.log("dateValue is ⭐", this.dateValue)
+    console.log("Activity Modal Controller connected")
   }
 
   showModal(event) {
     event.preventDefault()
-    const cell = event.target.closest('[data-activity-cell]')
+    const button = event.currentTarget
+    // Set the activity ID from the button's dataset
+    this.activityIdValue = button.dataset.activityModalActivityIdValue ? 
+                           parseInt(button.dataset.activityModalActivityIdValue) : undefined
+    console.log("Activity data:", button.dataset.activityModalActivityValue)
     
-    // Debug cell object
-    console.log("1. Full cell object:", cell)
-    console.log("2. cell.dataset:", cell.dataset)
-    console.log("3. cell.dataset.date:", cell.dataset.date)
-    
-    // Debug dateInputTarget
-    console.log("4. this.dateInputTarget:", this.dateInputTarget)
-    
-    if (!cell) return
-    
-    this.dateInputTarget.value = cell.dataset.date
-    console.log("5. Final dateInputTarget.value:", this.dateInputTarget.value)
-    
-    this.activityInputTarget.value = cell.querySelector('.activity-content').textContent || ''
-    this.modalTarget.classList.remove('hidden')
+    try {
+      const activityData = JSON.parse(button.dataset.activityModalActivityValue || '{}')
+      console.log("Parsed activity data:", activityData)
+      
+      // Set form values
+      this.dateInputTarget.value = button.dataset.activityModalDateValue
+      this.distanceInputTarget.value = activityData.distance || ''
+      this.descriptionInputTarget.value = activityData.description || ''
+      
+      this.modalTarget.classList.remove('hidden')
+    } catch (error) {
+      console.error("Error parsing activity data:", error)
+    }
   }
 
   closeModal(event) {
@@ -38,31 +42,46 @@ export default class extends Controller {
 
   async save(event) {
     event.preventDefault()
-    const date = this.dateInputTarget.value
-    const content = this.activityInputTarget.value
-    const url = this.element.querySelector('[data-activity-modal-update-url]').dataset.activityModalUpdateUrl
-    console.log("url is ⭐", url)
+    const formData = {
+      activity: {
+        date: this.dateInputTarget.value,
+        distance: this.distanceInputTarget.value,
+        description: this.descriptionInputTarget.value,
+        plan_id: this.element.dataset.planId
+      }
+    }
+
+    const baseUrl = this.element.querySelector('[data-activity-modal-update-url]').dataset.activityModalUpdateUrl
+    const url = this.activityIdValue ? `${baseUrl}/${this.activityIdValue}` : baseUrl
+    const method = this.activityIdValue ? 'PATCH' : 'POST'
 
     try {
       const response = await fetch(url, {
-        method: 'POST',
+        method: method,
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-Token': document.querySelector("[name='csrf-token']").content,
           "Accept": "application/json"
         },
-        body: JSON.stringify({
-          activity: {
-            content: content,
-            date: date
-          }
-        })
+        body: JSON.stringify(formData)
       })
 
       if (response.ok) {
         const data = await response.json()
-        const cell = document.querySelector(`[data-date="${date}"]`)
-        cell.querySelector('.activity-content').textContent = content
+        // Update the cell content
+        const cell = document.querySelector(`[data-date="${this.dateInputTarget.value}"]`)
+        const contentDiv = cell.querySelector('.activity-content')
+        contentDiv.innerHTML = `
+          <div class="text-sm font-medium">${data.distance} miles</div>
+          <div class="text-xs text-gray-600">${data.description}</div>
+        `
+        cell.classList.add('bg-blue-100')
+        
+        // Update the edit button with new activity data
+        const button = cell.querySelector('button')
+        button.dataset.activityModalActivityValue = JSON.stringify(data)
+        button.dataset.activityModalActivityIdValue = data.id
+        
         this.closeModal()
       }
     } catch (error) {
