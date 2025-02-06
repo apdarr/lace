@@ -1,5 +1,5 @@
 class Plan < ApplicationRecord
-  before_save :load_from_plan_template
+  after_create :load_from_plan_template
 
   private
 
@@ -14,6 +14,7 @@ class Plan < ApplicationRecord
       week_name, week_data = week
       week_data.each do |day_name, planned_activity|
         Activity.create(
+          plan_id: self.id,
           distance: planned_activity["distance"].to_f,
           description: planned_activity["description"],
           start_date_local: start_date)

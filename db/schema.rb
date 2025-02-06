@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_24_191135) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_06_215623) do
   create_table "activities", force: :cascade do |t|
     t.float "distance"
     t.integer "elapsed_time"
@@ -24,6 +24,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_24_191135) do
     t.integer "strava_id"
     t.datetime "start_date_local"
     t.binary "embedding"
+    t.integer "plan_id"
   end
 
   create_table "plans", force: :cascade do |t|
