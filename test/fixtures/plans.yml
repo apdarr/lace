@@ -1,9 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  length: 1
-  race_date: 2025-01-24
+  race_date: <%= Date.today + 17.weeks %>
 
 two:
-  length: 1
-  race_date: 2025-01-24
+  race_date: <%= Date.today + 20.weeks %>

@@ -14,36 +14,44 @@ class PlansTest < ApplicationSystemTestCase
     visit plans_url
     click_on "New plan"
 
-    fill_in "Length", with: @plan.length
-    fill_in "Race date", with: @plan.race_date
+    # Only fill in race_date as that's the main field we need
+    fill_in "plan[race_date]", with: @plan.race_date
     click_on "Create Plan"
 
     assert_text "Plan was successfully created"
-    click_on "Back"
   end
 
   test "should update Plan" do
     visit plan_url(@plan)
     click_on "Edit this plan", match: :first
 
-    fill_in "Length", with: @plan.length
-    fill_in "Race date", with: @plan.race_date
+    fill_in "plan[race_date]", with: @plan.race_date + 1.week
     click_on "Update Plan"
 
     assert_text "Plan was successfully updated"
-    click_on "Back"
   end
 
   test "should show Plan" do
     visit plan_url(@plan)
-    assert_text "Length"
-    assert
+
+    # Verify calendar components exist
+    assert_selector ".grid-cols-8" # Main calendar grid
+    assert_selector "[data-activity-cell]" # Activity cells
+
+    # Verify calendar headers
+    assert_text "Week"
+    assert_text "M"
+    assert_text "Tu"
+    assert_text "W"
+    assert_text "Th"
+    assert_text "F"
+    assert_text "Sa"
+    assert_text "Su"
   end
 
   test "should destroy Plan" do
     visit plan_url(@plan)
     click_on "Destroy this plan", match: :first
-
     assert_text "Plan was successfully destroyed"
   end
 end
