@@ -1,0 +1,397 @@
+marathon_55_miles_18_weeks:
+  week_0:
+    monday:
+      distance: 0
+      description: Rest or cross-train
+    tuesday:
+      distance: 8
+      description: 4 miles at LT
+    wednesday:
+      distance: 0
+      description: Rest or cross-train
+    thursday:
+      distance: 9 
+      description: General aerobic
+    friday:
+      distance: 0
+      description: Rest or cross-train
+    saturday:
+      distance: 4 
+      description: Recovery
+    sunday:
+      distance: 12
+      description: Med-long run
+  week_1:
+    monday:
+      distance: 0
+      description: Rest or cross-train 
+    tuesday:
+      distance: 8
+      description: 6 x 10s hill sprints + 8 x 100m strides
+    wednesday:
+      distance: 0
+      description: Rest or cross-train
+    thursday:
+      distance: 10
+      description: General aerobic
+    friday:
+      distance: 0
+      description: Rest or cross-train
+    saturday:
+      distance: 5
+      description: Recovery
+    sunday:
+      distance: 13
+      description: 8 miles at MP
+  week_2:
+    monday:
+      distance: 0
+      description: Rest or cross-train
+    tuesday:
+      distance: 10
+      description: General aerobic
+    wednesday:
+      distance: 4
+      description: Recovery
+    thursday:
+      distance: 8
+      description: 4 miles at LT
+    friday:
+      distance: 0
+      description: Rest or cross-train
+    saturday:
+      distance: 4 
+      description: Recovery
+    sunday:
+      distance: 14
+      description: Med-long run
+  week_3:
+    monday:
+      distance: 0
+      description: Rest or cross-train 
+    tuesday:
+      distance: 8
+      description: 6 x 10s hill sprints + 8 x 100m strides
+    wednesday:
+      distance: 5 
+      description: Recovery
+    thursday:
+      distance: 10
+      description: General aerobic
+    friday:
+      distance: 0
+      description: Rest or cross-train
+    saturday:
+      distance: 4
+      description: Recovery
+    sunday:
+      distance: 15
+      description: Med-long run
+  week_4:
+    monday:
+      distance: 0 
+      description: Rest or cross-train 
+    tuesday:
+      distance: 9
+      description: 5 at LT
+    wednesday:
+      distance: 5
+      description: Recovery
+    thursday:
+      distance: 10
+      description: General aerobic
+    friday:
+      distance: 0
+      description: Rest or cross-train
+    saturday:
+      distance: 5
+      description: Recovery
+    sunday:
+      distance: 16
+      description: 10 at MP
+  week_5:
+    monday:
+      distance: 0
+      description: Rest or cross-train 
+    tuesday:
+      distance: 8
+      description: General aerobic + 10 x 100m strides
+    wednesday:
+      distance: 5
+      description: Recovery
+    thursday:
+      distance: 8 
+      description: General aerobic
+    friday:
+      distance: 0
+      description: Rest or cross-train
+    saturday:
+      distance: 4
+      description: Recovery
+    sunday:
+      distance: 12
+      description: Med-long run
+  week_6:
+    monday: 
+      distance: 0 
+      description: Rest or cross-train
+    tuesday:
+      distance: 10
+      description: 5 at LT
+    wednesday:
+      distance: 4
+      description: Recovery
+    thursday:
+      distance: 11
+      description: Med-long run
+    friday:
+      distance: 0
+      description: Rest or cross-train
+    saturday:
+      distance: 7
+      description: General aerobic + 8 x 100m strides
+    sunday:
+      distance: 18
+      description: Long run
+  week_7:
+    monday: 
+      distance: 0 
+      description: Rest or cross-train 
+    tuesday:
+      distance: 7
+      description: Recovery + 6 x 100m strides
+    wednesday:
+      distance: 12
+      description: Med-long run
+    thursday:
+      distance: 0
+      description: Rest or cross-train
+    friday:
+      distance: 10
+      description: 6 at LT
+    saturday:
+      distance: 5
+      description: Recovery
+    sunday:
+      distance: 20 
+      description: Long run
+  week_8:
+    monday:
+      distance: 0 
+      description: Rest or cross-train 
+    tuesday:
+      distance: 6
+      description: Recovery
+    wednesday:
+      distance: 14
+      description: Med-long run
+    thursday:
+      distance: 6
+      description: Recovery
+    friday:
+      distance: 0
+      description: Rest or cross-train
+    saturday:
+      distance: 6 
+      description: Recovery + 6 x 100m strides
+    sunday:
+      distance: 16
+      description: 12 at MP
+  week_9:
+    monday:
+      distance: 0 
+      description: Rest or cross-train
+    tuesday:
+      distance: 8
+      description: General aerobic
+    wednesday:
+      distance: 8
+      description: VO2max 5 x 800m at 5k race pace; jog 50-90% interval time between each
+    thursday:
+      distance: 5
+      description: Recovery
+    friday:
+      distance: 0
+      description: Rest or cross-train
+    saturday:
+      distance: 8
+      description: 6 x 10s hill sprints + 8 x 100m strides
+    sunday:
+      distance: 14
+      description: Med-long run
+  week_10:
+    monday:
+      distance: 0 
+      description: Rest or cross-train
+    tuesday:
+      distance: 7
+      description: Recovery + 6 x 100m strides  
+    wednesday:
+      distance: 11
+      description: 7 at LT
+    thursday:
+      distance: 0
+      description: Rest or cross-train
+    friday:
+      distance: 12
+      description: Med-long run
+    saturday:
+      distance: 5
+      description: Recovery
+    sunday:
+      distance: 20
+      description: Long run
+  week_11:
+    monday:
+      distance: 0
+      description: Rest or cross-train 
+    tuesday:
+      distance: 8
+      description: VO2max 5 x 600m at 5k race pace; jog 50-90% interval time between each
+    wednesday:
+      distance: 12
+      description: Med-long run
+    thursday:
+      distance: 0
+      description: Rest or cross-train
+    friday:
+      distance: 5
+      description: Recovery + 6 x 100m strides  
+    saturday:
+      distance: 13
+      description: Tune up race (13 is target; total can be 9-13 miles)
+    sunday:
+      distance: 17  
+      description: Long run
+  week_12:
+    monday:
+      distance: 0
+      description: Rest or cross-train 
+    tuesday:
+      distance: 8
+      description: General aerobic
+    wednesday:
+      distance: 9
+      description: VO2max 5 x 1000m at 5k race pace; jog 50-90% interval time between each  
+    thursday:
+      distance: 0
+      description: Rest or cross-train 
+    friday:
+      distance: 12
+      description: Med-long run
+    saturday:
+      distance: 5
+      description: Recovery
+    sunday:
+      distance: 18
+      description: 14 at MP
+  week_13:
+    monday:
+      distance: 0 
+      description: Rest or cross-train 
+    tuesday:
+      distance: 8
+      description: VO2max 5 x 600m; jog 50-90% interval time between each
+    wednesday:
+      distance: 11
+      description: Med-long run
+    thursday:
+      distance: 0
+      description: Rest or cross-train
+    friday:
+      distance: 4
+      description: Recovery + 6 x 100m strides
+    saturday:
+      distance: 13
+      description: Tune up race (13 is target; total can be 9-13 miles)
+    sunday:
+      distance: 17
+      description: Long run
+  week_14:  
+    monday:
+      distance: 0
+      description: Rest or cross-train 
+    tuesday:
+      distance: 7
+      description: Recovery + 6 x 100m strides
+    wednesday:
+      distance: 10
+      description: VO2max 4 x 1200m at 5k race pace; jog 50-90% interval time between each
+    thursday:
+      distance: 0
+      description: Rest or cross-train
+    friday:
+      distance: 11
+      description: Med-long run
+    saturday:
+      distance: 4
+      description: Recovery
+    sunday:
+      distance: 20
+      description: Long run
+  week_15:  
+    monday:
+      distance: 0
+      description: Rest or cross-train 
+    tuesday:
+      distance: 8
+      description: VO2max 5 x 600m at 5k race pace; jog 50-90% interval time between each
+    wednesday:
+      distance: 6
+      description: Recovery
+    thursday:
+      distance: 0
+      description: Rest or cross-train
+    friday:
+      distance: 4
+      description: Recovery + 6 x 100m strides
+    saturday:
+      distance: 13
+      description: Tune up race (13 is target; total can be 9-13 miles)
+    sunday:
+      distance: 16
+      description: Long run
+  week_16:
+    monday:
+      distance: 0
+      description: Rest or cross-train 
+    tuesday:
+      distance: 7
+      description: Recovery + 8 x 100m strides
+    wednesday:
+      distance: 8
+      description: VO2max 4 x 1200m at 5k race pace; jog 50-90% interval time between each
+    thursday:
+      distance: 0
+      description: Rest or cross-train
+    friday:
+      distance: 5
+      description: Reocvery + 6 x 100m strides
+    saturday:
+      distance: 0
+      description: Rest or cross-train
+    sunday:
+      distance: 12
+      description: Med-long run
+  week_17:
+    monday:
+      distance: 0
+      description: Rest 
+    tuesday:
+      distance: 6
+      description: Recovery
+    wednesday:
+      distance: 7
+      description: Dress rehearsal (2 at MP)
+    thursday:
+      distance: 0
+      description: Rest
+    friday:
+      distance: 5 
+      description: Recovery + 6 x 100m strides
+    saturday:
+      distance: 4 
+      description: Recovery
+    sunday:
+      distance: 26.2
+      description: Goal marathon

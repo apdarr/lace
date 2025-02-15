@@ -20,6 +20,11 @@ module ActiveSupport
 end
 
 VCR.configure do |config|
+  config.ignore_request do |request|
+    uri = request.uri.to_s
+    uri.include?("127.0.0.1") || uri.include?("localhost")
+  end
+
   config.cassette_library_dir = "test/vcr_cassettes"
   config.hook_into :webmock
 
