@@ -7,7 +7,7 @@ class Plan < ApplicationRecord
     puts "load_from_plan_template called⭐"
     start_date = (self.race_date - 17.weeks).beginning_of_week(:monday)
     template_path = Rails.root.join("app/models/templates/training_plans.yml")
-    template = YAML.load_file(template_path)
+    template = YAML.safe_load(File.read(template_path))
     hash = template.dig(template.first[0])
 
     hash.each do |week|
