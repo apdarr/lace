@@ -28,8 +28,6 @@ class ActivitiesController < ApplicationController
 
   # POST /activities or /activities.json
   def create
-    debugger
-
     ### 🧪 Reenable to get imports working again 🧪 ###
 
     # AllActivityJob.perform_later
