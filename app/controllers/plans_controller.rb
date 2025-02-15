@@ -65,6 +65,6 @@ class PlansController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def plan_params
-      params.expect(plan: [ :length, :race_date ])
+      params.require(:plan).permit(:length, :race_date)
     end
 end
