@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
+  # Initial OAuth request (handled by OmniAuth middleware)
+  post "/auth/strava"
+  # OAuth callback (handled by our sessions#create)
   get "/auth/strava/callback", to: "sessions#create"
+
+  get "/login", to: "sessions#new"
   resource :session, only: [ :destroy ]
   resources :plans
   resources :activities
