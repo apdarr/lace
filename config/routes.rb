@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   post "/auth/strava"
   # OAuth callback (handled by our sessions#create)
   get "/auth/strava/callback", to: "sessions#create"
-
+  get "root", to: "plans#index"
   get "/login", to: "sessions#new"
   resource :session, only: [ :destroy ]
   resources :plans
