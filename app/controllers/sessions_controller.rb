@@ -11,7 +11,6 @@ class SessionsController < ApplicationController
     Rails.logger.debug "Strava Client Secret: #{ENV['STRAVA_CLIENT_SECRET'].inspect}"
 
     auth = request.env["omniauth.auth"]
-    debugger
     user = User.find_or_create_from_strava(auth)
 
     if user.persisted?
