@@ -3,9 +3,8 @@ Rails.application.routes.draw do
   post "/auth/strava"
   # OAuth callback (handled by our sessions#create)
   get "/auth/strava/callback", to: "sessions#create"
-  get "root", to: "plans#index"
-  get "/login", to: "sessions#new"
-  resource :session, only: [ :destroy ]
+  root to: "plans#index" # Updated to use the correct root path syntax
+  resource :session
   resources :plans
   resources :activities
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

@@ -34,6 +34,11 @@
         <div class="flex items-center space-x-4">
           <%= link_to "Plans", plans_path, class: "text-white hover:bg-indigo-800 px-3 py-2 rounded-md text-sm font-medium" %>
           <%= link_to "Activities", activities_path, class: "text-white hover:bg-indigo-800 px-3 py-2 rounded-md text-sm font-medium" %>
+          <% if authenticated? %>
+            <%= button_to "Sign out", session_path, method: :delete, class: "text-white hover:bg-indigo-800 px-3 py-2 rounded-md text-sm font-medium" %>
+          <% elsif !current_page?(new_session_path) %>
+            <%= link_to "Sign in", new_session_path, class: "text-white hover:bg-indigo-800 px-3 py-2 rounded-md text-sm font-medium" %>
+          <% end %>
         </div>
       </div>
     </nav>
