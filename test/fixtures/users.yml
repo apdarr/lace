@@ -1,9 +1,9 @@
-<% password_digest = BCrypt::Password.create("password") %>
-
 one:
-  email_address: one@example.com
-  password_digest: <%= password_digest %>
-
-two:
-  email_address: two@example.com
-  password_digest: <%= password_digest %>
+  email_address: alice@example.com
+  firstname: alice
+  lastname: example
+  access_token: 1234abcd
+  refresh_token: 5678efgh
+  token_expires_at: <%= 1.week.from_now %>
+  strava_id: 123456789
+  profile_picture_url: "https://avatars.githubusercontent.com/u/92997159?v=4"
