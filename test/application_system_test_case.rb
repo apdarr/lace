@@ -5,7 +5,6 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   # Global OmniAuth test configuration
   OmniAuth.config.test_mode = true
-
   # Set the default path for OmniAuth in test mode
   OmniAuth.config.path_prefix = "/auth"
 end

@@ -34,7 +34,7 @@ class SessionsTest < ApplicationSystemTestCase
     assert_button "Sign in with Strava"
   end
 
-  test "should sign in with Strava" do
+  test "should sign in and sign out with Strava" do
     session_count = Session.count
 
     visit new_session_path
@@ -44,5 +44,15 @@ class SessionsTest < ApplicationSystemTestCase
     assert_current_path root_path
     assert_text "Successfully signed in with Strava!"
     assert_equal session_count + 1, Session.count
+  end
+
+  test "should sign out" do
+    visit new_session_path
+    click_button "Sign in with Strava"
+    assert_text "Successfully signed in with Strava!"
+
+    click_button "Sign out"
+    assert_current_path root_path
+    assert_text "Successfully signed out!"
   end
 end
