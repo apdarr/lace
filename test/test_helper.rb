@@ -30,6 +30,7 @@ module AuthenticationHelpers
   end
 end
 
+# Include the helpers in controller tests
 class ActionDispatch::IntegrationTest
   include AuthenticationHelpers
 end
