@@ -7,9 +7,8 @@ class SessionsController < ApplicationController
   end
 
   def create
-    Rails.logger.debug "Strava Client ID: #{ENV['STRAVA_CLIENT_ID'].inspect}"
-    Rails.logger.debug "Strava Client Secret: #{ENV['STRAVA_CLIENT_SECRET'].inspect}"
-
+    # Rails.logger.debug "Strava Client ID: #{ENV['STRAVA_CLIENT_ID'].inspect}"
+    # Rails.logger.debug "Strava Client Secret: #{ENV['STRAVA_CLIENT_SECRET'].inspect}"
     auth = request.env["omniauth.auth"]
     user = User.find_or_create_from_strava(auth)
 
