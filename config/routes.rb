@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  # Initial OAuth request (handled by OmniAuth middleware)
+  post "/auth/strava"
+  # OAuth callback (handled by our sessions#create)
+  get "/auth/strava/callback", to: "sessions#create"
+  root to: "plans#index" # Updated to use the correct root path syntax
+  resource :session
   resources :plans
   resources :activities
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

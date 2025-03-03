@@ -3,9 +3,13 @@ require "test_helper"
 class PlansControllerTest < ActionDispatch::IntegrationTest
   setup do
     @plan = plans(:one)
+    @user = users(:one)
+
+    sign_in_as(@user)
   end
 
   test "should get index" do
+    sign_in_as(@user)
     get plans_url
     assert_response :success
   end

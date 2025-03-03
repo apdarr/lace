@@ -1,9 +1,7 @@
 require "application_system_test_case"
 
-class PlansTest < ApplicationSystemTestCase
+class SessionsTest < ApplicationSystemTestCase
   setup do
-  @plan = plans(:one)
-  @user = users(:one)
     # Mock the Strava provider for this test
     OmniAuth.config.mock_auth[:strava] = OmniAuth::AuthHash.new({
       provider: "strava",
@@ -30,7 +28,13 @@ class PlansTest < ApplicationSystemTestCase
     OmniAuth.config.mock_auth[:strava] = nil
   end
 
-  test "should modify plans after sign in" do
+  test "visit the login page" do
+    visit new_session_path
+    assert_selector "h1", text: "Sign in"
+    assert_button "Sign in with Strava"
+  end
+
+  test "should sign in and sign out with Strava" do
     session_count = Session.count
 
     visit new_session_path
@@ -40,42 +44,15 @@ class PlansTest < ApplicationSystemTestCase
     assert_current_path root_path
     assert_text "Successfully signed in with Strava!"
     assert_equal session_count + 1, Session.count
+  end
 
-    visit plans_url
-    assert_selector "h1", text: "Plans"
+  test "should sign out" do
+    visit new_session_path
+    click_button "Sign in with Strava"
+    assert_text "Successfully signed in with Strava!"
 
-    click_on "New plan"
-    fill_in "plan[race_date]", with: @plan.race_date
-    click_on "Create Plan"
-
-    assert_text "Plan was successfully created"
-
-    visit plan_url(@plan)
-    click_on "Edit this plan", match: :first
-
-    fill_in "plan[race_date]", with: @plan.race_date + 1.week
-    click_on "Update Plan"
-
-    assert_text "Plan was successfully updated"
-
-    visit plan_url(@plan)
-
-    # Verify calendar components exist
-    assert_selector ".grid-cols-8" # Main calendar grid
-    assert_selector "[data-activity-cell]" # Activity cells
-
-    # Verify calendar headers
-    assert_text "Week"
-    assert_text "M"
-    assert_text "Tu"
-    assert_text "W"
-    assert_text "Th"
-    assert_text "F"
-    assert_text "Sa"
-    assert_text "Su"
-
-    visit plan_url(@plan)
-    click_on "Destroy this plan", match: :first
-    assert_text "Plan was successfully destroyed"
+    click_button "Sign out"
+    assert_current_path root_path
+    assert_text "Successfully signed out!"
   end
 end

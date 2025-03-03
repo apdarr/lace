@@ -7,6 +7,7 @@ VCR.configure do |config|
   config.hook_into :webmock
 end
 
+
 module ActiveSupport
   class TestCase
     # Run tests in parallel with specified workers
@@ -14,9 +15,24 @@ module ActiveSupport
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
-
-    # Add more helper methods to be used by all tests here...
   end
+end
+
+# Add authentication helpers for different test types
+module AuthenticationHelpers
+  def sign_in_as(user)
+    Current.session = user.sessions.create!
+
+    ActionDispatch::TestRequest.create.cookie_jar.tap do |cookie_jar|
+      cookie_jar.signed[:session_id] = Current.session.id
+      cookies[:session_id] = cookie_jar[:session_id]
+    end
+  end
+end
+
+# Include the helpers in controller tests
+class ActionDispatch::IntegrationTest
+  include AuthenticationHelpers
 end
 
 VCR.configure do |config|
