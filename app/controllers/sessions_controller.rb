@@ -19,6 +19,7 @@ class SessionsController < ApplicationController
         ip_address: request.remote_ip,
         user_agent: request.user_agent
       )
+
       cookies.signed[:session_id] = { value: session.id, httponly: true }
       redirect_to root_path, notice: "Successfully signed in with Strava!"
     else
