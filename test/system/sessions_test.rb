@@ -30,15 +30,15 @@ class SessionsTest < ApplicationSystemTestCase
 
   test "visit the login page" do
     visit new_session_path
-    assert_selector "h1", text: "Sign in"
-    assert_button "Sign in with Strava"
+    assert_selector "h1", text: "Welcome to lace.club"
+    assert_button "Continue with Strava"
   end
 
   test "should sign in and sign out with Strava" do
     session_count = Session.count
 
     visit new_session_path
-    click_button "Sign in with Strava"
+    click_button "Continue with Strava"
 
     # Check that we were redirected to the root path
     assert_current_path root_path
@@ -48,7 +48,7 @@ class SessionsTest < ApplicationSystemTestCase
 
   test "should sign out" do
     visit new_session_path
-    click_button "Sign in with Strava"
+    click_button "Continue with Strava"
     assert_text "Successfully signed in with Strava!"
 
     click_button "Sign out"
