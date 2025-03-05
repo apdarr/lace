@@ -1,21 +1,45 @@
-<div class="w-full">
+<div class="mx-auto md:w-2/3 w-full">
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
   <% end %>
 
-  <% content_for :title, "Plans" %>
-
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Plans</h1>
-    <%= link_to "New plan", new_plan_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
+  <div class="text-center mb-8">
+    <h1 class="font-bold text-5xl text-slate-800 mb-4">Your Training Plans</h1>
+    <p class="text-sm text-slate-600 mb-6 font-semibold">Create and manage your running journey</p>
   </div>
 
-  <div id="plans" class="min-w-full">
-    <% @plans.each do |plan| %>
-      <%= render plan %>
-      <p>
-        <%= link_to "Show this plan", plan, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-      </p>
-    <% end %>
+  <div class="bg-gradient-to-r from-blue-100 to-purple-100 p-6 rounded-xl shadow-md mb-8">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="font-semibold text-2xl text-slate-700">Plans</h2>
+      <%= link_to new_plan_path, class: "rounded-lg py-3 px-5 bg-indigo-600 text-white font-medium transition duration-300 hover:bg-indigo-700 hover:shadow-lg" do %>
+        New Plan
+      <% end %>
+    </div>
+
+    <div id="plans" class="space-y-4">
+      <% if @plans.any? %>
+        <% @plans.each do |plan| %>
+          <div class="bg-white/60 rounded-lg p-4 shadow-sm transition duration-300 hover:scale-102 hover:shadow-lg hover:bg-white/80">
+            <div class="flex justify-between items-center">
+              <div>
+                <h3 class="font-medium text-lg text-slate-800"><%= plan.length %> Week Plan</h3>
+                <p class="text-slate-600">Race Date: <span class="text-indigo-600 font-semibold"><%= plan.race_date.strftime("%b %d, %Y") %></span></p>
+              </div>
+              <div class="flex space-x-2">
+                <%= link_to "View", plan, class: "inline-flex items-center rounded-lg py-2 px-4 bg-indigo-100 text-indigo-700 font-medium hover:bg-indigo-200 transition" %>
+                <%= link_to "Edit", edit_plan_path(plan), class: "inline-flex items-center rounded-lg py-2 px-4 bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="bg-white/60 rounded-lg p-6 shadow-sm text-center">
+          <p class="text-slate-600 mb-4">You don't have any training plans yet.</p>
+          <%= link_to new_plan_path, class: "inline-block rounded-lg py-3 px-5 bg-indigo-600 text-white font-medium transition duration-300 hover:bg-indigo-700" do %>
+            Create your first plan
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>
