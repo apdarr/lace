@@ -9,6 +9,7 @@ class ActivitiesController < ApplicationController
     else
       @activities = Activity.all
     end
+    @activities = Activity.page(params[:page]).per(9)
   end
 
   # GET /activities/1 or /activities/1.json
