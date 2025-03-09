@@ -18,12 +18,22 @@
     <div class="mb-6 max-w-md mx-auto">
       <%= form_with(url: activities_path, method: :get, class: "flex gap-2") do |f| %>
         <%= f.search_field :query, 
+            value: params[:query],
             class: "flex-1 rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 text-sm",
             placeholder: "Search activities..." %>
         <%= f.submit "Search", 
             class: "px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition duration-300" %>
       <% end %>
     </div>
+    
+    <% if params[:query].present? %>
+      <div class="mb-6 text-center">
+        <p class="text-slate-700">
+          Showing results for: <span class="font-semibold text-indigo-700"><%= params[:query] %></span>
+          <%= link_to "Clear search", activities_path, class: "ml-3 text-sm text-rose-600 hover:text-rose-800" %>
+        </p>
+      </div>
+    <% end %>
 
     <div id="activities" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <% if @activities.any? %>
@@ -37,7 +47,11 @@
         <% end %>
       <% else %>
         <div class="col-span-full bg-white/60 rounded-lg p-6 shadow-sm text-center">
-          <p class="text-slate-600 mb-4">No activities found.</p>
+          <% if params[:query].present? %>
+            <p class="text-slate-600 mb-4">No activities found matching "<%= params[:query] %>".</p>
+          <% else %>
+            <p class="text-slate-600 mb-4">No activities found.</p>
+          <% end %>
         </div>
       <% end %>
     </div>
