@@ -9,7 +9,6 @@ class CreateEmbeddingsJobTest < ActiveJob::TestCase
     search_query = "activities where my heart rate was over 150"
 
     VCR.use_cassette("search_query") do
-      CreateEmbeddingsJob.perform_now(search_query)
       embedding = CreateEmbeddingsJob.perform_now(search_query)
       # OpenAI's text-embedding-3-small model returns 1536-dimensional vectors
       assert_equal 1536, embedding.length
