@@ -7,14 +7,45 @@
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
   <% end %>
 
-  <h1 class="font-bold text-4xl">Sign in</h1>
+  <div class="text-center mb-12">
+    <h1 class="font-bold text-5xl text-slate-800 mb-4">Welcome to lace.club</h1>
+    <p class="text-sm text-slate-600 mb-6 font-semibold">The hub for your next training block</p>
+    <div class="bg-gradient-to-r from-blue-100 to-purple-100 p-6 rounded-xl shadow-md">
+      <h2 class="font-semibold text-2xl text-slate-700 mb-3">Lace acts as a hub for your training block:</h2>
+      
+      <div class="space-y-4 mt-6">
+        <div class="flex items-center bg-white/60 rounded-lg p-3 shadow-sm transition duration-300 hover:scale-105 hover:shadow-lg hover:bg-white/80">
+          <span class="text-2xl mr-3">🤖</span>
+          <p class="text-slate-800 font-medium text-left">Compare workouts with previous ones <span class="text-indigo-600 font-bold">using AI</span> to track your progress</p>
+        </div>
+        
+        <div class="flex items-center bg-white/60 rounded-lg p-3 shadow-sm transition duration-300 hover:scale-105 hover:shadow-lg hover:bg-white/80">
+          <span class="text-2xl mr-3">🛤️</span>
+          <p class="text-slate-800 font-medium text-left"><span class="text-indigo-600 font-bold">Automatically create</span> a training plan by just choosing a race date</p>
+        </div>
 
-  <div class="mt-8">
-    <%= button_to "/auth/strava", method: :post, data: { turbo: false }, class: "rounded-lg py-3 px-5 bg-[#FC4C02] text-white font-medium cursor-pointer w-full flex items-center justify-center gap-2" do %>
-      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+         <div class="flex items-center bg-white/60 rounded-lg p-3 shadow-sm transition duration-300 hover:scale-105 hover:shadow-lg hover:bg-white/80">
+          <span class="text-2xl mr-3">🔍</span>
+          <p class="text-slate-800 font-medium text-left"><span class="text-indigo-600 font-bold">Browse nearby races</span> and have Lace build a plan for the event's distance</p>
+        </div>
+        
+        <div class="flex items-center bg-white/60 rounded-lg p-3 shadow-sm transition duration-300 hover:scale-105 hover:shadow-lg hover:bg-white/80">
+          <span class="text-2xl mr-3">🤝</span>
+          <p class="text-slate-800 font-medium text-left"><span class="text-indigo-600 font-bold">Connect with athletes</span> performing the same training plan as you</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="font-bold text-2xl text-center text-slate-700 mt-8 mb-4">Sign in to get started</h3>
+
+  <div class="mt-6">
+    <%= button_to "/auth/strava", method: :post, data: { turbo: false }, class: "rounded-lg py-4 px-5 bg-[#FC4C02] text-white font-medium cursor-pointer w-full flex items-center justify-center gap-3 hover:bg-[#e64500] transition-colors shadow-md" do %>
+      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
         <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7.01 13.828h4.172"/>
       </svg>
-      Sign in with Strava
+      Continue with Strava
     <% end %>
   </div>
+
 </div>

@@ -4,11 +4,12 @@ class ActivitiesController < ApplicationController
   # GET /activities or /activities.json
   def index
     if params[:query].present?
-      embedding = embed_query(params[:query])
-      @activities = Activity.nearest_neighbors(:embedding, embedding, distance: :cosine, limit: 10)
+      embedding = CreateEmbeddingsJob.perform_now(params[:query])
+      @activities = Activity.nearest_neighbors(:embedding, embedding, distance: :cosine)
     else
       @activities = Activity.all
     end
+    @activities = @activities.page(params[:page]).per(9)
   end
 
   # GET /activities/1 or /activities/1.json
@@ -74,11 +75,11 @@ class ActivitiesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_activity
-      @activity = Activity.find(params.expect(:id))
+      @activity = Activity.find(params.require(:id))
     end
 
     # Only allow a list of trusted parameters through.
     def activity_params
-      params.expect(activity: [ :distance, :elapsed_time, :activity_type, :kudos_count, :average_heart_rate, :max_heart_rate, :description ])
+      params.require(:activity).permit(:distance, :elapsed_time, :activity_type, :kudos_count, :average_heart_rate, :max_heart_rate, :description)
     end
 end

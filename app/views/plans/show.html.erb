@@ -1,107 +1,133 @@
 <div data-controller="activity-modal">
-  <div class="mx-auto md:w-2/3 w-full flex">
-    <div class="mx-auto">
-      <% if notice.present? %>
-        <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-      <% end %>
-      <div class="flex flex-row items-center gap-2">
-        <%= link_to "Edit this plan", edit_plan_path(@plan), class: "rounded-lg py-2 px-4 bg-gray-100 inline-block font-medium text-sm" %>
-        <%= link_to "Back to plans", plans_path, class: "rounded-lg py-2 px-4 bg-gray-100 inline-block font-medium text-sm" %>
-        <%= button_to "Destroy this plan", @plan, method: :delete, class: "rounded-lg py-2 px-4 bg-red-100 font-medium text-sm" %>
-      </div>
-
-      
-
-      <%= render @plan %>
-      <% training_start_date = @plan.race_date - 17.weeks %>
-
-      <div class="mt-8 mb-4">
-        <div class="grid grid-cols-8 gap-4">
-          <%# Header row: changed alignment for the "Week" cell %>
-          <div class="h-10 flex items-center justify-start font-medium text-gray-600">Week</div>
-          <div class="h-10 flex items-center justify-center font-medium text-gray-600">M</div>
-          <div class="h-10 flex items-center justify-center font-medium text-gray-600">Tu</div>
-          <div class="h-10 flex items-center justify-center font-medium text-gray-600">W</div>
-          <div class="h-10 flex items-center justify-center font-medium text-gray-600">Th</div>
-          <div class="h-10 flex items-center justify-center font-medium text-gray-600">F</div>
-          <div class="h-10 flex items-center justify-center font-medium text-gray-600">Sa</div>
-          <div class="h-10 flex items-center justify-center font-medium text-gray-600">Su</div>
-
-          <%# Calendar grid %>
-          <% training_start_date = @plan.race_date - 17.weeks %>
-          <% training_start_date = training_start_date.beginning_of_week %>
-          <% activities = Activity.where(plan_id: @plan.id).index_by { |a| a.start_date_local.to_date } %>
-          
-          <% 18.times do |week| %>
-            <% week_start = training_start_date + (week * 7) %>
-            <div class="h-24 flex items-center justify-start font-medium text-gray-600">
-              <%= week_start.strftime("%m/%d") %>
+  <%# Increased width from md:w-2/3 to md:w-4/5 and then to full width for larger screens %>
+  <div class="mx-auto w-full md:w-11/12 lg:w-full max-w-7xl">
+    <% if notice.present? %>
+      <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+    <% end %>
+    
+    <div class="text-center mb-8">
+      <h1 class="font-bold text-5xl text-slate-800 mb-4">Training Plan</h1>
+      <p class="text-sm text-slate-600 mb-6 font-semibold">Your personalized running schedule</p>
+    </div>
+    
+    <div class="bg-gradient-to-r from-blue-100 to-purple-100 p-6 rounded-xl shadow-md mb-8">
+      <div class="mb-6">
+        <h2 class="font-semibold text-2xl text-slate-700 mb-4">Plan Details</h2>
+        
+        <div class="bg-white/60 rounded-lg p-5 shadow-sm mb-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 border-b md:border-b-0 md:border-r border-slate-200">
+              <p class="text-sm text-slate-500 font-medium">Plan Length</p>
+              <p class="text-xl font-bold text-indigo-700"><%= @plan.length %> Weeks</p>
             </div>
+            <div class="p-4">
+              <p class="text-sm text-slate-500 font-medium">Race Date</p>
+              <p class="text-xl font-bold text-indigo-700"><%= @plan.race_date.strftime("%B %d, %Y") %></p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex flex-wrap gap-3 mb-6">
+          <%= link_to "Edit plan", edit_plan_path(@plan), class: "rounded-lg py-2 px-4 bg-indigo-100 text-indigo-700 font-medium hover:bg-indigo-200 transition duration-300" %>
+          <%= link_to "Back to plans", plans_path, class: "rounded-lg py-2 px-4 bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition duration-300" %>
+          <%= button_to "Delete plan", @plan, method: :delete, 
+              class: "rounded-lg py-2 px-4 bg-red-100 text-red-700 font-medium hover:bg-red-200 transition duration-300",
+              form: { data: { turbo_confirm: "Are you sure you want to delete this plan?" } } %>
+        </div>
+
+        <h2 class="font-semibold text-2xl text-slate-700 mb-4">Training Calendar</h2>
+        
+        <%# Added overflow-x-auto to handle horizontal overflow on small screens %>
+        <div class="mt-4 mb-4 overflow-x-auto">
+          <%# Added min-width to ensure the grid doesn't shrink too much %>
+          <div class="grid grid-cols-8 gap-4 min-w-[900px]">
+            <%# Header row: same as before %>
+            <div class="h-10 flex items-center justify-start font-medium text-slate-600">Week</div>
+            <div class="h-10 flex items-center justify-center font-medium text-slate-600">M</div>
+            <div class="h-10 flex items-center justify-center font-medium text-slate-600">Tu</div>
+            <div class="h-10 flex items-center justify-center font-medium text-slate-600">W</div>
+            <div class="h-10 flex items-center justify-center font-medium text-slate-600">Th</div>
+            <div class="h-10 flex items-center justify-center font-medium text-slate-600">F</div>
+            <div class="h-10 flex items-center justify-center font-medium text-slate-600">Sa</div>
+            <div class="h-10 flex items-center justify-center font-medium text-slate-600">Su</div>
+
+            <%# Calendar grid %>
+            <% training_start_date = @plan.race_date - 17.weeks %>
+            <% training_start_date = training_start_date.beginning_of_week %>
+            <% activities = Activity.where(plan_id: @plan.id).index_by { |a| a.start_date_local.to_date } %>
             
-            <div class="col-span-7" data-controller="drag">
-              <%# Remove outer mx-2 and add gap-x-2 and gap-y-2 to provide spacing only between squares %>
-              <div class="grid grid-cols-7 gap-x-2" 
-                   data-drag-target="container"
-                   data-week="<%= week %>">
-                <% 7.times do |day| %>
-                  <% current_date = week_start + day.days %>
-                  <% activity = activities[current_date] %>
-                  <%# Remove aspect-square, add margin-right %>
-                  <div class="h-32 w-full p-2 mr-2 <%= activity ? 'bg-blue-100' : 'bg-gray-100' %> rounded-lg transition-all duration-200 ease-in-out" 
-                       data-drag-target="item"
-                       data-activity-cell
-                       data-date="<%= current_date.to_s %>">
-                    <div class="h-full w-full flex flex-col">
-                      <div class="flex-grow activity-content">
-                        <% if activity %>
-                          <div class="text-sm font-medium"><%= activity.distance %> miles</div>
-                          <div class="text-xs text-gray-600"><%= activity.description %></div>
-                        <% end %>
-                      </div>
-                      <button type="button"
-                              class="text-xs px-2 py-1 bg-gray-200 rounded mt-1 hover:bg-gray-300 opacity-50 hover:opacity-100 transition-opacity"
-                              data-activity-modal-date-value="<%= current_date.to_s %>"
-                              data-activity-modal-activity-value="<%= activity.to_json if activity %>"
-                              data-activity-modal-activity-id-value="<%= activity&.id %>"
-                              data-action="activity-modal#showModal">
-                        <%= activity ? 'Edit' : 'Add' %>
-                      </button>
-                    </div>
-                  </div>
-                <% end %>
+            <% 18.times do |week| %>
+              <% week_start = training_start_date + (week * 7) %>
+              <div class="h-24 flex items-center justify-start font-medium text-slate-600">
+                <%= week_start.strftime("%m/%d") %>
               </div>
-            </div>
-          <% end %>
+              
+              <div class="col-span-7" data-controller="drag">
+                <%# Adjusted gap to provide more space for each day cell %>
+                <div class="grid grid-cols-7 gap-3" 
+                     data-drag-target="container"
+                     data-week="<%= week %>">
+                  <% 7.times do |day| %>
+                    <% current_date = week_start + day.days %>
+                    <% activity = activities[current_date] %>
+                    <%# Removed mr-2 as we're using gap now %>
+                    <div class="h-32 w-full p-2 <%= activity ? 'bg-zinc-100' : 'bg-white-100' %> rounded-lg transition-all duration-300 hover:shadow-md" 
+                         data-drag-target="item"
+                         data-activity-cell
+                         data-date="<%= current_date.to_s %>">
+                      <div class="h-full w-full flex flex-col">
+                        <div class="flex-grow activity-content">
+                          <% if activity %>
+                            <div class="text-sm font-medium text-indigo-800"><%= activity.distance %> miles</div>
+                            <div class="text-xs text-slate-600"><%= activity.description %></div>
+                          <% end %>
+                        </div>
+                        <button type="button"
+                                class="text-xs px-2 py-1 bg-indigo-100 rounded mt-1 hover:bg-slate-50 opacity-70 hover:opacity-100 transition-opacity"
+                                data-activity-modal-date-value="<%= current_date.to_s %>"
+                                data-activity-modal-activity-value="<%= activity.to_json if activity %>"
+                                data-activity-modal-activity-id-value="<%= activity&.id %>"
+                                data-action="activity-modal#showModal">
+                          <%= activity ? 'Edit' : 'Add' %>
+                        </button>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <%# Update modal template to handle activity data %>
+  <%# Modal template - unchanged %>
   <div id="activity-modal" 
        data-activity-modal-target="modal"
        data-activity-modal-update-url="<%= activities_path %>"
        data-plan-id="<%= @plan.id %>"
        class="hidden fixed inset-0 z-50">
-    <div class="fixed inset-0 bg-gray-600 bg-opacity-50"></div>
+    <%# ...existing modal code... %>
+    <div class="fixed inset-0 bg-slate-600 bg-opacity-50"></div>
     
     <div class="relative z-50">
       <div class="fixed top-20 left-1/2 transform -translate-x-1/2 p-5 border w-96 shadow-lg rounded-md bg-white">
         <div class="mt-3">
-          <h3 class="text-lg font-semibold text-gray-900">Edit Activity</h3>
+          <h3 class="text-lg font-semibold text-slate-800">Edit Activity</h3>
           <form data-action="submit->activity-modal#save">
             <input type="hidden" data-activity-modal-target="dateInput" name="date">
             <div class="mb-3">
               <label class="block text-sm font-medium mb-1">Distance (miles)</label>
               <input type="number" 
                      step="0.1" 
-                     class="w-full p-2 border rounded-md"
+                     class="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                      data-activity-modal-target="distanceInput">
             </div>
             <div class="mb-3">
               <label class="block text-sm font-medium mb-1">Description</label>
               <textarea
-                class="w-full p-2 border rounded-md"
+                class="w-full p-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                 rows="4"
                 placeholder="Enter activity details..."
                 data-activity-modal-target="descriptionInput"
@@ -109,12 +135,12 @@
             </div>
             <div class="mt-4 flex justify-end gap-2">
               <button type="button" 
-                      class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                      class="px-4 py-2 bg-slate-200 text-slate-800 rounded-md hover:bg-slate-300"
                       data-action="click->activity-modal#closeModal">
                 Cancel
               </button>
               <button type="submit" 
-                      class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                      class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
                 Save
               </button>
             </div>

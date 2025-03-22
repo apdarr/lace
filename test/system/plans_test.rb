@@ -2,8 +2,8 @@ require "application_system_test_case"
 
 class PlansTest < ApplicationSystemTestCase
   setup do
-  @plan = plans(:one)
-  @user = users(:one)
+    @plan = plans(:one)
+    @user = users(:one)
     # Mock the Strava provider for this test
     OmniAuth.config.mock_auth[:strava] = OmniAuth::AuthHash.new({
       provider: "strava",
@@ -34,7 +34,7 @@ class PlansTest < ApplicationSystemTestCase
     session_count = Session.count
 
     visit new_session_path
-    click_button "Sign in with Strava"
+    click_button "Continue with Strava"
 
     # Check that we were redirected to the root path
     assert_current_path root_path
@@ -44,14 +44,14 @@ class PlansTest < ApplicationSystemTestCase
     visit plans_url
     assert_selector "h1", text: "Plans"
 
-    click_on "New plan"
+    click_on "New Plan"
     fill_in "plan[race_date]", with: @plan.race_date
     click_on "Create Plan"
 
     assert_text "Plan was successfully created"
 
     visit plan_url(@plan)
-    click_on "Edit this plan", match: :first
+    click_on "Edit plan", match: :first
 
     fill_in "plan[race_date]", with: @plan.race_date + 1.week
     click_on "Update Plan"
@@ -75,7 +75,11 @@ class PlansTest < ApplicationSystemTestCase
     assert_text "Su"
 
     visit plan_url(@plan)
-    click_on "Destroy this plan", match: :first
+    # Accept the confirmation dialog when clicking "Delete plan"
+    accept_confirm do
+      click_on "Delete plan", match: :first
+    end
+
     assert_text "Plan was successfully destroyed"
   end
 end
