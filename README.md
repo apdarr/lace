@@ -1,6 +1,6 @@
 # Lace 🪢
 
-A simple training app for runners to plan their your next race. 
+A simple training app for runners to plan their next race. 
 
 ### Currently implemented features:
 
