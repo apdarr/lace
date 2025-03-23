@@ -1,24 +1,15 @@
-# README
+# Lace 🪢
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A simple training app for runners to plan their your next race. 
 
-Things you may want to cover:
+### Currently implemented features:
 
-* Ruby version
+**Build a training plan from a pre-set 18-week plan for the marathon** 
+  - Automatically builds the plan based on race date. 
+  - Edit works, and drag and drop runs to different days in the week. 
 
-* System dependencies
+**Import historical Strava activities**
+  - Compare activities to similar activities using embeddings LLM. 
+  - Search for activities using natural language.
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+![alt text](image.png)
