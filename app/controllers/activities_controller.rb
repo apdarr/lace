@@ -1,11 +1,16 @@
 class ActivitiesController < ApplicationController
   before_action :set_activity, only: %i[ show edit update destroy ]
-
   # GET /activities or /activities.json
   def index
     if params[:query].present?
-      embedding = CreateEmbeddingsJob.perform_now(params[:query])
-      @activities = Activity.nearest_neighbors(:embedding, embedding, distance: :cosine)
+      if params[:search_type] == "embeddings"
+        # Original embeddings-based search
+        embedding = CreateEmbeddingsJob.perform_now(params[:query])
+        @activities = Activity.nearest_neighbors(:embedding, embedding, distance: :cosine)
+      else
+        # New GPT-powered natural language search
+        @activities = NaturalLanguageQuery.new(params[:query]).execute_query
+      end
     else
       @activities = Activity.all
     end

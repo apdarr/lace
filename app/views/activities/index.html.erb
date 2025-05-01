@@ -16,13 +16,25 @@
     </div>
 
     <div class="mb-6 max-w-md mx-auto">
-      <%= form_with(url: activities_path, method: :get, class: "flex gap-2") do |f| %>
-        <%= f.search_field :query, 
-            value: params[:query],
-            class: "flex-1 rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 text-sm",
-            placeholder: "Search activities..." %>
-        <%= f.submit "Search", 
-            class: "px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition duration-300" %>
+      <%= form_with(url: activities_path, method: :get, class: "flex flex-col gap-2") do |f| %>
+        <div class="flex gap-2">
+          <%= f.search_field :query, 
+              value: params[:query],
+              class: "flex-1 rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 text-sm",
+              placeholder: "Search activities..." %>
+          <%= f.submit "Search", 
+              class: "px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition duration-300" %>
+        </div>
+        <div class="flex justify-center gap-4 mt-2">
+          <div class="flex items-center">
+            <%= f.radio_button :search_type, "gpt", checked: params[:search_type] != "embeddings", class: "mr-2" %>
+            <%= f.label :search_type_gpt, "Natural Language Search (GPT)", class: "text-sm text-slate-700" %>
+          </div>
+          <div class="flex items-center">
+            <%= f.radio_button :search_type, "embeddings", checked: params[:search_type] == "embeddings", class: "mr-2" %>
+            <%= f.label :search_type_embeddings, "Semantic Search (Embeddings)", class: "text-sm text-slate-700" %>
+          </div>
+        </div>
       <% end %>
     </div>
     
