@@ -86,7 +86,7 @@ class NaturalLanguageQuery
 
     # Validate column name to prevent injection
     return query unless valid_column?(column)
-    
+
     # Validate operator to prevent injection
     return query unless valid_operator?(operator)
 
