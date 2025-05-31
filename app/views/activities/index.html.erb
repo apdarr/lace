@@ -25,15 +25,6 @@
           <%= f.submit "Search", 
               class: "px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition duration-300" %>
         </div>
-        <div class="flex justify-center items-center mt-3">
-          <label class="flex items-center gap-2 cursor-pointer">
-            <%= f.check_box :search_type, 
-                { checked: params[:search_type] != "embeddings", class: "rounded-md text-indigo-600 focus:ring-indigo-500" }, 
-                "gpt", "embeddings" %>
-            <span class="text-sm font-medium text-slate-700">Use Natural Language Search</span>
-            <span class="text-xs text-slate-500">(Unchecked uses Embedding Search)</span>
-          </label>
-        </div>
       <% end %>
     </div>
     

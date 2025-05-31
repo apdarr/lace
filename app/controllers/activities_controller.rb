@@ -3,14 +3,8 @@ class ActivitiesController < ApplicationController
   # GET /activities or /activities.json
   def index
     if params[:query].present?
-      if params[:search_type] == "embeddings"
-        # Original embeddings-based search
-        embedding = CreateEmbeddingsJob.perform_now(params[:query])
-        @activities = Activity.nearest_neighbors(:embedding, embedding, distance: :cosine)
-      else
-        # New GPT-powered natural language search
+        # GPT-powered natural language search
         @activities = NaturalLanguageQuery.new(params[:query]).execute_query
-      end
     else
       @activities = Activity.all
     end
