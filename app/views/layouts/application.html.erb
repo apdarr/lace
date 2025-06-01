@@ -30,7 +30,9 @@
   <body>
     <nav class="bg-indigo-600 py-2 px-4">
       <div class="container flex justify-between items-center">
-        <h1 class="text-xl text-white">lace 👟</h1>
+        <%= link_to root_path, class: "flex items-center" do %>
+          <%= image_tag "lace-logo.png", alt: "lace", class: "h-12 w-auto max-w-232 object-contain" %>
+        <% end %>
         <div class="flex items-center space-x-4">
           <%= link_to "Plans", plans_path, class: "text-white hover:bg-teal-400 px-3 py-2 rounded-md text-sm font-medium" %>
           <%= link_to "Activities", activities_path, class: "text-white hover:bg-teal-400 px-3 py-2 rounded-md text-sm font-medium" %>

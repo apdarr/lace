@@ -1,39 +1,72 @@
-<div id="<%= dom_id activity %>" class="activity-details">
-  <div class="activity-section">
-    <div class="activity-stat">
-      <span class="label">Distance:</span>
-      <span class="value"><%= meters_to_miles(activity.distance) %> miles</span>
-    </div>
-
-    <div class="activity-stat">
-      <span class="label">Time:</span>
-      <span class="value"><%= activity.elapsed_time%></span>
-    </div>
-
-    <div class="activity-stat">
-      <span class="label">Type:</span>
-      <span class="value"><%= activity.activity_type %></span>
-    </div>
+<div id="<%= dom_id activity %>" class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+  <!-- Activity Header -->
+  <div class="bg-gradient-to-r from-blue-100 to-indigo-100 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+    <h3 class="text-lg font-semibold text-slate-800 capitalize"><%= activity.activity_type %></h3>
+    <%= link_to "View on Strava", "https://strava.com/activities/#{activity.strava_id}", target: "_blank", rel: "noopener", class: "py-2 px-4 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors font-medium text-sm ml-4" %>
   </div>
 
-  <div class="activity-section">
-    <div class="activity-stat">
-      <span class="label">Heart Rate:</span>
-      <span class="value">
-        <%= activity.average_heart_rate %> bpm <%= activity.max_heart_rate %> bpm)
-      </span>
+  <!-- Activity Data Table -->
+  <div class="p-6">
+    <div class="space-y-4">
+      <!-- Primary Stats Row -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm">
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Distance</div>
+          <div class="text-2xl font-bold text-indigo-700"><%= meters_to_miles(activity.distance) %></div>
+          <div class="text-sm text-slate-600">miles</div>
+        </div>
+        
+        <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm">
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Duration</div>
+          <div class="text-2xl font-bold text-indigo-700"><%= activity.elapsed_time %></div>
+          <div class="text-sm text-slate-600">seconds</div>
+        </div>
+      </div>
+
+      <!-- Heart Rate Stats -->
+      <% if activity.average_heart_rate.present? || activity.max_heart_rate.present? %>
+        <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm">
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3 text-center">Heart Rate</div>
+          <div class="flex items-center justify-center">
+            <% if activity.average_heart_rate.present? %>
+              <div class="text-center flex-1">
+                <div class="text-lg font-bold text-rose-600"><%= activity.average_heart_rate %></div>
+                <div class="text-xs text-slate-600">avg bpm</div>
+              </div>
+            <% end %>
+            <% if activity.average_heart_rate.present? && activity.max_heart_rate.present? %>
+              <div class="w-px h-12 bg-slate-200 mx-4"></div>
+            <% end %>
+            <% if activity.max_heart_rate.present? %>
+              <div class="text-center flex-1">
+                <div class="text-lg font-bold text-rose-700"><%= activity.max_heart_rate %></div>
+                <div class="text-xs text-slate-600">max bpm</div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Kudos -->
+      <% if activity.kudos_count.present? && activity.kudos_count > 0 %>
+        <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm">
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wider text-center mb-2">Kudos</div>
+          <div class="flex items-center justify-center space-x-2">
+            <span class="text-xl font-bold text-orange-600"><%= activity.kudos_count %></span>
+            <svg class="w-5 h-5 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
+            </svg>
+          </div>
+        </div>
+      <% end %>
     </div>
 
-    <div class="activity-stat">
-      <span class="label">Kudos:</span>
-      <span class="value"><%= activity.kudos_count %></span>
-    </div>
+    <!-- Description -->
+    <% if activity.description.present? %>
+      <div class="mt-6 bg-slate-50 rounded-lg p-4 border border-slate-200">
+        <div class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Description</div>
+        <div class="text-sm text-slate-700 leading-relaxed"><%= simple_format(activity.description) %></div>
+      </div>
+    <% end %>
   </div>
-
-  <% if activity.description.present? %>
-    <div class="activity-description">
-      <h4>Description:</h4>
-      <p><%= simple_format(activity.description) %></p>
-    </div>
-  <% end %>
 </div>

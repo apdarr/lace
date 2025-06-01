@@ -14,7 +14,7 @@ class ActivitiesController < ApplicationController
   # GET /activities/1 or /activities/1.json
   def show
     @activity = Activity.find(params[:id])
-    @nearest_activities = @activity.nearest_neighbors(:embedding, distance: "euclidean").first(5)
+    @nearest_activities = @activity.nearest_neighbors(:embedding, distance: "euclidean").first(6)
   end
 
   # GET /activities/new
