@@ -1,0 +1,208 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <% if alert = flash[:alert] %>
+    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
+  <% end %>
+
+  <% if notice = flash[:notice] %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <!-- Profile Header -->
+  <div class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl border border-slate-200 overflow-hidden shadow-sm mb-8">
+    <div class="bg-gradient-to-r from-blue-100 to-indigo-100 px-6 py-4 border-b border-slate-200">
+      <h1 class="text-2xl font-bold text-slate-800">Your Trainer Profile</h1>
+      <p class="text-slate-600 mt-1">Track your achievements and gear</p>
+    </div>
+    
+    <div class="p-6">
+      <div class="flex items-center space-x-4">
+        <!-- Trainer Avatar Placeholder -->
+        <div class="w-24 h-24 bg-gradient-to-br from-indigo-100 to-blue-200 rounded-lg border-2 border-indigo-200 flex items-center justify-center">
+          <div class="text-indigo-600 text-3xl">🏃</div>
+        </div>
+        
+        <div>
+          <h2 class="text-xl font-semibold text-slate-800"><%= @user&.firstname || "Runner" %>'s Trainer</h2>
+          <p class="text-slate-600">Level 1 • Beginner Runner</p>
+          <div class="mt-2">
+            <div class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Experience</div>
+            <div class="w-48 bg-slate-200 rounded-full h-2">
+              <div class="bg-indigo-500 h-2 rounded-full" style="width: 25%"></div>
+            </div>
+            <div class="text-xs text-slate-600 mt-1">250/1000 XP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Medals Section -->
+  <div class="bg-gradient-to-br from-slate-50 to-amber-50 rounded-xl border border-slate-200 overflow-hidden shadow-sm mb-8">
+    <div class="bg-gradient-to-r from-amber-100 to-yellow-100 px-6 py-4 border-b border-slate-200">
+      <h2 class="text-xl font-semibold text-slate-800 flex items-center">
+        <span class="text-2xl mr-3">🏅</span>
+        Medals & Achievements
+      </h2>
+      <p class="text-slate-600 mt-1">Badges earned through races and special accomplishments</p>
+    </div>
+    
+    <div class="p-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Race Badges -->
+        <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm text-center">
+          <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-lg border-2 border-blue-200 flex items-center justify-center">
+            <div class="text-blue-600 text-2xl">⭐</div>
+          </div>
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Chicago Marathon</div>
+          <div class="text-sm text-slate-600 mt-1">Coming Soon</div>
+        </div>
+        
+        <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm text-center">
+          <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-purple-100 to-pink-200 rounded-lg border-2 border-purple-200 flex items-center justify-center">
+            <div class="text-purple-600 text-2xl">🦄</div>
+          </div>
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Boston Marathon</div>
+          <div class="text-sm text-slate-600 mt-1">Coming Soon</div>
+        </div>
+        
+        <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm text-center">
+          <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-green-100 to-emerald-200 rounded-lg border-2 border-green-200 flex items-center justify-center">
+            <div class="text-green-600 text-2xl">🌉</div>
+          </div>
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">NYC Marathon</div>
+          <div class="text-sm text-slate-600 mt-1">Coming Soon</div>
+        </div>
+        
+        <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm text-center">
+          <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-red-100 to-orange-200 rounded-lg border-2 border-red-200 flex items-center justify-center">
+            <div class="text-red-600 text-2xl">🌅</div>
+          </div>
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Tokyo Marathon</div>
+          <div class="text-sm text-slate-600 mt-1">Coming Soon</div>
+        </div>
+      </div>
+      
+      <!-- Mystery/Novelty Badges -->
+      <div class="mt-6">
+        <h3 class="text-lg font-medium text-slate-700 mb-4 flex items-center">
+          <span class="text-xl mr-2">🎭</span>
+          Mystery Badges
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm text-center">
+            <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg border-2 border-slate-200 flex items-center justify-center">
+              <div class="text-slate-400 text-2xl">❓</div>
+            </div>
+            <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Heat Runner</div>
+            <div class="text-sm text-slate-600 mt-1">Run in 90°F+</div>
+          </div>
+          
+          <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm text-center">
+            <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg border-2 border-slate-200 flex items-center justify-center">
+              <div class="text-slate-400 text-2xl">❓</div>
+            </div>
+            <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Ice Runner</div>
+            <div class="text-sm text-slate-600 mt-1">Run in freezing temps</div>
+          </div>
+          
+          <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm text-center">
+            <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg border-2 border-slate-200 flex items-center justify-center">
+              <div class="text-slate-400 text-2xl">❓</div>
+            </div>
+            <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Century Week</div>
+            <div class="text-sm text-slate-600 mt-1">100+ miles/week</div>
+          </div>
+          
+          <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm text-center">
+            <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg border-2 border-slate-200 flex items-center justify-center">
+              <div class="text-slate-400 text-2xl">❓</div>
+            </div>
+            <div class="text-xs font-medium text-slate-500 uppercase tracking-wider">Storm Chaser</div>
+            <div class="text-sm text-slate-600 mt-1">Run in severe weather</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gear Section -->
+  <div class="bg-gradient-to-br from-slate-50 to-green-50 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+    <div class="bg-gradient-to-r from-green-100 to-emerald-100 px-6 py-4 border-b border-slate-200">
+      <h2 class="text-xl font-semibold text-slate-800 flex items-center">
+        <span class="text-2xl mr-3">⚙️</span>
+        Running Gear
+      </h2>
+      <p class="text-slate-600 mt-1">Your running equipment and sensors</p>
+    </div>
+    
+    <div class="p-6">
+      <!-- Shoes Section -->
+      <div class="mb-6">
+        <h3 class="text-lg font-medium text-slate-700 mb-4 flex items-center">
+          <span class="text-xl mr-2">👟</span>
+          Running Shoes
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm">
+            <div class="flex items-center space-x-4">
+              <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-lg border-2 border-blue-200 flex items-center justify-center">
+                <div class="text-blue-600 text-2xl">👟</div>
+              </div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-slate-700">Primary Shoes</div>
+                <div class="text-xs text-slate-500 uppercase tracking-wider mt-1">Nike Air Zoom Pegasus</div>
+                <div class="text-xs text-slate-600 mt-1">Miles: 425 • Status: Active</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm opacity-60">
+            <div class="flex items-center space-x-4">
+              <div class="w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg border-2 border-slate-200 flex items-center justify-center">
+                <div class="text-slate-400 text-2xl">➕</div>
+              </div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-slate-500">Add Another Pair</div>
+                <div class="text-xs text-slate-400 mt-1">Track multiple shoes</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Sensors Section -->
+      <div>
+        <h3 class="text-lg font-medium text-slate-700 mb-4 flex items-center">
+          <span class="text-xl mr-2">📱</span>
+          Sensors & Devices
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm">
+            <div class="flex items-center space-x-4">
+              <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-200 rounded-lg border-2 border-purple-200 flex items-center justify-center">
+                <div class="text-purple-600 text-2xl">⌚</div>
+              </div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-slate-700">GPS Watch</div>
+                <div class="text-xs text-slate-500 uppercase tracking-wider mt-1">Garmin Forerunner</div>
+                <div class="text-xs text-slate-600 mt-1">Connected via Strava</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-lg p-4 border border-slate-200 shadow-sm opacity-60">
+            <div class="flex items-center space-x-4">
+              <div class="w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg border-2 border-slate-200 flex items-center justify-center">
+                <div class="text-slate-400 text-2xl">💓</div>
+              </div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-slate-500">Heart Rate Monitor</div>
+                <div class="text-xs text-slate-400 mt-1">Coming Soon</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
