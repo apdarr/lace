@@ -121,6 +121,8 @@ GEM
       multipart-post (~> 2.0)
     faraday-net_http (3.4.0)
       net-http (>= 0.5.0)
+    faraday-retry (2.3.1)
+      faraday (~> 2.0)
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
@@ -324,6 +326,15 @@ GEM
       faraday (>= 1)
       faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
+    ruby_llm (1.3.0)
+      base64
+      event_stream_parser (~> 1)
+      faraday (>= 1.10.0)
+      faraday-multipart (>= 1)
+      faraday-net_http (>= 1)
+      faraday-retry (>= 1)
+      marcel (~> 1.0)
+      zeitwerk (~> 2)
     rubyzip (2.3.2)
     securerandom (0.4.0)
     selenium-webdriver (4.27.0)
@@ -432,6 +443,7 @@ DEPENDENCIES
   rails (~> 8.0.0)
   rubocop-rails-omakase
   ruby-openai
+  ruby_llm
   selenium-webdriver
   solid_cable
   solid_cache

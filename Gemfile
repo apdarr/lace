@@ -22,6 +22,8 @@ gem "strava-ruby-client"
 gem "sqlite-vec"
 # OpenAI wrapper
 gem "ruby-openai"
+# Ruby LLM - unified interface for AI models
+gem "ruby_llm"
 
 # Nearest neighbor search
 gem "neighbor"
