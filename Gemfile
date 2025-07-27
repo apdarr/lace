@@ -71,8 +71,6 @@ group :development, :test do
   gem "vcr"
 
   gem "webmock"
-
-  gem "dotenv"
 end
 
 group :development do
