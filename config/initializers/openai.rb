@@ -1,3 +1,3 @@
 OpenAI.configure do |config|
-  config.access_token = ENV["OPENAI_TOKEN"]
+  Rails.application.credentials.dig(:open_ai, :token)
 end
