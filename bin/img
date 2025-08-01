@@ -1,0 +1,102 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# One-off script to generate an image using Ruby LLM gem with DALL-E 3 model
+# Usage: bin/generate_image
+
+require_relative "../config/environment"
+
+puts "🎨 Starting image generation"
+
+# Check if OpenAI token is available
+openai_token = ENV["OPENAI_TOKEN"]
+if openai_token.nil? || openai_token.empty?
+  puts "❌ OPENAI_TOKEN environment variable is not set!"
+  exit 1
+end
+
+begin
+  # Configure RubyLLM to use OpenAI
+  RubyLLM.configure do |config|
+    config.openai_api_key = ENV["OPENAI_TOKEN"]
+  end
+
+  # Generate image using dall-e-3 model (gpt-image-1 requires organization verification)
+  prompt_setup = "Create an emoji that's reminiscent of a pokemon gym badge. The image should be bright and colorful and adhere to Apple's Emoji language. \n
+  It must be a simple, yet visually appealing design that can be easily recognized. The emoji should not have any colored background, instead it must just be the icon itself. \n
+  The design should be unique and not resemble any existing emoji. \n
+  The image should be in PNG format with a transparent background, and it should be suitable for use as an emoji in various applications. \n
+  The badge should represent a user's achievements in running, such as completing a marathon, half-marathon, or 5k distance. \n
+  The resulting image will eventually be used as a badge to represent a user's completed races in the marathon, half-marathon, 5k distance, etc. Create the image based on this prompt:"
+  # Ask for user input for the prompt
+  puts "Please enter your image prompt:"
+  user_input = gets.chomp.strip
+
+  # Use user input or default prompt
+  if user_input.empty?
+    puts "No input provided, exiting."
+    exit 1
+  end
+  prompt = "#{prompt_setup} #{user_input}"
+  
+  # Log the prompt being used
+  puts "📝 Generating image with prompt: '#{prompt}'"
+  
+  image = RubyLLM.paint(prompt, model: "gpt-image-1")
+  
+  puts "✅ Image generated successfully!"
+  puts "📊 Model used: #{image.model_id}"
+  puts "📋 MIME type: #{image.mime_type}"
+  puts "📏 Data type: #{image.base64? ? 'Base64 encoded' : 'URL'}"
+  
+  if image.revised_prompt
+    puts "✏️  Revised prompt: #{image.revised_prompt}"
+  end
+
+  # Generate filename with timestamp
+  timestamp = Time.now.strftime("%Y%m%d_%H%M%S")
+  filename = "generated_image_#{timestamp}.png"
+  save_path = Rails.root.join("app", "assets", "images", filename)
+  
+  # Ensure the directory exists
+  FileUtils.mkdir_p(File.dirname(save_path))
+  
+  # Save the image using the built-in save method
+  puts "💾 Saving image to: #{save_path}"
+  image.save(save_path)
+  
+  # Verify the file was saved
+  if File.exist?(save_path)
+    file_size = File.size(save_path)
+    puts "✅ Image saved successfully!"
+    puts "📁 File path: #{save_path}"
+    puts "📊 File size: #{file_size} bytes"
+  else
+    puts "❌ Failed to save image file"
+    exit 1
+  end
+
+rescue RubyLLM::UnauthorizedError => e
+  puts "❌ Authorization error: #{e.message}"
+  puts "🔑 Please check your OPENAI_TOKEN environment variable"
+  exit 1
+rescue RubyLLM::BadRequestError => e
+  puts "❌ Bad request error: #{e.message}"
+  puts "💡 This might be due to content policy violation"
+  exit 1
+rescue RubyLLM::RateLimitError => e
+  puts "❌ Rate limit exceeded: #{e.message}"
+  puts "⏰ Please wait before trying again"
+  exit 1
+rescue RubyLLM::Error => e
+  puts "❌ RubyLLM error: #{e.message}"
+  exit 1
+rescue => e
+  puts "❌ Unexpected error: #{e.message}"
+  puts "🔍 Error class: #{e.class}"
+  puts "📍 Backtrace:"
+  puts e.backtrace.first(5)
+  exit 1
+end
+
+puts "🎉 Image generation completed successfully!"
