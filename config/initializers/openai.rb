@@ -1,3 +1,3 @@
 OpenAI.configure do |config|
-  Rails.application.credentials.dig(:open_ai, :token)
+  config.access_token = Rails.application.credentials.dig(:open_ai, :token)
 end
