@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     member do
       get :edit_workouts
       patch :update_workouts
+      post :create_blank_schedule
     end
   end
   resources :activities

@@ -6,6 +6,27 @@ class Plan < ApplicationRecord
 
   has_many_attached :photos
 
+  validates :length, presence: true, numericality: { greater_than: 0 }
+  validates :race_date, presence: true
+  validate :race_date_in_future
+  validate :photos_are_images, if: -> { photos.attached? }
+
+  private
+
+  def race_date_in_future
+    return unless race_date.present?
+    
+    errors.add(:race_date, "must be in the future") if race_date <= Date.current
+  end
+
+  def photos_are_images
+    photos.each do |photo|
+      unless photo.content_type.in?(%w[image/jpeg image/jpg image/png image/gif])
+        errors.add(:photos, "must be JPEG, PNG, or GIF images")
+      end
+    end
+  end
+
   private
 
   def load_from_plan_template

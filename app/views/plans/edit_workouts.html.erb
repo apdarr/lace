@@ -50,6 +50,7 @@
                   <%= activity_form.text_field :description, 
                                              value: activity.description, 
                                              placeholder: "e.g., Easy run, Rest day, 5 x 800m intervals",
+                                             data: { action: "blur->workout-editor#suggestDescription" },
                                              class: "w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" %>
                 <% end %>
               </div>
@@ -58,7 +59,14 @@
         </div>
       <% else %>
         <div class="text-center py-8">
-          <p class="text-slate-600">No workouts found. Activities will be created when photos are processed or you can manually add them.</p>
+          <p class="text-slate-600 mb-4">No workouts found. You can:</p>
+          <div class="space-y-3">
+            <p class="text-slate-500">• Upload training plan photos that will be automatically processed</p>
+            <p class="text-slate-500">• Create a blank workout schedule and customize each day</p>
+            <%= link_to "Create Blank Schedule", create_blank_schedule_plan_path(@plan), 
+                        method: :post,
+                        class: "inline-block rounded-lg py-3 px-5 bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition duration-300" %>
+          </div>
         </div>
       <% end %>
     </div>

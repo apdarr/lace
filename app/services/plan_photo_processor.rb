@@ -7,7 +7,12 @@ class PlanPhotoProcessor
     return unless @plan.photos.attached?
 
     @plan.photos.each do |photo|
-      process_single_photo(photo)
+      begin
+        process_single_photo(photo)
+      rescue => e
+        Rails.logger.error "PlanPhotoProcessor: Error processing photo #{photo.id}: #{e.message}"
+        # Continue with other photos even if one fails
+      end
     end
   end
 
@@ -54,6 +59,12 @@ class PlanPhotoProcessor
     # Parse the JSON response and create activities
     begin
       workouts = JSON.parse(result)
+      
+      if workouts["error"]
+        Rails.logger.warn "PlanPhotoProcessor: GPT couldn't parse image: #{workouts['error']}"
+        return
+      end
+      
       create_activities_from_workouts(workouts)
     rescue JSON::ParserError => e
       Rails.logger.error "PlanPhotoProcessor: Failed to parse GPT response as JSON: #{e.message}"
@@ -68,11 +79,13 @@ class PlanPhotoProcessor
     current_date = start_date
 
     workouts["weeks"].each do |week|
+      next unless week["days"]
+      
       week["days"].each do |day|
         Activity.create(
           plan_id: @plan.id,
           distance: day["distance"].to_f,
-          description: day["description"],
+          description: day["description"] || "Workout",
           start_date_local: current_date
         )
         current_date += 1.day
