@@ -37,6 +37,7 @@
           <%= link_to "Plans", plans_path, class: "text-white hover:bg-teal-400 px-3 py-2 rounded-md text-sm font-medium" %>
           <%= link_to "Activities", activities_path, class: "text-white hover:bg-teal-400 px-3 py-2 rounded-md text-sm font-medium" %>
           <% if authenticated? %>
+            <%= link_to "Profile", profile_path, class: "text-white hover:bg-teal-400 px-3 py-2 rounded-md text-sm font-medium" %>
             <%= button_to "Sign out", session_path, method: :delete, class: "text-white hover:bg-rose-400 px-3 py-2 rounded-md text-sm font-medium" %>
           <% elsif !authenticated? && !current_page?(new_session_path) %>
             <%= link_to "Sign in", new_session_path, class: "text-white hover:bg-teal-400 px-3 py-2 rounded-md text-sm font-medium" %>

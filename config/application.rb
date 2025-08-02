@@ -2,7 +2,7 @@ require_relative "boot"
 require "rails/all"
 
 # Load dotenv files before environment and application are loaded.
-require "dotenv/load" if defined?(Dotenv)
+# require "dotenv/load" if defined?(Dotenv)
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
