@@ -87,7 +87,7 @@ applyTo: '**/*.rb'
 ## Testing Guidelines
 
 - The app uses Minitest, NOT RSpec.
-Write unit tests for models using `test/models` (Minitest) to validate business logic.
+- Write unit tests for models using `test/models` (Minitest) to validate business logic.
 - Use fixtures (Minitest) to manage test data cleanly and consistently.
 - Organize controller specs under `test/controllers` to test RESTful API behavior.
 - Prefer `before` blocks in RSpec or `setup` in Minitest to initialize common test data.
