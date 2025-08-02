@@ -90,16 +90,15 @@ applyTo: '**/*.rb'
 - Write unit tests for models using `test/models` (Minitest) to validate business logic.
 - Use fixtures (Minitest) to manage test data cleanly and consistently.
 - Organize controller specs under `test/controllers` to test RESTful API behavior.
-- Prefer `before` blocks in RSpec or `setup` in Minitest to initialize common test data.
+- Use `setup` in Minitest to initialize common test data.
 - Avoid hitting external APIs in tests — use `VCR` generally to record and replay HTTP interactions.
 - Use `system tests` in Minitest to simulate full user flows.
 - Isolate slow and expensive tests (e.g., external services, file uploads) into separate test types or tags.
 - Run test coverage tools like `SimpleCov` to ensure adequate code coverage.
-- Avoid `sleep` in tests; use `perform_enqueued_jobs` (Minitest) or `ActiveJob::TestHelper` with RSpec.
+- Avoid `sleep` in tests; use `perform_enqueued_jobs` (Minitest).
 - Use database cleaning tools (`rails test:prepare`, `DatabaseCleaner`, or `transactional_fixtures`) to maintain clean state between tests.
 - Test background jobs by enqueuing and performing jobs using `ActiveJob::TestHelper` or `have_enqueued_job` matchers.
 - Ensure tests run consistently across environments using CI tools (e.g., GitHub Actions, CircleCI).
-- Use custom matchers (RSpec) or custom assertions (Minitest) for reusable and expressive test logic.
 - Tag tests by type (e.g., `:model`, `:request`, `:feature`) for faster and targeted test runs.
 - Avoid brittle tests — don’t rely on specific timestamps, randomized data, or order unless explicitly necessary.
 - Write integration tests for end-to-end flows across multiple layers (model, view, controller).
