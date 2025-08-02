@@ -15,6 +15,26 @@ class PlansController < ApplicationController
     @plan = Plan.new
   end
 
+  # GET /plans/1/edit_workouts
+  def edit_workouts
+    @activities = @plan.activities.order(:start_date_local)
+  end
+
+  # PATCH /plans/1/update_workouts
+  def update_workouts
+    activities_params = params.require(:activities)
+    
+    activities_params.each do |id, activity_data|
+      activity = Activity.find(id)
+      activity.update(
+        distance: activity_data[:distance],
+        description: activity_data[:description]
+      )
+    end
+    
+    redirect_to @plan, notice: "Workouts were successfully updated."
+  end
+
   # GET /plans/1/edit
   def edit
   end
@@ -65,6 +85,6 @@ class PlansController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def plan_params
-      params.require(:plan).permit(:length, :race_date)
+      params.require(:plan).permit(:length, :race_date, :plan_type, photos: [])
     end
 end

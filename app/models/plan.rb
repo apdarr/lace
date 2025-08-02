@@ -1,9 +1,15 @@
 class Plan < ApplicationRecord
   after_create :load_from_plan_template
+  after_create :process_uploaded_photos, if: :custom?
+
+  enum plan_type: { template: 'template', custom: 'custom' }
+
+  has_many_attached :photos
 
   private
 
   def load_from_plan_template
+    return unless template?
     puts "load_from_plan_template called⭐"
     start_date = (self.race_date - 17.weeks).beginning_of_week(:monday)
     template_path = Rails.root.join("app/models/templates/training_plans.yml")
@@ -21,5 +27,11 @@ class Plan < ApplicationRecord
         start_date += 1.day
       end
     end
+  end
+
+  def process_uploaded_photos
+    return unless photos.attached?
+
+    PlanPhotoProcessor.new(self).process_photos
   end
 end
