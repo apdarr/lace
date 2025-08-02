@@ -2,6 +2,8 @@
 
 one:
   race_date: <%= Date.today + 17.weeks %>
+  plan_type: template
 
 two:
   race_date: <%= Date.today + 20.weeks %>
+  plan_type: custom

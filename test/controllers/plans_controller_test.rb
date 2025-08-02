@@ -21,10 +21,42 @@ class PlansControllerTest < ActionDispatch::IntegrationTest
 
   test "should create plan" do
     assert_difference("Plan.count") do
-      post plans_url, params: { plan: { length: @plan.length, race_date: @plan.race_date } }
+      post plans_url, params: { plan: { length: @plan.length, race_date: @plan.race_date, plan_type: "template" } }
     end
 
     assert_redirected_to plan_url(Plan.last)
+  end
+
+  test "should create custom plan" do
+    assert_difference("Plan.count") do
+      post plans_url, params: { plan: { length: 12, race_date: "2025-06-01", plan_type: "custom" } }
+    end
+
+    plan = Plan.last
+    assert plan.custom?
+    assert_redirected_to plan_url(plan)
+  end
+
+  test "should get edit_workouts for custom plan" do
+    custom_plan = Plan.create!(length: 12, race_date: "2025-06-01", plan_type: "custom")
+    get edit_workouts_plan_url(custom_plan)
+    assert_response :success
+  end
+
+  test "should update workouts" do
+    plan = Plan.create!(length: 12, race_date: "2025-06-01", plan_type: "custom")
+    activity = Activity.create!(plan: plan, distance: 5.0, description: "Test run", start_date_local: Time.current)
+    
+    patch update_workouts_plan_url(plan), params: { 
+      activities: { 
+        activity.id => { distance: 6.0, description: "Updated run" } 
+      } 
+    }
+    
+    activity.reload
+    assert_equal 6.0, activity.distance
+    assert_equal "Updated run", activity.description
+    assert_redirected_to plan_url(plan)
   end
 
   test "should show plan" do

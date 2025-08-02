@@ -15,20 +15,34 @@
         <h2 class="font-semibold text-2xl text-slate-700 mb-4">Plan Details</h2>
         
         <div class="bg-white/60 rounded-lg p-5 shadow-sm mb-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="p-4 border-b md:border-b-0 md:border-r border-slate-200">
               <p class="text-sm text-slate-500 font-medium">Plan Length</p>
               <p class="text-xl font-bold text-indigo-700"><%= @plan.length %> Weeks</p>
             </div>
-            <div class="p-4">
+            <div class="p-4 border-b md:border-b-0 md:border-r border-slate-200">
               <p class="text-sm text-slate-500 font-medium">Race Date</p>
               <p class="text-xl font-bold text-indigo-700"><%= @plan.race_date.strftime("%B %d, %Y") %></p>
+            </div>
+            <div class="p-4">
+              <p class="text-sm text-slate-500 font-medium">Plan Type</p>
+              <p class="text-xl font-bold <%= @plan.custom? ? 'text-purple-700' : 'text-green-700' %>">
+                <%= @plan.plan_type.humanize %>
+                <% if @plan.custom? %>
+                  <span class="text-sm font-normal text-slate-600">✨ Custom</span>
+                <% else %>
+                  <span class="text-sm font-normal text-slate-600">📋 Template</span>
+                <% end %>
+              </p>
             </div>
           </div>
         </div>
         
         <div class="flex flex-wrap gap-3 mb-6">
           <%= link_to "Edit plan", edit_plan_path(@plan), class: "rounded-lg py-2 px-4 bg-indigo-100 text-indigo-700 font-medium hover:bg-indigo-200 transition duration-300" %>
+          <% if @plan.custom? %>
+            <%= link_to "Edit workouts", edit_workouts_plan_path(@plan), class: "rounded-lg py-2 px-4 bg-purple-100 text-purple-700 font-medium hover:bg-purple-200 transition duration-300" %>
+          <% end %>
           <%= link_to "Back to plans", plans_path, class: "rounded-lg py-2 px-4 bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition duration-300" %>
           <%= button_to "Delete plan", @plan, method: :delete, 
               class: "rounded-lg py-2 px-4 bg-red-100 text-red-700 font-medium hover:bg-red-200 transition duration-300",
