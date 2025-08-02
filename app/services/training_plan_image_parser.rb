@@ -1,3 +1,5 @@
+require 'base64'
+
 class TrainingPlanImageParser
   def initialize(image_path)
     @image_path = image_path

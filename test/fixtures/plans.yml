@@ -1,7 +1,16 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
+  length: 18
   race_date: <%= Date.today + 17.weeks %>
+  custom_creation: false
 
 two:
+  length: 16
   race_date: <%= Date.today + 20.weeks %>
+  custom_creation: false
+
+custom_plan:
+  length: 12
+  race_date: <%= Date.today + 12.weeks %>
+  custom_creation: true

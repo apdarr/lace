@@ -46,7 +46,12 @@ class Plan < ApplicationRecord
 
   def load_from_plan_template
     # Only load from template if this is not a custom creation
-    return if custom_creation?
+    # Handle case where custom_creation column might not exist yet
+    begin
+      return if custom_creation?
+    rescue ActiveRecord::UnknownAttributeError
+      # Column doesn't exist yet, proceed with template loading
+    end
     
     puts "load_from_plan_template called⭐"
     start_date = (self.race_date - 17.weeks).beginning_of_week(:monday)
