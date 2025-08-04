@@ -251,7 +251,7 @@ GEM
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.8.1)
-    rack (3.1.16)
+    rack (3.2.0)
     rack-protection (4.1.1)
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
@@ -390,11 +390,11 @@ GEM
       faraday-multipart (>= 1.0)
       hashie
     stringio (3.1.7)
-    tailwindcss-rails (3.3.2)
+    tailwindcss-rails (4.3.0)
       railties (>= 7.0.0)
-      tailwindcss-ruby (~> 3.0)
-    tailwindcss-ruby (3.4.17-arm64-darwin)
-    tailwindcss-ruby (3.4.17-x86_64-linux)
+      tailwindcss-ruby (~> 4.0)
+    tailwindcss-ruby (4.1.11-arm64-darwin)
+    tailwindcss-ruby (4.1.11-x86_64-linux-gnu)
     thor (1.4.0)
     thruster (0.1.14-arm64-darwin)
     thruster (0.1.14-x86_64-linux)
@@ -463,7 +463,7 @@ DEPENDENCIES
   sqlite3 (>= 2.1)
   stimulus-rails
   strava-ruby-client
-  tailwindcss-rails (~> 3.0)
+  tailwindcss-rails (~> 4.3)
   thruster
   turbo-rails
   tzinfo-data
