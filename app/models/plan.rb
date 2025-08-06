@@ -32,7 +32,7 @@ class Plan < ApplicationRecord
   def load_from_plan_template
     return unless template?
     puts "load_from_plan_template called⭐"
-    start_date = (self.race_date - 17.weeks).beginning_of_week(:monday)
+    start_date = (self.race_date - self.length.weeks).beginning_of_week(:monday)
     template_path = Rails.root.join("app/models/templates/training_plans.yml")
     template = YAML.safe_load(File.read(template_path))
     hash = template.dig(template.first[0])

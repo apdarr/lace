@@ -66,11 +66,10 @@
             <div class="h-10 flex items-center justify-center font-medium text-slate-600">Su</div>
 
             <%# Calendar grid %>
-            <% training_start_date = @plan.race_date - 17.weeks %>
-            <% training_start_date = training_start_date.beginning_of_week %>
+            <% training_start_date = (@plan.race_date - @plan.length.weeks).beginning_of_week %>
             <% activities = Activity.where(plan_id: @plan.id).index_by { |a| a.start_date_local.to_date } %>
             
-            <% 18.times do |week| %>
+            <% @plan.length.times do |week| %>
               <% week_start = training_start_date + (week * 7) %>
               <div class="h-24 flex items-center justify-start font-medium text-slate-600">
                 <%= week_start.strftime("%m/%d") %>
