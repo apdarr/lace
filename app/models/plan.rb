@@ -2,7 +2,7 @@ class Plan < ApplicationRecord
   after_create :load_from_plan_template
   after_create :process_uploaded_photos, if: :custom?
 
-  enum plan_type: { template: 'template', custom: 'custom' }
+  enum :plan_type, { template: 0, custom: 1 }
 
   has_many_attached :photos
 
@@ -15,7 +15,7 @@ class Plan < ApplicationRecord
 
   def race_date_in_future
     return unless race_date.present?
-    
+
     errors.add(:race_date, "must be in the future") if race_date <= Date.current
   end
 

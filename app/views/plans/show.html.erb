@@ -27,7 +27,7 @@
             <div class="p-4">
               <p class="text-sm text-slate-500 font-medium">Plan Type</p>
               <p class="text-xl font-bold <%= @plan.custom? ? 'text-purple-700' : 'text-green-700' %>">
-                <%= @plan.plan_type.humanize %>
+                <%= @plan.plan_type %>
                 <% if @plan.custom? %>
                   <span class="text-sm font-normal text-slate-600">✨ Custom</span>
                 <% else %>
