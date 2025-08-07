@@ -1,64 +1,63 @@
 <% content_for :title, "Activities" %>
 
-<div class="mx-auto w-full max-w-7xl">
+<div class="app-container-wide stack-lg">
   <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+    <p class="mb-4 inline-flex items-center rounded-md bg-green-50 px-3 py-2 text-sm font-medium text-green-700 ring-1 ring-inset ring-green-200" id="notice"><%= notice %></p>
   <% end %>
 
-  <div class="text-center mb-8">
-    <h1 class="font-bold text-5xl text-slate-800 mb-4">Your Activities</h1>
-    <p class="text-sm text-slate-600 mb-6 font-semibold">Track your progress and review past workouts</p>
-  </div>
+  <header class="text-center stack-sm">
+    <h1 class="heading-page">Your Activities</h1>
+    <p class="text-sm font-medium text-slate-500">Track, review, and refine performance</p>
+  </header>
 
-  <div class="bg-gradient-to-r from-blue-100 to-purple-100 p-6 rounded-xl shadow-md mb-8">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="font-semibold text-2xl text-slate-700">Activities</h2>
-    </div>
+  <section class="card">
+    <div class="card-section stack-md">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <h2 class="heading-section text-base">Activities</h2>
+        <div class="w-full max-w-md">
+          <%= form_with(url: activities_path, method: :get, class: "flex flex-col gap-2") do |f| %>
+            <div class="flex gap-2">
+              <%= f.search_field :query, value: params[:query], class: "form-input flex-1", placeholder: "Search activities..." %>
+              <%= f.submit "Search", class: "btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
 
-    <div class="mb-6 max-w-md mx-auto">
-      <%= form_with(url: activities_path, method: :get, class: "flex flex-col gap-2") do |f| %>
-        <div class="flex gap-2">
-          <%= f.search_field :query, 
-              value: params[:query],
-              class: "flex-1 rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 text-sm",
-              placeholder: "Search activities..." %>
-          <%= f.submit "Search", 
-              class: "px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition duration-300" %>
+      <% if params[:query].present? %>
+        <div class="text-center">
+          <p class="text-sm text-slate-600">Showing results for: <span class="font-semibold text-slate-800"><%= params[:query] %></span>
+            <%= link_to "Clear", activities_path, class: "ml-2 text-xs text-red-600 hover:text-red-700" %></p>
         </div>
       <% end %>
-    </div>
-    
-    <% if params[:query].present? %>
-      <div class="mb-6 text-center">
-        <p class="text-slate-700">
-          Showing results for: <span class="font-semibold text-indigo-700"><%= params[:query] %></span>
-          <%= link_to "Clear search", activities_path, class: "ml-3 text-sm text-rose-600 hover:text-rose-800" %>
-        </p>
-      </div>
-    <% end %>
 
-    <div id="activities" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <% if @activities.any? %>
-        <% @activities.each do |activity| %>
-          <div class="bg-white/60 rounded-lg p-4 shadow-sm transition duration-300 hover:scale-105 hover:shadow-lg hover:bg-white/80">
-            <%= render activity %>
-            <div class="mt-4 flex justify-end">
-              <%= link_to "View details", activity, class: "inline-flex items-center rounded-lg py-2 px-4 bg-indigo-100 text-indigo-700 font-medium hover:bg-indigo-200 transition" %>
+      <div id="activities" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <% if @activities.any? %>
+          <% @activities.each do |activity| %>
+            <div class="card hover:shadow-md transition">
+              <div class="card-section space-y-4">
+                <%= render activity %>
+                <div class="flex justify-end">
+                  <%= link_to "Details", activity, class: "btn-outline" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="col-span-full text-center card">
+            <div class="card-section space-y-3">
+              <% if params[:query].present? %>
+                <p class="text-sm text-slate-600">No activities found matching "<%= params[:query] %>".</p>
+              <% else %>
+                <p class="text-sm text-slate-600">No activities found.</p>
+              <% end %>
             </div>
           </div>
         <% end %>
-      <% else %>
-        <div class="col-span-full bg-white/60 rounded-lg p-6 shadow-sm text-center">
-          <% if params[:query].present? %>
-            <p class="text-slate-600 mb-4">No activities found matching "<%= params[:query] %>".</p>
-          <% else %>
-            <p class="text-slate-600 mb-4">No activities found.</p>
-          <% end %>
-        </div>
-      <% end %>
+      </div>
+      <div class="pt-4">
+        <%= paginate @activities %>
+      </div>
     </div>
-    <div class="mt-6">
-      <%= paginate @activities %>
-    </div>
-  </div>
+  </section>
 </div>

@@ -11,41 +11,46 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Borel&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%# PWA manifest (optional) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <nav class="bg-indigo-600 py-2 px-4">
-      <div class="container flex justify-between items-center">
-        <%= link_to root_path, class: "flex items-center" do %>
-          <%= image_tag "lace-logo.png", alt: "lace", class: "h-12 w-auto max-w-232 object-contain" %>
-        <% end %>
-        <div class="flex items-center space-x-4">
-          <%= link_to "Plans", plans_path, class: "text-white hover:bg-teal-400 px-3 py-2 rounded-md text-sm font-medium" %>
-          <%= link_to "Activities", activities_path, class: "text-white hover:bg-teal-400 px-3 py-2 rounded-md text-sm font-medium" %>
+  <body class="min-h-screen flex flex-col page-background dot-grid">
+    <nav class="app-nav">
+      <div class="app-nav-inner">
+        <div class="flex items-center gap-4">
+          <%= link_to root_path, class: "flex items-center" do %>
+            <div class="flex flex-col items-start leading-none select-none">
+              <span class="logo-bar font-8bit uppercase tracking-[0.4em] text-[11px] sm:text-[12px] text-slate-50 drop-shadow-[0_1px_1px_rgba(0,0,0,0.35)]">Lace</span>
+            </div>
+          <% end %>
+        </div>
+        <div class="nav-bar">
+          <%= link_to "Plans", plans_path, class: ["nav-pill", (current_page?(plans_path) ? 'nav-pill-active' : nil)].compact.join(' ') %>
+          <%= link_to "Activities", activities_path, class: ["nav-pill", (current_page?(activities_path) ? 'nav-pill-active' : nil)].compact.join(' ') %>
           <% if authenticated? %>
-            <%= link_to "Profile", profile_path, class: "text-white hover:bg-teal-400 px-3 py-2 rounded-md text-sm font-medium" %>
-            <%= button_to "Sign out", session_path, method: :delete, class: "text-white hover:bg-rose-400 px-3 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Profile", profile_path, class: ["nav-pill", (current_page?(profile_path) ? 'nav-pill-active' : nil)].compact.join(' ') %>
+            <%= button_to "Sign out", session_path, method: :delete, class: "nav-pill" %>
           <% elsif !authenticated? && !current_page?(new_session_path) %>
-            <%= link_to "Sign in", new_session_path, class: "text-white hover:bg-teal-400 px-3 py-2 rounded-md text-sm font-medium" %>
+            <%= link_to "Sign in", new_session_path, class: "nav-pill nav-pill-active" %>
           <% end %>
         </div>
       </div>
     </nav>
-    <main class="container mx-auto mt-8 px-5 flex">
+
+    <main class="flex-1 app-container-wide py-12 relative">
       <%= yield %>
     </main>
   </body>
