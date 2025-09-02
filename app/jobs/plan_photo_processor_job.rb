@@ -2,6 +2,10 @@ class PlanPhotoProcessorJob < ApplicationJob
   queue_as :default
 
   def perform(plan)
+    Rails.logger.info "PlanPhotoProcessorJob: Starting job for plan #{plan.id}"
+    Rails.logger.info "PlanPhotoProcessorJob: Photos attached? #{plan.photos.attached?}"
+    Rails.logger.info "PlanPhotoProcessorJob: Number of photos: #{plan.photos.count}"
+
     return unless plan.photos.attached?
 
     plan.photos.each do |photo|
@@ -57,12 +61,12 @@ class PlanPhotoProcessorJob < ApplicationJob
     # Parse the JSON response and create activities
     begin
       workouts = JSON.parse(result)
-      
+
       if workouts["error"]
         Rails.logger.warn "PlanPhotoProcessorJob: GPT couldn't parse image: #{workouts['error']}"
         return
       end
-      
+
       create_activities_from_workouts(plan, workouts)
     rescue JSON::ParserError => e
       Rails.logger.error "PlanPhotoProcessorJob: Failed to parse GPT response as JSON: #{e.message}"
@@ -78,7 +82,7 @@ class PlanPhotoProcessorJob < ApplicationJob
 
     workouts["weeks"].each do |week|
       next unless week["days"]
-      
+
       week["days"].each do |day|
         Activity.create(
           plan_id: plan.id,
@@ -112,7 +116,7 @@ class PlanPhotoProcessorJob < ApplicationJob
                 "description": "Easy run"
               },
               {
-                "day": "tuesday", 
+                "day": "tuesday",#{' '}
                 "distance": 0,
                 "description": "Rest day"
               }

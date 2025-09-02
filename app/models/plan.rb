@@ -53,6 +53,6 @@ class Plan < ApplicationRecord
   def process_uploaded_photos
     # Note that right now this is being called for all after_create calls
     return unless photos.attached?
-    PlanPhotoProcessor.new(self).process_photos
+    PlanPhotoProcessorJob.perform_later(self)
   end
 end
