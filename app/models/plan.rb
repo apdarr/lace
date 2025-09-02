@@ -52,13 +52,7 @@ class Plan < ApplicationRecord
 
   def process_uploaded_photos
     # Note that right now this is being called for all after_create calls
-
-    debugger
-
     return unless photos.attached?
-
-    debugger
-
     PlanPhotoProcessor.new(self).process_photos
   end
 end
