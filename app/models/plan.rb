@@ -1,6 +1,6 @@
 class Plan < ApplicationRecord
-  after_create :load_from_plan_template
-  after_create :process_uploaded_photos, if: :custom?
+  # after_create :load_from_plan_template
+  after_create :process_uploaded_photos
 
   enum :plan_type, { template: 0, custom: 1 }
 
@@ -51,7 +51,13 @@ class Plan < ApplicationRecord
   end
 
   def process_uploaded_photos
+    # Note that right now this is being called for all after_create calls
+
+    debugger
+
     return unless photos.attached?
+
+    debugger
 
     PlanPhotoProcessor.new(self).process_photos
   end
