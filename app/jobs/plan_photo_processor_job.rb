@@ -29,11 +29,11 @@ class PlanPhotoProcessorJob < ApplicationJob
 
     response = client.chat(
       parameters: {
-        model: "gpt-4-vision-preview",
+        model: "gpt-image-1",
         messages: [
           {
             role: "system",
-            content: system_prompt_for_workout_extraction
+            content: File.read(Rails.root.join("app", "jobs", "prompts", "workout_extraction.txt"))
           },
           {
             role: "user",
@@ -96,46 +96,6 @@ class PlanPhotoProcessorJob < ApplicationJob
   end
 
   def system_prompt_for_workout_extraction
-    <<~PROMPT
-      You are an expert running coach and training plan analyzer. Your task is to analyze images of training plans and extract workout details.
-
-      Please extract the following information from the training plan image:
-      - Week-by-week workout schedule
-      - Daily activities with distances and descriptions
-      - Training intensities and workout types
-
-      Return the data in this exact JSON format:
-      {
-        "weeks": [
-          {
-            "week_number": 1,
-            "days": [
-              {
-                "day": "monday",
-                "distance": 5.0,
-                "description": "Easy run"
-              },
-              {
-                "day": "tuesday",#{' '}
-                "distance": 0,
-                "description": "Rest day"
-              }
-              // ... continue for all 7 days
-            ]
-          }
-          // ... continue for all weeks in the plan
-        ]
-      }
-
-      Guidelines:
-      - Set distance to 0 for rest days or cross-training days
-      - Use clear, concise descriptions for workouts
-      - Include workout intensity when specified (e.g., "Tempo run", "Easy run", "Intervals")
-      - If distances are given in kilometers, convert to miles
-      - If the image is unclear or doesn't contain a training plan, return {"error": "Unable to parse training plan from image"}
-
-      RESPONSE FORMAT:
-      Return ONLY valid JSON with no extra text or explanations.
-    PROMPT
+    File.read(Rails.root.join("app", "jobs", "prompts", "workout_extraction.txt"))
   end
 end
