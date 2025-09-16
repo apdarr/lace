@@ -25,5 +25,8 @@ module Lace
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Configure Active Storage to use VIPS for image processing (better HEIC support)
+    config.active_storage.variant_processor = :vips
   end
 end

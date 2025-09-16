@@ -21,8 +21,8 @@ class Plan < ApplicationRecord
 
   def photos_are_images
     photos.each do |photo|
-      unless photo.content_type.in?(%w[image/jpeg image/jpg image/png image/gif])
-        errors.add(:photos, "must be JPEG, PNG, or GIF images")
+      unless photo.content_type.in?(%w[image/jpeg image/jpg image/png image/gif image/heic image/heif])
+        errors.add(:photos, "must be JPEG, PNG, GIF, or HEIC images")
       end
     end
   end

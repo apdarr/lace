@@ -8,12 +8,17 @@ class PlanPhotoProcessorJobTest < ActiveJob::TestCase
       plan_type: "custom"
     )
 
-    # Attach a test image
+    # Use actual HEIC files from test/images directory
+    file_path = Rails.root.join("test/images/IMG_5177.heic")
     @plan.photos.attach(
-      io: File.open(Rails.root.join("app/assets/images/lace-logo.png")),
-      filename: "test_training_plan.png",
-      content_type: "image/png"
+      io: File.open(file_path, "rb"),
+      filename: "test_training_plan.heic",
+      content_type: "image/heic"
     )
+
+    # Ensure the attachment is saved and the blob is available
+    @plan.save!
+    @plan.reload
   end
 
   test "should enqueue the job" do
@@ -90,9 +95,9 @@ class PlanPhotoProcessorJobTest < ActiveJob::TestCase
   test "should continue processing other photos if one fails" do
     # Attach a second photo
     @plan.photos.attach(
-      io: File.open(Rails.root.join("app/assets/images/lace-logo.png")),
-      filename: "second_training_plan.png",
-      content_type: "image/png"
+      io: File.open(Rails.root.join("test/images/IMG_5178.heic")),
+      filename: "second_training_plan.heic",
+      content_type: "image/heic"
     )
 
     Activity.where(plan: @plan).destroy_all
@@ -152,6 +157,54 @@ class PlanPhotoProcessorJobTest < ActiveJob::TestCase
     assert_includes log_content, "Starting job for plan #{@plan.id}"
     assert_includes log_content, "Photos attached? true"
     assert_includes log_content, "Number of photos: 1"
+  end
+
+  test "should process multiple photos in a single combined request" do
+    plan = Plan.create!(
+      length: 4,
+      race_date: 2.months.from_now,
+      plan_type: "custom"
+    )
+
+    # Attach the real test images from test/images directory
+    %w[IMG_5177.heic IMG_5178.heic].each do |filename|
+      plan.photos.attach(
+        io: File.open(Rails.root.join("test/images/#{filename}")),
+        filename: filename,
+        content_type: "image/heic"
+      )
+    end
+
+    assert_equal 2, plan.photos.count
+
+    Activity.where(plan: plan).destroy_all
+
+    VCR.use_cassette("plan_photo_processor_job_multi_photo") do
+      PlanPhotoProcessorJob.perform_now(plan)
+    end
+
+    activities = Activity.where(plan: plan).order(:start_date_local)
+    assert activities.count > 0, "Expected activities to be created from multi-photo processing"
+
+    # Check date sequencing (should start at computed start date and be consecutive)
+    expected_start_date = (plan.race_date - plan.length.weeks).beginning_of_week(:monday).to_date
+    assert_equal expected_start_date, activities.first.start_date_local.to_date
+
+    if activities.count > 1
+      activities.each_cons(2) do |a, b|
+        assert_equal a.start_date_local.to_date + 1, b.start_date_local.to_date, "Activities should have consecutive dates"
+      end
+    end
+
+    # Verify activities have expected attributes
+    activities.each do |activity|
+      assert_not_nil activity.plan_id
+      assert_not_nil activity.start_date_local
+      assert activity.distance >= 0
+      assert_not_nil activity.description
+    end
+  ensure
+    plan&.destroy
   end
 
   private
