@@ -29,8 +29,9 @@ class PlanPhotoProcessorJob < ApplicationJob
         converted_blob = ActiveStorage::Blob.create_and_upload!(
           io: StringIO.new(jpeg_variant.download),
           filename: attachment.filename.to_s.sub(/\.(heic|heif)\z/i, ".jpg"),
-          content_type: "image/jpeg")
+          content_type: "image/jpeg"
         )
+
         converted_blob
       else
         attachment.blob
@@ -46,8 +47,10 @@ class PlanPhotoProcessorJob < ApplicationJob
     Rails.logger.info "PlanPhotoProcessorJob: invoking RubyLLM with #{attachments.size} image(s)"
 
     prompt_text = system_prompt_for_workout_extraction
-    chat = RubyLLM.chat(model: "gpt-5-nano-2025-08-07")
-  
+    chat = RubyLLM.chat(model: "gpt-5-mini")
+
+    debugger
+
     response = chat.ask(prompt_text, with: attachments)
     unless response && response.content.present?
       Rails.logger.error "PlanPhotoProcessorJob: empty response from RubyLLM"
