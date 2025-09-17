@@ -1,146 +1,85 @@
 class PlanPhotoProcessorJob < ApplicationJob
   queue_as :default
 
+  # Entry point from ActiveJob
   def perform(plan)
-    puts "DEBUG: PlanPhotoProcessorJob starting for plan #{plan.id}"
-    Rails.logger.info "PlanPhotoProcessorJob: Starting job for plan #{plan.id}"
-    Rails.logger.info "PlanPhotoProcessorJob: Photos attached? #{plan.photos.attached?}"
-    Rails.logger.info "PlanPhotoProcessorJob: Number of photos: #{plan.photos.count}"
-
+    Rails.logger.info "PlanPhotoProcessorJob: starting for plan #{plan.id} (#{plan.photos.count} photos)"
     return unless plan.photos.attached?
 
-    puts "DEBUG: About to call process_all_photos_combined"
-    process_all_photos_combined(plan)
-    puts "DEBUG: Finished process_all_photos_combined"
+    attachments = prepare_attachments(plan)
+    if attachments.empty?
+      Rails.logger.warn "PlanPhotoProcessorJob: no usable image attachments after conversion"
+      return
+    end
+
+    extract_and_persist_workouts(plan, attachments)
+  rescue => e
+    Rails.logger.error "PlanPhotoProcessorJob: unrecoverable error: #{e.class}: #{e.message}"
   end
 
   private
 
-  def process_all_photos_combined(plan)
-    puts "DEBUG: Starting process_all_photos_combined with #{plan.photos.count} photos"
-    puts "DEBUG: Photos attached? #{plan.photos.attached?}"
-    puts "DEBUG: Photos: #{plan.photos.map(&:id)}"
-    # Collect all photos as base64 images
-    image_data_array = []
-
-    # First pass: convert any HEIC files to JPEG and store them
-    converted_photos = []
-    plan.photos.each do |photo|
-      if photo.content_type == "image/heic" || photo.content_type == "image/heif"
-        puts "DEBUG: Converting HEIC/HEIF to JPEG for photo #{photo.id}"
-        # Convert HEIC to JPEG using image_processing
-        converted_image = photo.variant(format: :jpeg)
-        converted_data = converted_image.processed.download
-
-        # Create a new blob with the converted JPEG data
+  # Convert any HEIC/HEIF images to JPEG so the vision model can read them.
+  # Returns an array of ActiveStorage::Blob (original or converted) suitable to pass via RubyLLM `with:`.
+  def prepare_attachments(plan)
+    plan.photos.map do |attachment|
+      if attachment.content_type.in?(%w[image/heic image/heif])
+        Rails.logger.info "PlanPhotoProcessorJob: converting HEIC #{attachment.filename} -> JPEG"
+        jpeg_variant = attachment.variant(format: :jpeg).processed
         converted_blob = ActiveStorage::Blob.create_and_upload!(
-          io: StringIO.new(converted_data),
-          filename: "#{File.basename(photo.filename.to_s, '.*')}.jpg",
-          content_type: "image/jpeg"
+          io: StringIO.new(jpeg_variant.download),
+          filename: attachment.filename.to_s.sub(/\.(heic|heif)\z/i, ".jpg"),
+          content_type: "image/jpeg")
         )
-
-        # Attach the converted blob to the plan
-        plan.photos.attach(converted_blob)
-        converted_photos << plan.photos.last
-        puts "DEBUG: Converted photo #{photo.id} to JPEG as attachment #{plan.photos.last.id}"
+        converted_blob
       else
-        # Keep non-HEIC photos as-is
-        converted_photos << photo
+        attachment.blob
       end
-    end
+    rescue => e
+      Rails.logger.error "PlanPhotoProcessorJob: failed converting #{attachment.filename}: #{e.message}"
+      nil
+    end.compact
+  end
 
-    # Second pass: process all photos (now all in supported formats)
-    converted_photos.each do |photo|
-      begin
-        puts "DEBUG: Processing photo #{photo.id}, filename: #{photo.filename}, content_type: #{photo.content_type}"
-        puts "DEBUG: Photo blob present? #{photo.blob.present?}"
-        puts "DEBUG: Photo blob key: #{photo.blob&.key}"
+  # Use RubyLLM simplified API: chat.with_instructions + ask(..., with: attachments)
+  def extract_and_persist_workouts(plan, attachments)
+    Rails.logger.info "PlanPhotoProcessorJob: invoking RubyLLM with #{attachments.size} image(s)"
 
-        image_data = photo.download
-        puts "DEBUG: Image size: #{image_data.size} bytes"
-        puts "DEBUG: Image dimensions info would require image analysis"
-
-        base64_image = Base64.strict_encode64(image_data)
-        puts "DEBUG: Base64 encoded size: #{base64_image.length} characters"
-        image_data_array << base64_image
-        puts "DEBUG: Successfully encoded photo #{photo.id}"
-      rescue => e
-        puts "DEBUG: Error processing photo #{photo.id}: #{e.message}"
-        puts "DEBUG: Error class: #{e.class}"
-        puts "DEBUG: Backtrace: #{e.backtrace.first(3).join("\n")}"
-        Rails.logger.error "PlanPhotoProcessorJob: Error processing photo #{photo.id}: #{e.message}"
-        # Continue with other photos even if one fails
-      end
-    end
-
-    if image_data_array.empty?
-      puts "DEBUG: No images to process"
-      Rails.logger.warn "PlanPhotoProcessorJob: No images to process"
+    prompt_text = system_prompt_for_workout_extraction
+    chat = RubyLLM.chat(model: "gpt-5-nano-2025-08-07")
+  
+    response = chat.ask(prompt_text, with: attachments)
+    unless response && response.content.present?
+      Rails.logger.error "PlanPhotoProcessorJob: empty response from RubyLLM"
       return
     end
 
-    puts "DEBUG: About to create OpenAI client"
-    client = OpenAI::Client.new
-    puts "DEBUG: OpenAI client created, about to make API call"
+    raw = response.content.to_s.strip
+    Rails.logger.debug "PlanPhotoProcessorJob: raw model output (truncated): #{raw[0, 150]}"
 
-    # Build content array with text instruction and all images
-    content_array = [
-      {
-        type: "text",
-        text: if image_data_array.size == 1
-                "Please analyze this training plan image and extract the workout details in the specified JSON format."
-              else
-                "Please analyze ALL provided training plan images (these represent sequential pages of one training plan) and extract the unified workout details in the specified JSON format."
-              end
-      }
-    ]
-
-    # Add all images to the content array
-    image_data_array.each do |base64_image|
-      content_array << {
-        type: "image_url",
-        image_url: {
-          url: "data:image/jpeg;base64,#{base64_image}"
-        }
-      }
+    workouts = parse_json_safely(raw)
+    unless workouts
+      Rails.logger.error "PlanPhotoProcessorJob: aborting \u2013 could not parse JSON output"
+      return
     end
 
-    puts "DEBUG: Making OpenAI API call with model gpt-5-nano-2025-08-07"
-    response = client.chat(
-      parameters: {
-        model: "gpt-5-nano-2025-08-07",
-        messages: [
-          {
-            role: "system",
-            content: system_prompt_for_workout_extraction
-          },
-          {
-            role: "user",
-            content: content_array
-          }
-        ]
-      }
-    )
-
-    puts "DEBUG: Received OpenAI response"
-    result = response.dig("choices", 0, "message", "content").to_s.strip
-    puts "DEBUG: GPT response (first 100 chars): #{result[0..100]}"
-    Rails.logger.debug "PlanPhotoProcessorJob: GPT response: #{result}"
-
-    # Parse the JSON response and create activities
-    begin
-      workouts = JSON.parse(result)
-
-      if workouts["error"]
-        Rails.logger.warn "PlanPhotoProcessorJob: GPT couldn't parse image: #{workouts['error']}"
-        return
-      end
-
-      create_activities_from_workouts(plan, workouts)
-    rescue JSON::ParserError => e
-      Rails.logger.error "PlanPhotoProcessorJob: Failed to parse GPT response as JSON: #{e.message}"
-      Rails.logger.error "PlanPhotoProcessorJob: GPT response was: #{result}"
+    if workouts.is_a?(Hash) && workouts["error"]
+      Rails.logger.warn "PlanPhotoProcessorJob: model reported error: #{workouts['error']}"
+      return
     end
+
+    create_activities_from_workouts(plan, workouts)
+    Rails.logger.info "PlanPhotoProcessorJob: activities created for plan #{plan.id}"
+  rescue RubyLLM::Error => e
+    Rails.logger.error "PlanPhotoProcessorJob: RubyLLM API error: #{e.class}: #{e.message}"
+  end
+
+  def parse_json_safely(text)
+    json_str = text[/\{.*\}\s*\z/m] || text # heuristic: take from first { to end if extra prose
+    JSON.parse(json_str)
+  rescue JSON::ParserError => e
+    Rails.logger.error "PlanPhotoProcessorJob: JSON parse error: #{e.message}"
+    nil
   end
 
   def create_activities_from_workouts(plan, workouts)
@@ -151,12 +90,11 @@ class PlanPhotoProcessorJob < ApplicationJob
 
     workouts["weeks"].each do |week|
       next unless week["days"]
-
       week["days"].each do |day|
         Activity.create(
           plan_id: plan.id,
           distance: day["distance"].to_f,
-          description: day["description"] || "Workout",
+            description: day["description"] || "Workout",
           start_date_local: current_date
         )
         current_date += 1.day
