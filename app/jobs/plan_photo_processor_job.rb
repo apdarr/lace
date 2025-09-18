@@ -3,18 +3,22 @@ class PlanPhotoProcessorJob < ApplicationJob
 
   # Entry point from ActiveJob
   def perform(plan)
+    plan.update!(processing_status: "processing")
     Rails.logger.info "PlanPhotoProcessorJob: starting for plan #{plan.id} (#{plan.photos.count} photos)"
     return unless plan.photos.attached?
 
     attachments = prepare_attachments(plan)
     if attachments.empty?
       Rails.logger.warn "PlanPhotoProcessorJob: no usable image attachments after conversion"
+      plan.update!(processing_status: "failed")
       return
     end
 
     extract_and_persist_workouts(plan, attachments)
+    plan.update!(processing_status: "completed")
   rescue => e
     Rails.logger.error "PlanPhotoProcessorJob: unrecoverable error: #{e.class}: #{e.message}"
+    plan.update!(processing_status: "failed")
   end
 
   private

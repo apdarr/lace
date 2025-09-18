@@ -3,6 +3,7 @@ class Plan < ApplicationRecord
   after_create :process_uploaded_photos
 
   enum :plan_type, { template: 0, custom: 1 }
+  enum :processing_status, { idle: "idle", queued: "queued", processing: "processing", completed: "completed", failed: "failed" }
 
   has_many_attached :photos
 
@@ -53,6 +54,8 @@ class Plan < ApplicationRecord
   def process_uploaded_photos
     # Note that right now this is being called for all after_create calls
     return unless photos.attached?
-    PlanPhotoProcessorJob.perform_later(self)
+
+    job = PlanPhotoProcessorJob.perform_later(self)
+    update!(processing_status: "queued", job_id: job.job_id)
   end
 end

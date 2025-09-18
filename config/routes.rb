@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       get :edit_workouts
       patch :update_workouts
       post :create_blank_schedule
+      get :processing_status
     end
   end
   resources :activities

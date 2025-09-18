@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_19_001024) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_18_160700) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -61,7 +61,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_19_001024) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "plan_type", default: "template", null: false
+    t.string "processing_status", default: "idle"
+    t.string "job_id"
     t.index ["plan_type"], name: "index_plans_on_plan_type"
+    t.index ["processing_status"], name: "index_plans_on_processing_status"
   end
 
   create_table "sessions", force: :cascade do |t|

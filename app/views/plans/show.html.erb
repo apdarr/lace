@@ -1,4 +1,7 @@
-<div data-controller="activity-modal" class="app-container-wide">
+<div data-controller="activity-modal plan-processor" 
+     data-plan-processor-plan-id-value="<%= @plan.id %>" 
+     data-plan-processor-status-value="<%= @plan.processing_status %>"
+     class="app-container-wide">
   <div class="stack-lg">
     <% if notice.present? %>
       <p class="mb-4 inline-flex items-center rounded-md bg-green-50 px-3 py-2 text-sm font-medium text-green-700 ring-1 ring-inset ring-green-200" id="notice"><%= notice %></p>
@@ -33,7 +36,7 @@
           </div>
         </div>
 
-        <div class="actions-row">
+        <div class="actions-row" data-plan-processor-target="actions">
           <%= link_to "Edit plan", edit_plan_path(@plan), class: "btn-soft" %>
           <% if @plan.custom? %>
             <%= link_to "Edit workouts", edit_workouts_plan_path(@plan), class: "btn-outline" %>
@@ -46,7 +49,25 @@
 
         <div class="divider"></div>
 
-        <h2 class="heading-section">Training Calendar</h2>
+        <!-- Processing Spinner -->
+        <div data-plan-processor-target="processing_indicator" class="<%= @plan.processing_status.in?(%w[queued processing]) ? '' : 'hidden' %>">
+          <div class="text-center py-12">
+            <div class="inline-flex items-center space-x-3">
+              <svg class="animate-spin -ml-1 mr-3 h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <div class="text-gray-700">
+                <div class="font-medium" data-plan-processor-target="status_text">Processing your training plan photos...</div>
+                <div class="text-sm text-gray-500 mt-1">This may take a few minutes. Your workouts will appear automatically when ready.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Training Calendar -->
+        <div data-plan-processor-target="calendar" class="<%= @plan.processing_status.in?(%w[queued processing]) ? 'hidden' : '' %>">
+          <h2 class="heading-section">Training Calendar</h2>
         <div class="calendar-wrapper mt-2">
           <div class="calendar-grid">
             <div class="calendar-week-label">Week</div>
@@ -90,6 +111,7 @@
             <% end %>
           </div>
         </div>
+        </div> <!-- End calendar container -->
       </div>
     </section>
   </div>

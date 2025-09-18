@@ -134,9 +134,16 @@ class PlanPhotoProcessorJobTest < ActiveJob::TestCase
 
     Activity.where(plan: plan).destroy_all
 
+    # Set initial status to queued (simulating the after_create callback)
+    plan.update!(processing_status: "queued")
+
     VCR.use_cassette("plan_photo_processor_job_multi_photo") do
       PlanPhotoProcessorJob.perform_now(plan)
     end
+
+    # Verify status was updated to completed
+    plan.reload
+    assert_equal "completed", plan.processing_status
 
     activities = Activity.where(plan: plan).order(:start_date_local)
     assert activities.count > 0, "Expected activities to be created from multi-photo processing"
