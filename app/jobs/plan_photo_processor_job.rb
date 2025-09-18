@@ -49,8 +49,6 @@ class PlanPhotoProcessorJob < ApplicationJob
     prompt_text = system_prompt_for_workout_extraction
     chat = RubyLLM.chat(model: "gpt-5-mini")
 
-    debugger
-
     response = chat.ask(prompt_text, with: attachments)
     unless response && response.content.present?
       Rails.logger.error "PlanPhotoProcessorJob: empty response from RubyLLM"
