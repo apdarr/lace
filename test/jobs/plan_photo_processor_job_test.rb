@@ -32,12 +32,11 @@ class PlanPhotoProcessorJobTest < ActiveJob::TestCase
   end
 
   test "should perform the job when executed" do
-    # Separate test if we also want to confirm the job actually runs.
-    assert_performed_jobs 1 do
-      perform_enqueued_jobs do
-        PlanPhotoProcessorJob.perform_later(@plan)
-      end
+    # We assert specifically that PlanPhotoProcessorJob is performed, ignoring other jobs (e.g., ActiveStorage::AnalyzeJob)
+    perform_enqueued_jobs do
+      PlanPhotoProcessorJob.perform_later(@plan)
     end
+    assert_performed_with(job: PlanPhotoProcessorJob)
   end
 
   test "should exit early when plan has no photos" do

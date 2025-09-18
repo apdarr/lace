@@ -88,19 +88,23 @@ class PlanPhotoProcessorJob < ApplicationJob
 
     start_date = (plan.race_date - plan.length.weeks).beginning_of_week(:monday)
     current_date = start_date
-
+    created = 0
     workouts["weeks"].each do |week|
       next unless week["days"]
       week["days"].each do |day|
+        distance_val = day["distance"].to_f
+        description_val = day["description"].presence || "Workout"
         Activity.create(
           plan_id: plan.id,
-          distance: day["distance"].to_f,
-            description: day["description"] || "Workout",
+          distance: distance_val,
+          description: description_val,
           start_date_local: current_date
         )
         current_date += 1.day
+        created += 1
       end
     end
+    Rails.logger.info "PlanPhotoProcessorJob: created #{created} activities starting #{start_date.to_date}"
   end
 
   def system_prompt_for_workout_extraction
