@@ -5,43 +5,35 @@ export default class extends Controller {
   static targets = ["container", "item"]
 
   connect() {
-    if (!this.hasContainerTarget) return
+    console.log('Drag controller connected')
     
-    this.sortableInstances = []
-    this.containerTargets.forEach(container => {
-      this.sortableInstances.push(this.initializeSortable(container))
-    })
+    if (this.hasContainerTarget) {
+      this.containerTargets.forEach(container => {
+        this.initializeSortable(container)
+      })
+    }
   }
 
   initializeSortable(container) {
+    console.log('Initializing sortable for:', container)
+    
     return new Sortable(container, {
       animation: 150,
-      draggable: "[data-drag-target='item']",
-      handle: ".activity-content",
-      group: {
-        name: 'shared',
-        pull: true,
-        put: (to) => to.el.children.length < 7
-      },
+      draggable: '[data-drag-target="item"]',
+      handle: '.cursor-grab',
+      delay: 100,
+      delayOnTouchOnly: true,
+      touchStartThreshold: 5,
+      forceFallback: true,
+      fallbackClass: 'opacity-50',
       onStart: (evt) => {
-        evt.item.classList.add('scale-105', 'shadow-lg', 'bg-green-100', 'border-2', 'border-green-400')
+        console.log('Drag started')
+        evt.item.classList.add('scale-105', 'shadow-lg', 'ring-2', 'ring-blue-400')
       },
       onEnd: (evt) => {
-        evt.item.classList.remove('scale-105', 'shadow-lg', 'bg-green-100', 'border-2', 'border-green-400')
-        if (evt.to.children.length > 7) {
-          evt.from.appendChild(evt.item)
-          return
-        }
-        this.handleDragEnd(evt)
+        console.log('Drag ended')
+        evt.item.classList.remove('scale-105', 'shadow-lg', 'ring-2', 'ring-blue-400')
       }
     })
-  }
-
-  handleDragEnd(event) {
-    const itemDate = event.item.dataset.date
-    const newIndex = event.newIndex
-    const weekContainer = event.to
-    
-    console.log(`Item from ${itemDate} moved to position ${newIndex} in week ${weekContainer.dataset.week}`)
   }
 }

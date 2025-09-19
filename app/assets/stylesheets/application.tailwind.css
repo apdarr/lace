@@ -77,7 +77,19 @@
   .calendar-day-grid { @apply grid grid-cols-7 gap-3; }
   .calendar-cell { @apply h-32 w-full p-2 rounded-md border border-slate-200 bg-white flex flex-col transition shadow-sm hover:shadow-md; }
   .calendar-cell-has { @apply bg-slate-50 border-slate-300; }
-  .calendar-edit-btn { @apply mt-auto inline-flex justify-center rounded bg-slate-100 text-[11px] font-medium px-2 py-1 text-slate-700 hover:bg-slate-200; }
+  .calendar-edit-btn { @apply mt-auto inline-flex justify-center rounded-full bg-slate-100 text-[11px] font-medium px-3 py-1.5 text-slate-700 hover:bg-slate-200 shadow-sm hover:shadow-md transition-all duration-200; }
+
+
+  /* Mobile Calendar Components */
+  .mobile-day-card { @apply p-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 transition-colors; }
+  .mobile-day-card-has { @apply bg-slate-50 border-slate-300; }
+  
+  /* Week View Components */
+  .week-day-card { @apply p-4 rounded-lg border border-slate-200 bg-white min-h-[120px] flex flex-col; }
+  .week-day-card-has { @apply bg-slate-50 border-slate-300; }
+  
+  .mobile-week-card { @apply p-4 rounded-lg border border-slate-200 bg-white shadow-sm; }
+  .mobile-week-card-has { @apply bg-slate-50 border-slate-300 shadow-md; }
 
   /* Dividers */
   .divider { @apply h-px bg-slate-200 my-6; }
