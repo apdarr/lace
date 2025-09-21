@@ -10,25 +10,28 @@
     </div>
   <% end %>
 
-  <div class="form-field">
-    <%= form.label :distance, "Distance (miles)", class: "form-label" %>
-    <%= form.number_field :distance, step: 0.1, class: "form-input", placeholder: "e.g. 3.5" %>
+  <!-- Two-column layout for larger screens -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="form-field">
+      <%= form.label :distance, "Distance (miles)", class: "form-label" %>
+      <%= form.number_field :distance, step: 0.1, class: "form-input", placeholder: "e.g. 3.5" %>
+    </div>
+
+    <div class="form-field">
+      <%= form.label :activity_type, "Activity Type", class: "form-label" %>
+      <%= form.select :activity_type, [
+        ['Running', 'Run'],
+        ['Cycling', 'Ride'], 
+        ['Swimming', 'Swim'],
+        ['Cross Training', 'Workout'],
+        ['Rest', 'Rest']
+      ], { prompt: 'Select activity type' }, { class: "form-input" } %>
+    </div>
   </div>
 
   <div class="form-field">
     <%= form.label :description, "Workout Description", class: "form-label" %>
-    <%= form.text_area :description, rows: 4, class: "form-textarea", placeholder: "Describe the workout..." %>
-  </div>
-
-  <div class="form-field">
-    <%= form.label :activity_type, "Activity Type", class: "form-label" %>
-    <%= form.select :activity_type, [
-      ['Running', 'Run'],
-      ['Cycling', 'Ride'], 
-      ['Swimming', 'Swim'],
-      ['Cross Training', 'Workout'],
-      ['Rest', 'Rest']
-    ], { prompt: 'Select activity type' }, { class: "form-input" } %>
+    <%= form.text_area :description, rows: 6, class: "form-textarea", placeholder: "Describe the workout..." %>
   </div>
 
   <% if params[:date].present? %>

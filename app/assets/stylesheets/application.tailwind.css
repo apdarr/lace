@@ -21,7 +21,8 @@
 @layer components {
   /* Layout helpers */
   .app-container { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
-  .app-container-wide { @apply max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-10; }
+  .app-container-wide { @apply max-w-[95vw] mx-auto px-4 sm:px-6 lg:px-8; }
+  .app-container-form { @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8; }
   .full-bleed-section { @apply w-full; }
   .stack-xs > * + * { @apply mt-2; }
   .stack-sm > * + * { @apply mt-3; }
