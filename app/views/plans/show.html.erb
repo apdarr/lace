@@ -1,7 +1,6 @@
 <div data-controller="activity-modal plan-processor" 
      data-plan-processor-plan-id-value="<%= @plan.id %>" 
      data-plan-processor-status-value="<%= @plan.processing_status %>"
-     class="app-container-wide">
   <div class="stack-lg">
     <% if notice.present? %>
       <p class="mb-4 inline-flex items-center rounded-md bg-green-50 px-3 py-2 text-sm font-medium text-green-700 ring-1 ring-inset ring-green-200" id="notice"><%= notice %></p>
@@ -74,15 +73,16 @@
           
           <% training_start_date = (@plan.race_date - @plan.length.weeks).beginning_of_week %>
           <% activities = Activity.where(plan_id: @plan.id).index_by { |a| a.start_date_local.to_date } %>
+          <% all_activities = Activity.where(plan_id: @plan.id) %>
           
           <!-- Week Selector -->
           <div class="mb-6">
-            <select class="form-input w-full sm:w-auto" id="week-selector">
+            <select class="form-input w-full" id="week-selector">
               <% @plan.length.times do |week| %>
                 <% week_start = training_start_date + (week * 7) %>
-                <% week_total = calculate_week_total_miles(activities, week_start) %>
+                <% week_total = calculate_week_total_miles_from_collection(all_activities, week_start) %>
                 <option value="<%= week %>" <%= 'selected' if week == 0 %>>
-                  Week <%= week + 1 %> • <%= week_start.strftime("%b %d") %> - <%= (week_start + 6.days).strftime("%b %d") %> • <%= sprintf("%.1f", week_total) %> mi
+                  <%= week_start.strftime("%b %d") %> - <%= (week_start + 6.days).strftime("%b %d") %>
                 </option>
               <% end %>
             </select>
@@ -91,7 +91,7 @@
           <!-- Training Days -->
           <% @plan.length.times do |week| %>
             <% week_start = training_start_date + (week * 7) %>
-            <% week_total = calculate_week_total_miles(activities, week_start) %>
+            <% week_total = calculate_week_total_miles_from_collection(all_activities, week_start) %>
             <div class="week-view space-y-4 <%= 'hidden' unless week == 0 %>" data-week="<%= week %>">
               
               <!-- Week Header -->
@@ -104,53 +104,77 @@
               </div>
               
               <!-- Draggable Day List -->
-              <div class="space-y-3" data-controller="drag" data-drag-target="container">
+              <div class="space-y-3">
                 <% 7.times do |day| %>
                   <% current_date = week_start + day.days %>
-                  <% activity = activities[current_date] %>
-                  <div class="relative pl-8 pr-4 py-4 rounded-lg border border-slate-200 bg-white shadow-sm hover:shadow transition group <%= 'bg-slate-50 border-slate-300' if activity %>" 
-                       data-drag-target="item" 
-                       data-activity-cell 
-                       data-date="<%= current_date.to_s %>">
-                    
-                    <!-- Drag Handle -->
-                    <div class="absolute left-2 top-1/2 transform -translate-y-1/2 flex flex-col gap-1 p-1 text-slate-400 hover:text-slate-600 cursor-grab active:cursor-grabbing select-none opacity-70 group-hover:opacity-100 transition">
-                      <div class="w-1 h-1 rounded-full bg-current"></div>
-                      <div class="w-1 h-1 rounded-full bg-current"></div>
-                      <div class="w-1 h-1 rounded-full bg-current"></div>
-                      <div class="w-1 h-1 rounded-full bg-current"></div>
-                      <div class="w-1 h-1 rounded-full bg-current"></div>
-                    </div>
-                    
-                    <!-- Day Content -->
-                    <div class="flex items-start justify-between mb-3">
+                  <div class="day-container">
+                    <!-- Fixed Day Header -->
+                    <div class="flex items-center justify-between mb-2 px-1">
                       <div>
-                        <div class="text-base font-semibold text-slate-900 leading-tight"><%= current_date.strftime('%A') %></div>
+                        <div class="text-base font-semibold text-slate-900"><%= current_date.strftime('%A') %></div>
                         <div class="text-xs text-slate-500"><%= current_date.strftime('%b %-d') %></div>
                       </div>
                       <button type="button"
                               class="calendar-edit-btn"
-                              data-activity-modal-date-value="<%= current_date.to_s %>"
-                              data-activity-modal-activity-value="<%= activity.to_json if activity %>"
-                              data-activity-modal-activity-id-value="<%= activity&.id %>"
-                              data-action="activity-modal#showModal">
-                        <%= activity ? 'Edit' : 'Add' %>
+                              onclick="window.location.href='/activities/new?date=<%= current_date.to_s %>&plan_id=<%= @plan.id %>'">
+                        Add
                       </button>
                     </div>
                     
-                    <% if activity %>
-                      <div class="space-y-2">
-                        <div class="flex items-center gap-2">
-                          <span class="badge-accent"><%= activity.distance %> mi</span>
+                    <!-- Droppable Workout Area -->
+                    <div class="min-h-[80px] rounded-lg border-2 border-dashed border-slate-200 bg-slate-50/50 p-3 transition-colors hover:border-slate-300 hover:bg-slate-100/50"
+                         data-controller="drag" 
+                         data-drag-target="container"
+                         data-day="<%= current_date.to_s %>">
+                      
+                      <% day_activities = activities.select { |date, activity| date == current_date } %>
+                      <% if day_activities.any? %>
+                        <% day_activities.each do |date, activity| %>
+                          <% original_date = activity.start_date_local.to_date %>
+                          <div class="relative pl-8 pr-4 py-3 rounded-lg border border-slate-200 bg-white shadow-sm hover:shadow transition group mb-2 last:mb-0" 
+                               data-drag-target="item" 
+                               data-activity-cell 
+                               data-date="<%= current_date.to_s %>"
+                               data-activity-id="<%= activity.id %>"
+                               data-original-date="<%= original_date.to_s %>">
+                            
+                            <!-- Drag Handle -->
+                            <div class="absolute left-2 top-1/2 transform -translate-y-1/2 flex flex-col gap-1 p-1 text-slate-400 hover:text-slate-600 cursor-grab active:cursor-grabbing select-none opacity-70 group-hover:opacity-100 transition">
+                              <div class="w-1 h-1 rounded-full bg-current"></div>
+                              <div class="w-1 h-1 rounded-full bg-current"></div>
+                              <div class="w-1 h-1 rounded-full bg-current"></div>
+                              <div class="w-1 h-1 rounded-full bg-current"></div>
+                              <div class="w-1 h-1 rounded-full bg-current"></div>
+                            </div>
+                            
+                            <!-- Workout Content -->
+                            <div class="flex items-start justify-between mb-2">
+                              <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                  <span class="badge-accent"><%= activity.distance %> mi</span>
+                                  <% if original_date != current_date %>
+                                    <span class="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-full">
+                                      Originally <%= original_date.strftime('%A') %>
+                                    </span>
+                                  <% end %>
+                                </div>
+                                <p class="text-xs text-slate-700 leading-snug"><%= activity.description %></p>
+                              </div>
+                              <button type="button"
+                                      class="calendar-edit-btn ml-2"
+                                      onclick="window.location.href='/activities/<%= activity.id %>/edit'">
+                                Edit
+                              </button>
+                            </div>
+                          </div>
+                        <% end %>
+                      <% else %>
+                        <div class="text-center py-4 text-slate-400">
+                          <div class="text-xs">Rest day</div>
+                          <div class="text-[10px] mt-1">Drag workouts here or tap Add</div>
                         </div>
-                        <p class="text-xs text-slate-700 leading-snug"><%= activity.description %></p>
-                      </div>
-                    <% else %>
-                      <div class="text-center py-4 text-slate-400">
-                        <div class="text-xs">Rest day</div>
-                        <div class="text-[10px] mt-1">Tap Add to schedule</div>
-                      </div>
-                    <% end %>
+                      <% end %>
+                    </div>
                   </div>
                 <% end %>
               </div>

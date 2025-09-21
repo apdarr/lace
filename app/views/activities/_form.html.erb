@@ -1,52 +1,46 @@
-<%= form_with(model: activity) do |form| %>
+<%= form_with(model: activity, local: true, class: "space-y-6") do |form| %>
   <% if activity.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(activity.errors.count, "error") %> prohibited this activity from being saved:</h2>
-
-      <ul>
+    <div class="rounded-lg bg-red-50 p-4">
+      <h2 class="text-sm font-semibold text-red-800"><%= pluralize(activity.errors.count, "error") %> prohibited this activity from being saved:</h2>
+      <ul class="mt-2 text-sm text-red-700">
         <% activity.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+          <li>• <%= error.full_message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :distance, style: "display: block" %>
-    <%= form.text_field :distance %>
+  <div class="form-field">
+    <%= form.label :distance, "Distance (miles)", class: "form-label" %>
+    <%= form.number_field :distance, step: 0.1, class: "form-input", placeholder: "e.g. 3.5" %>
   </div>
 
-  <div>
-    <%= form.label :elapsed_time, style: "display: block" %>
-    <%= form.number_field :elapsed_time %>
+  <div class="form-field">
+    <%= form.label :description, "Workout Description", class: "form-label" %>
+    <%= form.text_area :description, rows: 4, class: "form-textarea", placeholder: "Describe the workout..." %>
   </div>
 
-  <div>
-    <%= form.label :activity_type, style: "display: block" %>
-    <%= form.text_field :activity_type %>
+  <div class="form-field">
+    <%= form.label :activity_type, "Activity Type", class: "form-label" %>
+    <%= form.select :activity_type, [
+      ['Running', 'Run'],
+      ['Cycling', 'Ride'], 
+      ['Swimming', 'Swim'],
+      ['Cross Training', 'Workout'],
+      ['Rest', 'Rest']
+    ], { prompt: 'Select activity type' }, { class: "form-input" } %>
   </div>
 
-  <div>
-    <%= form.label :kudos_count, style: "display: block" %>
-    <%= form.number_field :kudos_count %>
-  </div>
+  <% if params[:date].present? %>
+    <%= form.hidden_field :start_date_local, value: params[:date] %>
+  <% end %>
 
-  <div>
-    <%= form.label :average_heart_rate, style: "display: block" %>
-    <%= form.number_field :average_heart_rate %>
-  </div>
+  <% if params[:plan_id].present? %>
+    <%= form.hidden_field :plan_id, value: params[:plan_id] %>
+  <% end %>
 
-  <div>
-    <%= form.label :max_heart_rate, style: "display: block" %>
-    <%= form.number_field :max_heart_rate %>
-  </div>
-
-  <div>
-    <%= form.label :description, style: "display: block" %>
-    <%= form.text_field :description %>
-  </div>
-
-  <div>
-    <%= form.submit %>
+  <div class="flex gap-3 pt-4">
+    <%= form.submit "Save Workout", class: "btn-primary flex-1" %>
+    <%= link_to "Cancel", request.referer || plans_path, class: "btn-outline flex-1 text-center" %>
   </div>
 <% end %>

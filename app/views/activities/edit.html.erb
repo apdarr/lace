@@ -1,12 +1,18 @@
-<% content_for :title, "Editing activity" %>
+<div class="app-container">
+  <div class="stack-lg">
+    <header class="text-center stack-sm">
+      <div class="flex items-center justify-between mb-4">
+        <%= link_to "← Back", request.referer || plans_path, class: "btn-ghost text-sm" %>
+        <div></div>
+      </div>
+      <h1 class="heading-page">Edit Workout</h1>
+      <p class="text-sm font-medium text-slate-500">Update your training activity</p>
+    </header>
 
-<h1>Editing activity</h1>
-
-<%= render "form", activity: @activity %>
-
-<br>
-
-<div>
-  <%= link_to "Show this activity", @activity %> |
-  <%= link_to "Back to activities", activities_path %>
+    <section class="card">
+      <div class="card-section">
+        <%= render "form", activity: @activity %>
+      </div>
+    </section>
+  </div>
 </div>
