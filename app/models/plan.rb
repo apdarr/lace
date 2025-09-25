@@ -1,10 +1,10 @@
 class Plan < ApplicationRecord
-  # after_create :load_from_plan_template
   after_create :process_uploaded_photos
 
-  enum :plan_type, { template: 0, custom: 1 }
+  enum :plan_type, { template: "template", custom: "custom" }
   enum :processing_status, { idle: "idle", queued: "queued", processing: "processing", completed: "completed", failed: "failed" }
 
+  has_many :activities, dependent: :destroy
   has_many_attached :photos
 
   validates :length, presence: true, numericality: { greater_than: 0 }
@@ -29,27 +29,6 @@ class Plan < ApplicationRecord
   end
 
   private
-
-  def load_from_plan_template
-    return unless template?
-    puts "load_from_plan_template called⭐"
-    start_date = (self.race_date - self.length.weeks).beginning_of_week(:monday)
-    template_path = Rails.root.join("app/models/templates/training_plans.yml")
-    template = YAML.safe_load(File.read(template_path))
-    hash = template.dig(template.first[0])
-
-    hash.each do |week|
-      week_name, week_data = week
-      week_data.each do |day_name, planned_activity|
-        Activity.create(
-          plan_id: self.id,
-          distance: planned_activity["distance"].to_f,
-          description: planned_activity["description"],
-          start_date_local: start_date)
-        start_date += 1.day
-      end
-    end
-  end
 
   def process_uploaded_photos
     # Note that right now this is being called for all after_create calls

@@ -1,5 +1,5 @@
 class PlansController < ApplicationController
-  before_action :set_plan, only: %i[ show edit update destroy processing_status ]
+  before_action :set_plan, only: %i[ show edit update destroy processing_status edit_workouts update_workouts create_blank_schedule ]
 
   # GET /plans or /plans.json
   def index
@@ -21,7 +21,7 @@ class PlansController < ApplicationController
 
     # If no activities exist for a custom plan, create a blank schedule
     if @activities.empty? && @plan.custom?
-      create_blank_schedule
+      create_blank_activities
       @activities = @plan.activities.order(:start_date_local)
     end
   end
@@ -30,17 +30,7 @@ class PlansController < ApplicationController
   def create_blank_schedule
     return unless @plan.custom?
 
-    start_date = (@plan.race_date - @plan.length.weeks).beginning_of_week(:monday)
-
-    (@plan.length * 7).times do |day_index|
-      Activity.create!(
-        plan_id: @plan.id,
-        distance: 0.0,
-        description: "Rest day",
-        start_date_local: start_date + day_index.days
-      )
-    end
-
+    create_blank_activities
     redirect_to edit_workouts_plan_path(@plan), notice: "Blank workout schedule created. You can now customize each day."
   end
 
@@ -123,5 +113,21 @@ class PlansController < ApplicationController
     # Only allow a list of trusted parameters through.
     def plan_params
       params.require(:plan).permit(:length, :race_date, :plan_type, photos: [])
+    end
+
+    # Create blank activities for a custom plan
+    def create_blank_activities
+      return unless @plan.custom?
+
+      start_date = (@plan.race_date - @plan.length.weeks).beginning_of_week(:monday)
+
+      (@plan.length * 7).times do |day_index|
+        Activity.create!(
+          plan_id: @plan.id,
+          distance: 0.0,
+          description: "Rest day",
+          start_date_local: start_date + day_index.days
+        )
+      end
     end
 end
