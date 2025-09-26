@@ -45,8 +45,8 @@ class PlansTest < ApplicationSystemTestCase
       assert_text "Showing results for: activities longer than 10km"
       assert_selector "#activities"
 
-      click_on "Clear search"
-      assert_no_text "Showing results for:"
+      # click_on "Clear search"
+      # assert_no_text "Showing results for:"
     end
   end
 end

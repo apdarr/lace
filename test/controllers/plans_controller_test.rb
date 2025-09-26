@@ -39,7 +39,7 @@ class PlansControllerTest < ActionDispatch::IntegrationTest
     assert_difference("Plan.count") do
       post plans_url, params: { plan: { length: 12, race_date: @race_date, plan_type: "custom" } }
     end
-    
+
     plan = Plan.last
     assert plan.custom?
     assert_redirected_to plan_url(plan)
