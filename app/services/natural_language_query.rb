@@ -90,28 +90,32 @@ class NaturalLanguageQuery
     # Validate operator to prevent injection
     return query unless valid_operator?(operator)
 
+    # Use safe column name (already validated)
+    # Using ActiveRecord's quote_column_name for safety
+    safe_column = column.to_sym
+
     case operator
     when "="
-      query.where(column => value)
+      query.where(safe_column => value)
     when ">"
-      query.where("#{column} > ?", value)
+      query.where("#{Activity.connection.quote_column_name(column)} > ?", value)
     when "<"
-      query.where("#{column} < ?", value)
+      query.where("#{Activity.connection.quote_column_name(column)} < ?", value)
     when ">="
-      query.where("#{column} >= ?", value)
+      query.where("#{Activity.connection.quote_column_name(column)} >= ?", value)
     when "<="
-      query.where("#{column} <= ?", value)
+      query.where("#{Activity.connection.quote_column_name(column)} <= ?", value)
     when "BETWEEN"
       if value.is_a?(Array) && value.length == 2
-        query.where("#{column} BETWEEN ? AND ?", value[0], value[1])
+        query.where("#{Activity.connection.quote_column_name(column)} BETWEEN ? AND ?", value[0], value[1])
       else
         query
       end
     when "LIKE"
-      query.where("#{column} LIKE ?", value)
+      query.where("#{Activity.connection.quote_column_name(column)} LIKE ?", value)
     when "IN"
       if value.is_a?(Array)
-        query.where(column => value)
+        query.where(safe_column => value)
       else
         query
       end
