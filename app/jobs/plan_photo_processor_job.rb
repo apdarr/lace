@@ -4,11 +4,14 @@ class PlanPhotoProcessorJob < ApplicationJob
   # Entry point from ActiveJob
   def perform(plan)
     plan.update!(processing_status: "processing")
+    puts "🔍 PlanPhotoProcessorJob: starting for plan #{plan.id} (#{plan.photos.count} photos)"
     Rails.logger.info "PlanPhotoProcessorJob: starting for plan #{plan.id} (#{plan.photos.count} photos)"
     return unless plan.photos.attached?
 
     attachments = prepare_attachments(plan)
+    puts "🔍 PlanPhotoProcessorJob: prepared #{attachments.size} attachments"
     if attachments.empty?
+      puts "⚠️  PlanPhotoProcessorJob: no usable image attachments after conversion"
       Rails.logger.warn "PlanPhotoProcessorJob: no usable image attachments after conversion"
       plan.update!(processing_status: "failed")
       return
@@ -16,7 +19,10 @@ class PlanPhotoProcessorJob < ApplicationJob
 
     extract_and_persist_workouts(plan, attachments)
     plan.update!(processing_status: "completed")
+    puts "✅ PlanPhotoProcessorJob: completed successfully"
   rescue => e
+    puts "❌ PlanPhotoProcessorJob: unrecoverable error: #{e.class}: #{e.message}"
+    puts e.backtrace.first(5).join("\n")
     Rails.logger.error "PlanPhotoProcessorJob: unrecoverable error: #{e.class}: #{e.message}"
     plan.update!(processing_status: "failed")
   end
@@ -28,9 +34,12 @@ class PlanPhotoProcessorJob < ApplicationJob
   def prepare_attachments(plan)
     blobs = []
 
-    plan.photos.each do |attachment|
+    puts "🔍 prepare_attachments: processing #{plan.photos.count} photos"
+    plan.photos.each_with_index do |attachment, idx|
       begin
+        puts "🔍 Photo #{idx + 1}: #{attachment.filename} (#{attachment.content_type})"
         if attachment.content_type.in?(%w[image/heic image/heif])
+          puts "🔍 Photo #{idx + 1}: attempting HEIC->JPEG conversion"
           Rails.logger.info "PlanPhotoProcessorJob: converting HEIC #{attachment.filename} -> JPEG"
           begin
             jpeg_variant = attachment.variant(format: :jpeg).processed
@@ -40,20 +49,26 @@ class PlanPhotoProcessorJob < ApplicationJob
               content_type: "image/jpeg"
             )
             blobs << converted_blob
+            puts "✅ Photo #{idx + 1}: converted successfully"
           rescue => conversion_error
+            puts "⚠️  Photo #{idx + 1}: conversion failed (#{conversion_error.class}: #{conversion_error.message}), using original"
             Rails.logger.warn "PlanPhotoProcessorJob: HEIC conversion failed (#{conversion_error.message}), using original"
             blobs << attachment.blob
           end
         else
           blobs << attachment.blob
+          puts "✅ Photo #{idx + 1}: using original blob"
         end
       rescue => e
+        puts "❌ Photo #{idx + 1}: error preparing: #{e.class} - #{e.message}"
+        puts e.backtrace.first(3).join("\n")
         Rails.logger.error "PlanPhotoProcessorJob: error preparing #{attachment.filename}: #{e.class} - #{e.message}"
         Rails.logger.error e.backtrace.first(3).join("\n")
         # Skip this attachment entirely if we can't even access the blob
       end
     end
 
+    puts "🔍 prepare_attachments: returning #{blobs.size} blobs"
     Rails.logger.info "PlanPhotoProcessorJob: prepared #{blobs.size} blobs from #{plan.photos.count} photos"
     blobs
   end
