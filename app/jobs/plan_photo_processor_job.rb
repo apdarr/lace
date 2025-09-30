@@ -26,32 +26,36 @@ class PlanPhotoProcessorJob < ApplicationJob
   # Convert any HEIC/HEIF images to JPEG so the vision model can read them.
   # Returns an array of ActiveStorage::Blob (original or converted) suitable to pass via RubyLLM `with:`.
   def prepare_attachments(plan)
-    prepared = plan.photos.map do |attachment|
-      if attachment.content_type.in?(%w[image/heic image/heif])
-        Rails.logger.info "PlanPhotoProcessorJob: converting HEIC #{attachment.filename} -> JPEG"
-        begin
-          jpeg_variant = attachment.variant(format: :jpeg).processed
-          ActiveStorage::Blob.create_and_upload!(
-            io: StringIO.new(jpeg_variant.download),
-            filename: attachment.filename.to_s.sub(/\.(heic|heif)\z/i, ".jpg"),
-            content_type: "image/jpeg"
-          )
-        rescue => conversion_error
-          Rails.logger.warn "PlanPhotoProcessorJob: HEIC conversion unavailable (#{conversion_error.message}), using original blob"
-          attachment.blob
+    blobs = []
+    
+    plan.photos.each do |attachment|
+      begin
+        if attachment.content_type.in?(%w[image/heic image/heif])
+          Rails.logger.info "PlanPhotoProcessorJob: converting HEIC #{attachment.filename} -> JPEG"
+          begin
+            jpeg_variant = attachment.variant(format: :jpeg).processed
+            converted_blob = ActiveStorage::Blob.create_and_upload!(
+              io: StringIO.new(jpeg_variant.download),
+              filename: attachment.filename.to_s.sub(/\.(heic|heif)\z/i, ".jpg"),
+              content_type: "image/jpeg"
+            )
+            blobs << converted_blob
+          rescue => conversion_error
+            Rails.logger.warn "PlanPhotoProcessorJob: HEIC conversion failed (#{conversion_error.message}), using original"
+            blobs << attachment.blob
+          end
+        else
+          blobs << attachment.blob
         end
-      else
-        attachment.blob
+      rescue => e
+        Rails.logger.error "PlanPhotoProcessorJob: error preparing #{attachment.filename}: #{e.class} - #{e.message}"
+        Rails.logger.error e.backtrace.first(3).join("\n")
+        # Skip this attachment entirely if we can't even access the blob
       end
-    rescue => e
-      Rails.logger.error "PlanPhotoProcessorJob: failed preparing #{attachment.filename}: #{e.message}"
-      nil
-    end.compact
+    end
 
-    return prepared if prepared.any?
-
-    Rails.logger.warn "PlanPhotoProcessorJob: all attachments failed conversion; falling back to original blobs"
-    plan.photos.map(&:blob)
+    Rails.logger.info "PlanPhotoProcessorJob: prepared #{blobs.size} blobs from #{plan.photos.count} photos"
+    blobs
   end
 
   # Use RubyLLM simplified API: chat.with_instructions + ask(..., with: attachments)
