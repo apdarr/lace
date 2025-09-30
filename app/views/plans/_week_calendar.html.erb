@@ -1,0 +1,143 @@
+<% training_start_date = (plan.race_date - plan.length.weeks).beginning_of_week %>
+<% activities = Activity.where(plan_id: plan.id).index_by { |a| a.start_date_local.to_date } %>
+
+<!-- Week Selector -->
+<div class="mb-4">
+  <select class="form-input w-full sm:w-auto" id="week-selector">
+    <% plan.length.times do |week| %>
+      <% week_start = training_start_date + (week * 7) %>
+      <% week_total = calculate_week_total_miles(activities, week_start) %>
+      <option value="<%= week %>" <%= 'selected' if week == 0 %>>
+        Week <%= week + 1 %> • <%= week_start.strftime("%b %d") %> - <%= (week_start + 6.days).strftime("%b %d") %> • <%= sprintf("%.1f", week_total) %> mi
+      </option>
+    <% end %>
+  </select>
+</div>
+
+<!-- Desktop Week View -->
+<div class="hidden md:block">
+  <% plan.length.times do |week| %>
+    <% week_start = training_start_date + (week * 7) %>
+    <% week_total = calculate_week_total_miles(activities, week_start) %>
+    <div class="week-view <%= 'hidden' unless week == 0 %>" data-week="<%= week %>">
+      <div class="flex items-center justify-between mb-4 p-3 bg-slate-50 rounded-lg">
+        <h3 class="text-sm font-semibold text-slate-700">Week <%= week + 1 %> • <%= week_start.strftime("%b %d") %> - <%= (week_start + 6.days).strftime("%b %d") %></h3>
+        <div class="text-sm font-medium text-slate-600">
+          <span class="text-xs text-slate-500">Total:</span> 
+          <%= sprintf("%.1f", week_total) %> mi
+        </div>
+      </div>
+      <div class="grid grid-cols-7 gap-4">
+        <% 7.times do |day| %>
+          <% current_date = week_start + day.days %>
+          <% activity = activities[current_date] %>
+          <div class="space-y-2">
+            <div class="text-center">
+              <div class="text-sm font-medium text-slate-700"><%= current_date.strftime("%a") %></div>
+              <div class="text-lg font-semibold text-slate-900"><%= current_date.strftime("%-d") %></div>
+            </div>
+            <div class="week-day-card <%= 'week-day-card-has' if activity %>" 
+                 data-drag-target="item" 
+                 data-activity-cell 
+                 data-date="<%= current_date.to_s %>">
+              <% if activity %>
+                <div class="text-sm font-medium text-slate-800 mb-1"><%= activity.distance %> mi</div>
+                <div class="text-xs text-slate-600 line-clamp-4 mb-3"><%= activity.description %></div>
+              <% else %>
+                <div class="text-sm text-slate-400 mb-3">Rest day</div>
+              <% end %>
+              <button type="button"
+                      class="w-full btn-soft text-xs"
+                      data-activity-modal-date-value="<%= current_date.to_s %>"
+                      data-activity-modal-activity-value="<%= activity.to_json if activity %>"
+                      data-activity-modal-activity-id-value="<%= activity&.id %>"
+                      data-action="activity-modal#showModal">
+                <%= activity ? 'Edit Workout' : 'Add Workout' %>
+              </button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Mobile Week View - Vertical Cards -->
+<div class="md:hidden">
+  <% plan.length.times do |week| %>
+    <% week_start = training_start_date + (week * 7) %>
+    <% week_total = calculate_week_total_miles(activities, week_start) %>
+    <div class="week-view <%= 'hidden' unless week == 0 %>" data-week="<%= week %>">
+      <div class="flex items-center justify-between mb-3 p-3 bg-slate-50 rounded-lg">
+        <h3 class="text-sm font-semibold text-slate-700">Week <%= week + 1 %></h3>
+        <div class="text-sm font-medium text-slate-600">
+          <span class="text-xs text-slate-500">Total:</span> 
+          <%= sprintf("%.1f", week_total) %> mi
+        </div>
+      </div>
+      <div class="mobile-week-list flex flex-col gap-3" 
+           data-controller="drag" 
+           data-drag-target="container"
+           data-drag-mode-value="vertical">
+        <% 7.times do |day| %>
+          <% current_date = week_start + day.days %>
+            <% activity = activities[current_date] %>
+            <div class="mobile-week-card group relative pl-10 pr-3 pt-3 pb-4 rounded-lg border border-slate-200 bg-white shadow-sm hover:shadow transition <%= 'mobile-week-card-has' if activity %>" 
+                 data-drag-target="item" 
+                 data-activity-cell 
+                 data-date="<%= current_date.to_s %>">
+              <div class="drag-handle absolute left-2 top-1/2 -translate-y-1/2 flex flex-col justify-center gap-1 p-2 rounded-md text-slate-400 hover:text-slate-600 cursor-grab active:cursor-grabbing">
+                <span class="w-1 h-1 rounded-full bg-current"></span>
+                <span class="w-1 h-1 rounded-full bg-current"></span>
+                <span class="w-1 h-1 rounded-full bg-current"></span>
+                <span class="w-1 h-1 rounded-full bg-current"></span>
+                <span class="w-1 h-1 rounded-full bg-current"></span>
+              </div>
+              <div class="flex items-start justify-between mb-3">
+                <div>
+                  <div class="text-base font-semibold text-slate-900 leading-tight"><%= current_date.strftime('%A') %></div>
+                  <div class="text-xs text-slate-500"><%= current_date.strftime('%b %-d') %></div>
+                </div>
+                <button type="button"
+                        class="calendar-edit-btn text-[11px] px-3 py-1"
+                        data-activity-modal-date-value="<%= current_date.to_s %>"
+                        data-activity-modal-activity-value="<%= activity.to_json if activity %>"
+                        data-activity-modal-activity-id-value="<%= activity&.id %>"
+                        data-action="activity-modal#showModal">
+                  <%= activity ? 'Edit' : 'Add' %>
+                </button>
+              </div>
+              <% if activity %>
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2">
+                    <span class="badge-accent"><%= activity.distance %> mi</span>
+                  </div>
+                  <p class="text-xs text-slate-700 leading-snug"><%= activity.description %></p>
+                </div>
+              <% else %>
+                <div class="text-center py-4 text-slate-400">
+                  <div class="text-xs">Rest day</div>
+                  <div class="text-[10px] mt-1">Tap Add to schedule</div>
+                </div>
+              <% end %>
+            </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  document.getElementById('week-selector').addEventListener('change', function(e) {
+    // Hide all week views
+    document.querySelectorAll('.week-view').forEach(view => {
+      view.classList.add('hidden');
+    });
+    
+    // Show selected week
+    const selectedWeek = e.target.value;
+    document.querySelectorAll(`[data-week="${selectedWeek}"]`).forEach(view => {
+      view.classList.remove('hidden');
+    });
+  });
+</script>

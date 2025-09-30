@@ -10,7 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_19_001024) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_18_160700) do
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
   create_table "activities", force: :cascade do |t|
     t.float "distance"
     t.integer "elapsed_time"
@@ -32,6 +60,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_19_001024) do
     t.date "race_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "plan_type", default: "template", null: false
+    t.string "processing_status", default: "idle"
+    t.string "job_id"
+    t.index ["plan_type"], name: "index_plans_on_plan_type"
+    t.index ["processing_status"], name: "index_plans_on_processing_status"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -57,5 +90,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_19_001024) do
     t.index ["strava_id"], name: "index_users_on_strava_id", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "sessions", "users"
 end

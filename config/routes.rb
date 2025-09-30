@@ -5,7 +5,14 @@ Rails.application.routes.draw do
   get "/auth/strava/callback", to: "sessions#create"
   root to: "plans#index" # Updated to use the correct root path syntax
   resource :session
-  resources :plans
+  resources :plans do
+    member do
+      get :edit_workouts
+      patch :update_workouts
+      post :create_blank_schedule
+      get :processing_status
+    end
+  end
   resources :activities
   get "profile", to: "profile#show"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

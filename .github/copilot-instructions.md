@@ -92,6 +92,7 @@ applyTo: '**/*.rb'
 - Organize controller specs under `test/controllers` to test RESTful API behavior.
 - Use `setup` in Minitest to initialize common test data.
 - Avoid hitting external APIs in tests — use `VCR` generally to record and replay HTTP interactions.
+- Follow VCR best practices instead of creating custom mocks
 - Use `system tests` in Minitest to simulate full user flows.
 - Isolate slow and expensive tests (e.g., external services, file uploads) into separate test types or tags.
 - Run test coverage tools like `SimpleCov` to ensure adequate code coverage.

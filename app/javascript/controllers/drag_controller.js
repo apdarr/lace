@@ -5,43 +5,58 @@ export default class extends Controller {
   static targets = ["container", "item"]
 
   connect() {
-    if (!this.hasContainerTarget) return
+    console.log('Drag controller connected')
     
-    this.sortableInstances = []
-    this.containerTargets.forEach(container => {
-      this.sortableInstances.push(this.initializeSortable(container))
-    })
+    if (this.hasContainerTarget) {
+      this.containerTargets.forEach(container => {
+        this.initializeSortable(container)
+      })
+    }
   }
 
   initializeSortable(container) {
+    console.log('Initializing sortable for:', container)
+    
     return new Sortable(container, {
+      group: 'workouts', // Allow moving between different day containers
       animation: 150,
-      draggable: "[data-drag-target='item']",
-      handle: ".activity-content",
-      group: {
-        name: 'shared',
-        pull: true,
-        put: (to) => to.el.children.length < 7
-      },
+      draggable: '[data-drag-target="item"]',
+      handle: '.cursor-grab',
+      delay: 100,
+      delayOnTouchOnly: true,
+      touchStartThreshold: 5,
+      forceFallback: true,
+      fallbackClass: 'opacity-50',
       onStart: (evt) => {
-        evt.item.classList.add('scale-105', 'shadow-lg', 'bg-green-100', 'border-2', 'border-green-400')
+        console.log('Drag started')
+        evt.item.classList.add('scale-105', 'shadow-lg', 'ring-2', 'ring-blue-400')
+        // Highlight all drop zones
+        document.querySelectorAll('[data-drag-target="container"]').forEach(zone => {
+          zone.classList.add('border-blue-300', 'bg-blue-50/50')
+        })
       },
       onEnd: (evt) => {
-        evt.item.classList.remove('scale-105', 'shadow-lg', 'bg-green-100', 'border-2', 'border-green-400')
-        if (evt.to.children.length > 7) {
-          evt.from.appendChild(evt.item)
-          return
+        console.log('Drag ended')
+        evt.item.classList.remove('scale-105', 'shadow-lg', 'ring-2', 'ring-blue-400')
+        // Remove highlight from all drop zones
+        document.querySelectorAll('[data-drag-target="container"]').forEach(zone => {
+          zone.classList.remove('border-blue-300', 'bg-blue-50/50')
+        })
+        
+        // Update the activity's date based on which day container it was dropped into
+        const newDay = evt.to.dataset.day
+        const activityId = evt.item.dataset.activityId
+        
+        if (newDay && activityId) {
+          console.log(`Moving activity ${activityId} to ${newDay}`)
+          // Here you would make an AJAX call to update the activity's date
+          // fetch(`/activities/${activityId}`, {
+          //   method: 'PATCH',
+          //   headers: { 'Content-Type': 'application/json' },
+          //   body: JSON.stringify({ activity: { start_date_local: newDay } })
+          // })
         }
-        this.handleDragEnd(evt)
       }
     })
-  }
-
-  handleDragEnd(event) {
-    const itemDate = event.item.dataset.date
-    const newIndex = event.newIndex
-    const weekContainer = event.to
-    
-    console.log(`Item from ${itemDate} moved to position ${newIndex} in week ${weekContainer.dataset.week}`)
   }
 }

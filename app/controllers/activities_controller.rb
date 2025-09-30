@@ -20,6 +20,11 @@ class ActivitiesController < ApplicationController
   # GET /activities/new
   def new
     @activity = Activity.new
+    # If creating from plan with specific date, pre-populate
+    if params[:plan_id].present? && params[:date].present?
+      @activity.plan_id = params[:plan_id]
+      @activity.start_date_local = Date.parse(params[:date])
+    end
   end
 
   # GET /activities/1/edit
@@ -28,31 +33,24 @@ class ActivitiesController < ApplicationController
 
   # POST /activities or /activities.json
   def create
-    ### 🧪 Reenable to get imports working again 🧪 ###
+    @activity = Activity.new(activity_params)
 
-    # AllActivityJob.perform_later
-
-    ### 🧪 Reenable to get imports working again 🧪 ###
-
-    flash[:notice] = "Activity has been enqueued for processing."
-    # @activity = Activity.new(activity_params)
-
-    # respond_to do |format|
-    #   if @activity.save
-    #     format.html { redirect_to @activity, notice: "Activity was successfully created." }
-    #     format.json { render :show, status: :created, location: @activity }
-    #   else
-    #     format.html { render :new, status: :unprocessable_entity }
-    #     format.json { render json: @activity.errors, status: :unprocessable_entity }
-    #   end
-    # end
+    respond_to do |format|
+      if @activity.save
+        format.html { redirect_to plan_path(@activity.plan), notice: "Activity was successfully created." }
+        format.json { render :show, status: :created, location: @activity }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @activity.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   # PATCH/PUT /activities/1 or /activities/1.json
   def update
     respond_to do |format|
       if @activity.update(activity_params)
-        format.html { redirect_to @activity, notice: "Activity was successfully updated." }
+        format.html { redirect_to plan_path(@activity.plan), notice: "Activity was successfully updated." }
         format.json { render :show, status: :ok, location: @activity }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -79,6 +77,6 @@ class ActivitiesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def activity_params
-      params.require(:activity).permit(:distance, :elapsed_time, :activity_type, :kudos_count, :average_heart_rate, :max_heart_rate, :description)
+      params.require(:activity).permit(:distance, :elapsed_time, :activity_type, :kudos_count, :average_heart_rate, :max_heart_rate, :description, :plan_id, :start_date_local)
     end
 end
