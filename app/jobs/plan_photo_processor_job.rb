@@ -26,21 +26,18 @@ class PlanPhotoProcessorJob < ApplicationJob
   # Convert any HEIC/HEIF images to JPEG so the vision model can read them.
   # Returns an array of ActiveStorage::Blob (original or converted) suitable to pass via RubyLLM `with:`.
   def prepare_attachments(plan)
-    plan.photos.map do |attachment|
+    prepared = plan.photos.map do |attachment|
       if attachment.content_type.in?(%w[image/heic image/heif])
         Rails.logger.info "PlanPhotoProcessorJob: converting HEIC #{attachment.filename} -> JPEG"
         begin
           jpeg_variant = attachment.variant(format: :jpeg).processed
-          converted_blob = ActiveStorage::Blob.create_and_upload!(
+          ActiveStorage::Blob.create_and_upload!(
             io: StringIO.new(jpeg_variant.download),
             filename: attachment.filename.to_s.sub(/\.(heic|heif)\z/i, ".jpg"),
             content_type: "image/jpeg"
           )
-          converted_blob
         rescue => conversion_error
           Rails.logger.warn "PlanPhotoProcessorJob: HEIC conversion unavailable (#{conversion_error.message}), using original blob"
-          # If HEIC conversion fails (e.g., missing codec in CI), use original blob
-          # The AI vision API can handle HEIC directly
           attachment.blob
         end
       else
@@ -50,6 +47,11 @@ class PlanPhotoProcessorJob < ApplicationJob
       Rails.logger.error "PlanPhotoProcessorJob: failed preparing #{attachment.filename}: #{e.message}"
       nil
     end.compact
+
+    return prepared if prepared.any?
+
+    Rails.logger.warn "PlanPhotoProcessorJob: all attachments failed conversion; falling back to original blobs"
+    plan.photos.map(&:blob)
   end
 
   # Use RubyLLM simplified API: chat.with_instructions + ask(..., with: attachments)
