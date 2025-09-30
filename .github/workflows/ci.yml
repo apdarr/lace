@@ -71,6 +71,7 @@ jobs:
             curl \
             libjemalloc2 \
             imagemagick \
+            libheif1 \
             sqlite3
 
       - name: Checkout code
