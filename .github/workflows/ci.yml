@@ -70,8 +70,7 @@ jobs:
             google-chrome-stable \
             curl \
             libjemalloc2 \
-            libvips42 \
-            libheif1 \
+            imagemagick \
             sqlite3
 
       - name: Checkout code

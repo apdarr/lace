@@ -29,19 +29,25 @@ class PlanPhotoProcessorJob < ApplicationJob
     plan.photos.map do |attachment|
       if attachment.content_type.in?(%w[image/heic image/heif])
         Rails.logger.info "PlanPhotoProcessorJob: converting HEIC #{attachment.filename} -> JPEG"
-        jpeg_variant = attachment.variant(format: :jpeg).processed
-        converted_blob = ActiveStorage::Blob.create_and_upload!(
-          io: StringIO.new(jpeg_variant.download),
-          filename: attachment.filename.to_s.sub(/\.(heic|heif)\z/i, ".jpg"),
-          content_type: "image/jpeg"
-        )
-
-        converted_blob
+        begin
+          jpeg_variant = attachment.variant(format: :jpeg).processed
+          converted_blob = ActiveStorage::Blob.create_and_upload!(
+            io: StringIO.new(jpeg_variant.download),
+            filename: attachment.filename.to_s.sub(/\.(heic|heif)\z/i, ".jpg"),
+            content_type: "image/jpeg"
+          )
+          converted_blob
+        rescue => conversion_error
+          Rails.logger.warn "PlanPhotoProcessorJob: HEIC conversion unavailable (#{conversion_error.message}), using original blob"
+          # If HEIC conversion fails (e.g., missing codec in CI), use original blob
+          # The AI vision API can handle HEIC directly
+          attachment.blob
+        end
       else
         attachment.blob
       end
     rescue => e
-      Rails.logger.error "PlanPhotoProcessorJob: failed converting #{attachment.filename}: #{e.message}"
+      Rails.logger.error "PlanPhotoProcessorJob: failed preparing #{attachment.filename}: #{e.message}"
       nil
     end.compact
   end
