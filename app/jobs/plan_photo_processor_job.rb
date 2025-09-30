@@ -27,7 +27,7 @@ class PlanPhotoProcessorJob < ApplicationJob
   # Returns an array of ActiveStorage::Blob (original or converted) suitable to pass via RubyLLM `with:`.
   def prepare_attachments(plan)
     blobs = []
-    
+
     plan.photos.each do |attachment|
       begin
         if attachment.content_type.in?(%w[image/heic image/heif])
