@@ -88,8 +88,8 @@ builder:
   #   - RAILS_MASTER_KEY
 
 # Use a different ssh user than root
-ssh:
-  log_level: debug
+# ssh:
+#   log_level: debug
 #  user: deploy
 #   user: app
 
