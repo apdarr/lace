@@ -28,10 +28,14 @@ Rails.application.configure do
   config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  config.force_ssl = false
 
   # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+
+  # Force Rails to use the secret key base from production credentials.
+  config.secret_key_base = Rails.application.credentials.secret_key_base
+
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]
