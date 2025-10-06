@@ -38,9 +38,9 @@
           <% end %>
         </div>
         <div class="nav-bar">
-          <%= link_to "Plans", plans_path, class: ["nav-pill", (current_page?(plans_path) ? 'nav-pill-active' : nil)].compact.join(' ') %>
-          <%= link_to "Activities", activities_path, class: ["nav-pill", (current_page?(activities_path) ? 'nav-pill-active' : nil)].compact.join(' ') %>
           <% if authenticated? %>
+            <%= link_to "Plans", plans_path, class: ["nav-pill", (current_page?(plans_path) ? 'nav-pill-active' : nil)].compact.join(' ') %>
+            <%= link_to "Activities", activities_path, class: ["nav-pill", (current_page?(activities_path) ? 'nav-pill-active' : nil)].compact.join(' ') %>
             <%= link_to "Profile", profile_path, class: ["nav-pill", (current_page?(profile_path) ? 'nav-pill-active' : nil)].compact.join(' ') %>
             <%= button_to "Sign out", session_path, method: :delete, class: "nav-pill" %>
           <% elsif !authenticated? && !current_page?(new_session_path) %>

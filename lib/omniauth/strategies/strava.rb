@@ -1,5 +1,4 @@
 require "omniauth-oauth2"
-require "debug"
 
 module OmniAuth
   module Strategies
