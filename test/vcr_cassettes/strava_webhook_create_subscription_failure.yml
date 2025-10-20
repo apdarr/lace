@@ -1,0 +1,24 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://www.strava.com/api/v3/push_subscriptions
+    body:
+      encoding: UTF-8
+      string: client_id=12345&client_secret=secret&callback_url=invalid_url&verify_token=lace_strava_webhook
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: '{"message":"Bad Request","errors":[{"resource":"PushSubscription","field":"callback_url","code":"invalid"}]}'
+    http_version: null
+  recorded_at: Mon, 20 Oct 2025 15:00:00 GMT
+recorded_with: VCR 6.1.0

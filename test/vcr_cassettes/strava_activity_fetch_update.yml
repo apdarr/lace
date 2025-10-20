@@ -1,0 +1,26 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://www.strava.com/api/v3/activities/12345678902
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      Authorization:
+      - Bearer <BEARER_TOKEN>
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: '{"id":12345678902,"name":"Evening Run","distance":8000.0,"moving_time":2400,"elapsed_time":2450,"total_elevation_gain":80.0,"sport_type":"Run","start_date":"2024-01-15T18:30:00Z","start_date_local":"2024-01-15T18:30:00Z","timezone":"(GMT-05:00) America/New_York","achievement_count":0,"kudos_count":3,"comment_count":0,"athlete_count":1,"photo_count":0,"average_speed":3.33,"max_speed":5.0,"average_heartrate":150.0,"max_heartrate":170.0,"description":"Tempo run","elev_high":130.0,"elev_low":50.0}'
+    http_version: null
+  recorded_at: Mon, 20 Oct 2025 15:00:00 GMT
+recorded_with: VCR 6.1.0
