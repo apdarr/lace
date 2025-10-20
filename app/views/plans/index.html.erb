@@ -25,8 +25,22 @@
                   <div class="space-y-1">
                     <h3 class="text-base font-semibold text-slate-800"><%= plan.length %> Week Plan</h3>
                     <p class="text-sm text-slate-500">Race Date: <span class="font-medium text-slate-800"><%= plan.race_date.strftime("%b %d, %Y") %></span></p>
+                    <% if plan.respond_to?(:webhook_enabled?) && plan.webhook_enabled? %>
+                      <div class="flex items-center gap-1.5 text-xs text-green-600">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-medium">Strava Sync Enabled</span>
+                      </div>
+                    <% end %>
                   </div>
                   <div class="flex gap-2">
+                    <% unless plan.respond_to?(:webhook_enabled?) && plan.webhook_enabled? %>
+                      <%= button_to "Enable Sync", enable_webhook_sync_plan_path(plan), 
+                          method: :patch,
+                          class: "btn-soft text-xs",
+                          form: { data: { turbo_confirm: "Enable automatic Strava activity syncing for this plan?" } } %>
+                    <% end %>
                     <%= link_to "View", plan, class: "btn-outline" %>
                     <%= link_to "Edit", edit_plan_path(plan), class: "btn-soft" %>
                   </div>

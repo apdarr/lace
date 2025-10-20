@@ -1,5 +1,5 @@
 class PlansController < ApplicationController
-  before_action :set_plan, only: %i[ show edit update destroy processing_status edit_workouts update_workouts create_blank_schedule ]
+  before_action :set_plan, only: %i[ show edit update destroy processing_status edit_workouts update_workouts create_blank_schedule enable_webhook_sync ]
 
   # GET /plans or /plans.json
   def index
@@ -104,6 +104,16 @@ class PlansController < ApplicationController
     end
   end
 
+  # PATCH /plans/1/enable_webhook_sync
+  def enable_webhook_sync
+    if @plan.respond_to?(:webhook_enabled=)
+      @plan.update(webhook_enabled: true)
+      redirect_to plans_path, notice: "Strava activity sync has been enabled for this plan."
+    else
+      redirect_to plans_path, alert: "Webhook sync is not available yet. Database migration pending."
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_plan
@@ -112,7 +122,7 @@ class PlansController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def plan_params
-      params.require(:plan).permit(:length, :race_date, :plan_type, photos: [])
+      params.require(:plan).permit(:length, :race_date, :plan_type, :webhook_enabled, photos: [])
     end
 
     # Create blank activities for a custom plan
