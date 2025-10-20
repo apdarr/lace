@@ -1,0 +1,39 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+one:
+  user: one
+  strava_id: 12345678901
+  strava_athlete_id: 123456
+  activity_type: "Run"
+  distance: 5000.0
+  start_date_local: 2024-01-15 06:30:00.000000000 +0000
+  match_status: "unmatched"
+  webhook_payload: |
+    {
+      "id": 12345678901,
+      "name": "Morning Run",
+      "distance": 5000.0,
+      "sport_type": "Run",
+      "start_date": "2024-01-15T06:30:00Z",
+      "start_date_local": "2024-01-15T06:30:00Z",
+      "description": "Easy morning run"
+    }
+
+two:
+  user: one
+  strava_id: 12345678902
+  strava_athlete_id: 123456
+  activity_type: "Run"
+  distance: 8000.0
+  start_date_local: 2024-01-20 18:30:00.000000000 +0000
+  match_status: "matched"
+  activity: one
+  webhook_payload: |
+    {
+      "id": 12345678902,
+      "name": "Evening Run",
+      "distance": 8000.0,
+      "sport_type": "Run",
+      "start_date": "2024-01-20T18:30:00Z",
+      "start_date_local": "2024-01-20T18:30:00Z",
+      "description": "Tempo run"
+    }
