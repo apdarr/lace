@@ -70,9 +70,10 @@ namespace :activities do
       exit 0
     end
 
+    workout_id = activity.matched_workout_id
     matcher = ActivityMatcher.new(activity)
     if matcher.unmatch!
-      puts "Successfully unmatched activity ##{activity_id} from workout ##{activity.matched_workout_id}"
+      puts "Successfully unmatched activity ##{activity_id} from workout ##{workout_id}"
     else
       puts "Failed to unmatch activity ##{activity_id}"
       exit 1
