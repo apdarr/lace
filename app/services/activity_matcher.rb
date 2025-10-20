@@ -14,6 +14,9 @@
 #   result = matcher.find_best_match
 #   # => { workout: Activity, confidence: 0.85 } or nil
 #
+#   # Limit matching to a specific plan:
+#   result = matcher.find_best_match(plan_id: 123)
+#
 #   # To automatically match and save:
 #   matcher.match!  # => true if matched, false otherwise
 #
@@ -30,14 +33,18 @@ class ActivityMatcher
 
   def initialize(activity)
     @activity = activity
+    @plan_id = nil
   end
 
   # Find the best matching workout for this activity
   # Returns a hash with { workout: Activity, confidence: Float } or nil if no match found
-  def find_best_match
+  # Options:
+  #   plan_id: Limit matching to workouts in a specific plan
+  def find_best_match(plan_id: nil)
     return nil unless @activity.strava_activity?
     return nil if @activity.matched?
 
+    @plan_id = plan_id
     candidate_workouts = find_candidate_workouts
     return nil if candidate_workouts.empty?
 
@@ -49,8 +56,10 @@ class ActivityMatcher
   end
 
   # Match the activity to a workout and save the match
-  def match!
-    best_match = find_best_match
+  # Options:
+  #   plan_id: Limit matching to workouts in a specific plan
+  def match!(plan_id: nil)
+    best_match = find_best_match(plan_id: plan_id)
     return false unless best_match
 
     @activity.update!(
@@ -86,9 +95,14 @@ class ActivityMatcher
     end_date = @activity.start_date_local.to_date + DATE_TOLERANCE_DAYS.days
 
     # Find planned workouts that haven't been matched yet
-    Activity.planned_workouts
+    workouts = Activity.planned_workouts
       .where(start_date_local: start_date.beginning_of_day..end_date.end_of_day)
       .where.missing(:matched_activities)
+    
+    # Filter by plan if specified
+    workouts = workouts.where(plan_id: @plan_id) if @plan_id.present?
+    
+    workouts
   end
 
   # Score each candidate workout based on multiple factors

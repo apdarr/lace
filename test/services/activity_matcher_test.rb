@@ -222,11 +222,46 @@ class ActivityMatcherTest < ActiveSupport::TestCase
     assert_equal false, matcher.unmatch!
   end
 
+  test "find_best_match filters by plan_id when specified" do
+    plan2 = Plan.create!(length: 12, race_date: 3.months.from_now)
+    
+    workout1 = create_workout(distance: 5000.0, date: Date.today, plan_id: @plan.id)
+    workout2 = create_workout(distance: 5000.0, date: Date.today, plan_id: plan2.id)
+    activity = create_activity(distance: 5000.0, date: Date.today)
+    
+    matcher = ActivityMatcher.new(activity)
+    
+    # Without plan_id filter, should match to either workout (likely the first one)
+    result_no_filter = matcher.find_best_match
+    assert_not_nil result_no_filter
+    
+    # With plan_id filter for plan2, should only match to workout2
+    result_with_filter = matcher.find_best_match(plan_id: plan2.id)
+    assert_not_nil result_with_filter
+    assert_equal workout2.id, result_with_filter[:workout].id
+    assert_equal plan2.id, result_with_filter[:workout].plan_id
+  end
+
+  test "match! uses plan_id parameter" do
+    plan2 = Plan.create!(length: 12, race_date: 3.months.from_now)
+    
+    create_workout(distance: 5000.0, date: Date.today, plan_id: @plan.id)
+    workout2 = create_workout(distance: 5000.0, date: Date.today, plan_id: plan2.id)
+    activity = create_activity(distance: 5000.0, date: Date.today)
+    
+    matcher = ActivityMatcher.new(activity)
+    matcher.match!(plan_id: plan2.id)
+    
+    activity.reload
+    assert_equal workout2.id, activity.matched_workout_id
+    assert_equal plan2.id, activity.matched_workout.plan_id
+  end
+
   private
 
-  def create_workout(distance:, date:, description: "Workout", activity_type: "Run")
+  def create_workout(distance:, date:, description: "Workout", activity_type: "Run", plan_id: nil)
     Activity.create!(
-      plan_id: @plan.id,
+      plan_id: plan_id || @plan.id,
       distance: distance,
       description: description,
       activity_type: activity_type,
