@@ -1,5 +1,27 @@
 # Service for matching Strava activities to planned workouts
-# Implements matching algorithm: date ±1 day, distance ±10%, activity type, description similarity
+#
+# This service implements an intelligent matching algorithm that attempts to link
+# newly imported Strava activities to planned workouts in a user's training plan.
+#
+# Matching Algorithm:
+# - Date matching: ±1 day tolerance (40% weight)
+# - Distance matching: ±10% tolerance (40% weight)
+# - Activity type matching: Exact or partial match (10% weight)
+# - Description similarity: Keyword matching (10% weight)
+#
+# Usage:
+#   matcher = ActivityMatcher.new(strava_activity)
+#   result = matcher.find_best_match
+#   # => { workout: Activity, confidence: 0.85 } or nil
+#
+#   # To automatically match and save:
+#   matcher.match!  # => true if matched, false otherwise
+#
+#   # To unmatch an activity:
+#   matcher.unmatch!  # => true if unmatched, false otherwise
+#
+# The confidence score ranges from 0.0 to 1.0, with matches below
+# MIN_CONFIDENCE_THRESHOLD (0.3) being rejected.
 class ActivityMatcher
   # Match tolerance constants
   DATE_TOLERANCE_DAYS = 1
@@ -40,6 +62,19 @@ class ActivityMatcher
     true
   end
 
+  # Unmatch the activity from its current workout
+  def unmatch!
+    return false unless @activity.matched?
+
+    @activity.update!(
+      matched_workout_id: nil,
+      match_confidence: nil,
+      matched_at: nil
+    )
+
+    true
+  end
+
   private
 
   # Find workouts that could potentially match this activity
@@ -50,10 +85,10 @@ class ActivityMatcher
     start_date = @activity.start_date_local.to_date - DATE_TOLERANCE_DAYS.days
     end_date = @activity.start_date_local.to_date + DATE_TOLERANCE_DAYS.days
 
+    # Find planned workouts that haven't been matched yet
     Activity.planned_workouts
       .where(start_date_local: start_date.beginning_of_day..end_date.end_of_day)
-      .where(matched_activities: { id: nil }) # Not already matched
-      .left_joins(:matched_activities)
+      .where.missing(:matched_activities)
   end
 
   # Score each candidate workout based on multiple factors

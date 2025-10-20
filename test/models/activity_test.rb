@@ -158,4 +158,59 @@ class ActivityTest < ActiveSupport::TestCase
     assert_includes workout.matched_activities, activity2
     assert_equal 2, workout.matched_activities.count
   end
+
+  test "validates matched_workout must be a planned workout" do
+    strava_activity1 = Activity.create!(
+      strava_id: 123456,
+      distance: 5000.0,
+      start_date_local: Time.current
+    )
+    strava_activity2 = Activity.build(
+      strava_id: 789012,
+      distance: 5100.0,
+      matched_workout_id: strava_activity1.id,
+      start_date_local: Time.current
+    )
+
+    refute strava_activity2.valid?
+    assert_includes strava_activity2.errors[:matched_workout_id], "cannot match a Strava activity to another Strava activity"
+  end
+
+  test "validates activity cannot be matched to itself" do
+    activity = Activity.create!(
+      strava_id: 123456,
+      distance: 5000.0,
+      start_date_local: Time.current
+    )
+    activity.matched_workout_id = activity.id
+
+    refute activity.valid?
+    assert_includes activity.errors[:matched_workout_id], "is reserved"
+  end
+
+  test "planned workout can have multiple matched activities" do
+    workout = Activity.create!(
+      plan_id: 1,
+      distance: 5.0,
+      start_date_local: Date.today
+    )
+    
+    activity1 = Activity.create!(
+      strava_id: 123456,
+      distance: 5000.0,
+      matched_workout_id: workout.id,
+      start_date_local: Time.current
+    )
+    
+    activity2 = Activity.create!(
+      strava_id: 789012,
+      distance: 5000.0,
+      matched_workout_id: workout.id,
+      start_date_local: Time.current
+    )
+
+    assert activity1.valid?
+    assert activity2.valid?
+    assert_equal 2, workout.matched_activities.count
+  end
 end

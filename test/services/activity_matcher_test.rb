@@ -198,6 +198,30 @@ class ActivityMatcherTest < ActiveSupport::TestCase
     assert result1[:confidence] > result2[:confidence]
   end
 
+  test "unmatch! removes matched workout from activity" do
+    workout = create_workout(distance: 5000.0, date: Date.today)
+    activity = create_activity(distance: 5000.0, date: Date.today)
+    matcher = ActivityMatcher.new(activity)
+    
+    matcher.match!
+    activity.reload
+    assert activity.matched?
+    
+    matcher.unmatch!
+    activity.reload
+    
+    assert_nil activity.matched_workout_id
+    assert_nil activity.match_confidence
+    assert_nil activity.matched_at
+  end
+
+  test "unmatch! returns false when activity is not matched" do
+    activity = create_activity(distance: 5000.0, date: Date.today)
+    matcher = ActivityMatcher.new(activity)
+    
+    assert_equal false, matcher.unmatch!
+  end
+
   private
 
   def create_workout(distance:, date:, description: "Workout", activity_type: "Run")
