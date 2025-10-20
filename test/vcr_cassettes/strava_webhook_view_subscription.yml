@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://www.strava.com/api/v3/push_subscriptions/12345?client_id=12345&client_secret=secret
+    uri: https://www.strava.com/api/v3/push_subscriptions/12345?client_id&client_secret
     body:
       encoding: UTF-8
       string: ''

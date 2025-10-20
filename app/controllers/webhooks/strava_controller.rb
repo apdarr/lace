@@ -1,6 +1,6 @@
 class Webhooks::StravaController < ApplicationController
   skip_before_action :verify_authenticity_token
-  skip_before_action :authenticate
+  skip_before_action :require_authentication
 
   # GET /webhooks/strava - Webhook verification endpoint
   # Strava sends this to verify the webhook endpoint during subscription

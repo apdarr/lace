@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_18_160700) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_20_145833) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -63,6 +63,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_160700) do
     t.string "plan_type", default: "template", null: false
     t.string "processing_status", default: "idle"
     t.string "job_id"
+    t.boolean "webhook_enabled", default: false, null: false
     t.index ["plan_type"], name: "index_plans_on_plan_type"
     t.index ["processing_status"], name: "index_plans_on_processing_status"
   end
@@ -87,6 +88,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_160700) do
     t.string "profile_picture_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "strava_webhook_subscription_id"
+    t.string "webhook_verify_token"
     t.index ["strava_id"], name: "index_users_on_strava_id", unique: true
   end
 

@@ -8,7 +8,7 @@ class ProcessStravaWebhookJobTest < ActiveJob::TestCase
   test "creates new activity on create event" do
     strava_activity_id = 12345678901
 
-    VCR.use_cassette("strava_activity_fetch") do
+    VCR.use_cassette("strava_activity_fetch_create") do
       assert_difference "Activity.count", 1 do
         ProcessStravaWebhookJob.perform_now(
           aspect_type: "create",
@@ -25,7 +25,7 @@ class ProcessStravaWebhookJobTest < ActiveJob::TestCase
   test "updates existing activity on update event" do
     existing_activity = activities(:one)
 
-    VCR.use_cassette("strava_activity_fetch") do
+    VCR.use_cassette("strava_activity_fetch_existing") do
       assert_no_difference "Activity.count" do
         ProcessStravaWebhookJob.perform_now(
           aspect_type: "update",
