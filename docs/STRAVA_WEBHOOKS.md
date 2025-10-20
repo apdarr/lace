@@ -65,7 +65,7 @@ To register a webhook subscription for a user:
 
 ```ruby
 # In a Rails console or rake task
-user = User.find_by(email: "user@example.com")
+user = User.find_by(email_address: "user@example.com")
 callback_url = "https://yourdomain.com/webhooks/strava"
 
 StravaWebhookService.create_subscription(user, callback_url)
@@ -73,9 +73,11 @@ StravaWebhookService.create_subscription(user, callback_url)
 
 **Important Notes:**
 - The callback URL must be publicly accessible via HTTPS
-- Strava will send a verification request to the callback URL
-- Each application can only have one active subscription
-- You'll need to use ngrok or similar for local development
+- Strava will send a verification request to the callback URL during subscription creation
+- **Strava API Limitation**: Each Strava application can only have ONE active webhook subscription at a time, shared across all users. This is a Strava API constraint, not an application design choice.
+- For multi-user applications, this means you should create one application-wide subscription that handles events for all users
+- The webhook endpoint identifies which user the event belongs to using the `owner_id` field (Strava athlete ID) in the webhook payload
+- You'll need to use ngrok or similar for local development testing
 
 ### 4. Webhook Endpoints
 
@@ -111,7 +113,10 @@ This endpoint receives webhook events from Strava. Event payload example:
 ### Registering a Subscription
 
 ```ruby
-user = User.first
+# Find a user to associate the subscription with
+# In a multi-user app, you can use any user or a dedicated system user
+user = User.find(1)  # Or User.find_by(strava_id: your_strava_id)
+
 callback_url = Rails.application.routes.url_helpers.webhooks_strava_url(
   host: "yourdomain.com",
   protocol: "https"
@@ -120,6 +125,8 @@ callback_url = Rails.application.routes.url_helpers.webhooks_strava_url(
 subscription_id = StravaWebhookService.create_subscription(user, callback_url)
 # => "12345"
 ```
+
+**Note**: Although the subscription is associated with a user for token storage, it handles events for all users in your application. The `owner_id` in webhook events identifies which user the activity belongs to.
 
 ### Viewing Subscriptions
 
@@ -136,9 +143,14 @@ subscription = StravaWebhookService.view_subscription("12345")
 ### Deleting a Subscription
 
 ```ruby
-user = User.find_by(strava_webhook_subscription_id: "12345")
+# Find the user who owns the subscription (has the subscription_id stored)
+user = User.find_by.not(strava_webhook_subscription_id: nil).first
+# Or if you know the user ID: User.find(1)
+
 StravaWebhookService.delete_subscription(user)
 ```
+
+**Note**: Because Strava only allows one subscription per application, deleting it will stop webhook events for all users. Make sure you intend to disable webhooks entirely before deleting.
 
 ## Event Processing
 
