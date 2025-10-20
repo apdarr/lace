@@ -1,9 +1,38 @@
----
-description: 'Ruby on Rails coding conventions and guidelines'
-applyTo: '**/*.rb'
----
+# The Big Picture
 
-# Ruby on Rails
+This is a Ruby on Rails application, using Hotwire for front-end interactivity. The app is intended to be a training companion for runners as they follow a training plan for a race. Here's how the app works currently: 
+
+## Current State of Lace
+
+- Users sign in and sign up through Strava OAuth. 
+- Once signed in, users can create a training plan by: 
+  - Setting a future race date. 
+  - Desired length of plan. 
+  - Upload photos of their training plan. For example, if their training plan came from a book, they'd simply take a photo of the plan and upload it to the app. 
+  - The app will then use OpenAI with `gpt-5-mini` and vision capabilities to parse the workouts and automatically add dates and details to each workout.
+  - Users can then drag and drop workouts to different dates if they need to adjust their plan.
+  - Users can edit workouts details. 
+- Users can also import their Strava activities in one giant import. 
+  - Athletes can then search through past import activities using semantic search.
+
+## Future State and Plans
+
+- Instead of importing all Strava activities, we rely on a webhook to automatically sync new activities as they are created on Strava.
+  - The app will attempt to match new Strava activities to existing workouts in the user's plan based on date, distance, and description in the activity and the Strava activity. 
+  - Users can link unmatched activities to existing workouts in their plan. They can also unlink matched activities.
+- Calendar integration with Google Calendar. When the plan creates, users can chose to sync their plan to Google Calendar, to a particular calendar they've created (i.e. if they have a shared calendar with their spouse).
+  - Moving a date in Lace will update the event in Google Calendar.
+- UI polish and improvements. 
+  - More responsive design for mobile users.
+    - The viewport will adjust based on screen size. Right now the viewport "jumps" as users scroll left and right on smaller screens.
+  - Better responsiveness.
+  - Improved accessibility.
+- Profiles
+  - Users can set past races. On their profile screen, they'll have "badges". Most likely these badges will be stylized Tailwind circle icon, hopefully with some animation and / or gradient effect that roughly matches the color scheme of the race's logo. 
+    - Maybe there's a way to intellligently pull race's color schemes from their websites. 
+  - Eventually, investigate exploring social features, where users can share training plans with each others, follow each other, finding others running the same race and goal times, etc. 
+
+# Ruby on Rails Coding Conventions and Guidelines
 
 ## General Guidelines
 
