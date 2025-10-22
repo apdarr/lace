@@ -27,13 +27,13 @@ http_interactions:
       Date:
       - Wed, 22 Oct 2025 20:37:50 GMT
       X-Envoy-Upstream-Service-Time:
-      - '36'
+      - '31'
       Server:
       - istio-envoy
       Status:
       - 200 OK
       X-Ratelimit-Usage:
-      - '1,1'
+      - '2,2'
       X-Ratelimit-Limit:
       - '200,2000'
       Vary:
@@ -47,7 +47,7 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       X-Request-Id:
-      - 978b69c4-cc89-4ca0-989e-51165d4daf61
+      - a43258c1-e580-44bd-a8c5-6d048b503a26
       X-Readratelimit-Limit:
       - '100,1000'
       X-Download-Options:
@@ -57,17 +57,17 @@ http_interactions:
       X-Frame-Options:
       - DENY
       X-Readratelimit-Usage:
-      - '1,1'
+      - '2,2'
       X-Content-Type-Options:
       - nosniff
       X-Cache:
       - Miss from cloudfront
       Via:
-      - 1.1 d7cd7bbb5e691f063a58871257c8120e.cloudfront.net (CloudFront)
+      - 1.1 748bf2e250893e1ba5433de84d1e52d4.cloudfront.net (CloudFront)
       X-Amz-Cf-Pop:
       - ORD58-P4
       X-Amz-Cf-Id:
-      - XsDeghA1BtIJtZ1L-_uT6AJAJgdJjX9leW2qmN4mqpO_850dhRIgJg==
+      - AOm7_vGtkLYof0ezsSC2Pcd7e05QsZ27gpJRT-d8xAaUJQ2YDlxZhg==
     body:
       encoding: ASCII-8BIT
       string: '[{"id":310806,"resource_state":2,"application_id":<STRAVA_CLIENT_ID>,"callback_url":"https://4eaab962dc06.ngrok-free.app/webhooks/strava","created_at":"2025-10-20T21:45:25+00:00","updated_at":"2025-10-20T21:45:25+00:00"}]'

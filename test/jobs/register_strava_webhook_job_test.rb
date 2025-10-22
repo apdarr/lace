@@ -3,7 +3,8 @@ require "test_helper"
 class RegisterStravaWebhookJobTest < ActiveJob::TestCase
   setup do
     @user = users(:one)
-    @callback_url = "https://example.com/webhooks/strava"
+    # Use ngrok URL for webhook verification - this is accessible by Strava for verification
+    @callback_url = "https://4eaab962dc06.ngrok-free.app/webhooks/strava"
   end
 
   test "registers webhook subscription successfully" do

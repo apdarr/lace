@@ -35,11 +35,14 @@ class DeleteStravaWebhookJobTest < ActiveJob::TestCase
     assert_nil @user.strava_webhook_subscription_id
   end
 
-  test "raises error on deletion failure" do
+  test "clears subscription ID even when subscription not found" do
+    @user.update(strava_webhook_subscription_id: "12345")
+
     VCR.use_cassette("strava_webhook_delete_failure") do
-      assert_raises(DeleteStravaWebhookJob::SubscriptionError) do
-        DeleteStravaWebhookJob.perform_now(@user.id)
-      end
+      DeleteStravaWebhookJob.perform_now(@user.id)
+
+      @user.reload
+      assert_nil @user.strava_webhook_subscription_id
     end
   end
 end

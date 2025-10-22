@@ -1,22 +1,24 @@
 ---
 http_interactions:
 - request:
-    method: get
-    uri: https://www.strava.com/api/v3/push_subscriptions?client_id=<STRAVA_CLIENT_ID>&client_secret=<STRAVA_CLIENT_SECRET>
+    method: post
+    uri: https://www.strava.com/api/v3/push_subscriptions
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: callback_url=invalid_url&client_id=<STRAVA_CLIENT_ID>&client_secret=<STRAVA_CLIENT_SECRET>&verify_token=lace_strava_webhook
     headers:
       Accept:
       - application/json; charset=utf-8
       User-Agent:
       - Strava Ruby Client/2.2.0
+      Content-Type:
+      - application/x-www-form-urlencoded
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
   response:
     status:
-      code: 200
-      message: OK
+      code: 400
+      message: Bad Request
     headers:
       Content-Type:
       - application/json; charset=utf-8
@@ -25,21 +27,21 @@ http_interactions:
       Connection:
       - keep-alive
       Date:
-      - Wed, 22 Oct 2025 20:37:50 GMT
+      - Mon, 20 Oct 2025 21:44:22 GMT
       X-Envoy-Upstream-Service-Time:
-      - '36'
+      - '38'
       Server:
       - istio-envoy
       Status:
-      - 200 OK
+      - 400 Bad Request
       X-Ratelimit-Usage:
-      - '1,1'
+      - '8,23'
       X-Ratelimit-Limit:
       - '200,2000'
       Vary:
       - Accept, Origin
       Cache-Control:
-      - max-age=0, private, must-revalidate
+      - no-cache
       Referrer-Policy:
       - strict-origin-when-cross-origin
       X-Permitted-Cross-Domain-Policies:
@@ -47,29 +49,27 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       X-Request-Id:
-      - 978b69c4-cc89-4ca0-989e-51165d4daf61
+      - bebfe937-9273-42b4-8442-7da1965c8131
       X-Readratelimit-Limit:
       - '100,1000'
       X-Download-Options:
       - noopen
-      Etag:
-      - W/"57a783efff32988336c598713ef6839b"
       X-Frame-Options:
       - DENY
       X-Readratelimit-Usage:
-      - '1,1'
+      - '8,23'
       X-Content-Type-Options:
       - nosniff
       X-Cache:
-      - Miss from cloudfront
+      - Error from cloudfront
       Via:
-      - 1.1 d7cd7bbb5e691f063a58871257c8120e.cloudfront.net (CloudFront)
+      - 1.1 f449f4ea60d8c122ba96a995290f8ec0.cloudfront.net (CloudFront)
       X-Amz-Cf-Pop:
       - ORD58-P4
       X-Amz-Cf-Id:
-      - XsDeghA1BtIJtZ1L-_uT6AJAJgdJjX9leW2qmN4mqpO_850dhRIgJg==
+      - NznQc2spMGiRIahkkNkiRpxIhoL98Jbsa7H5n99S7z5S6XI782EXIg==
     body:
-      encoding: ASCII-8BIT
-      string: '[{"id":310806,"resource_state":2,"application_id":<STRAVA_CLIENT_ID>,"callback_url":"https://4eaab962dc06.ngrok-free.app/webhooks/strava","created_at":"2025-10-20T21:45:25+00:00","updated_at":"2025-10-20T21:45:25+00:00"}]'
-  recorded_at: Wed, 22 Oct 2025 20:37:50 GMT
+      encoding: UTF-8
+      string: '{"message":"Bad Request","errors":[{"resource":"PushSubscription","field":"bad","code":"request"}]}'
+  recorded_at: Mon, 20 Oct 2025 21:44:22 GMT
 recorded_with: VCR 6.3.1
