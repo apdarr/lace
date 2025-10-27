@@ -6,6 +6,7 @@ class AllActivityJobTest < ActiveJob::TestCase
   # end
 
   test "should fetch and save activities" do
+    StravaActivity.delete_all
     Activity.delete_all
     VCR.use_cassette("all_activity_job") do
       AllActivityJob.perform_now

@@ -18,11 +18,12 @@ class MatchStravaActivityJobTest < ActiveJob::TestCase
 
   test "finds matching workout by date" do
     strava_activity = strava_activities(:one)
-    plan = plans(:one) || create_plan(@user)
+    plan = plans(:one)
 
     # Create an activity in the plan on the same date
-    matching_activity = activities.create!(
+    matching_activity = Activity.create!(
       plan_id: plan.id,
+      user: plan.user,
       start_date_local: strava_activity.start_date_local,
       distance: strava_activity.distance,
       activity_type: strava_activity.activity_type
@@ -39,19 +40,25 @@ class MatchStravaActivityJobTest < ActiveJob::TestCase
     strava_activity = strava_activities(:one)
     strava_activity.update(distance: 5000.0, start_date_local: Time.current)
 
-    # This test validates the scoring logic without requiring fixtures
-    job = MatchStravaActivityJob.new
+    plan = plans(:one)
 
-    # Create a matching workout
-    mock_activity = OpenStruct.new(
-      distance: 5050.0,  # 1% off
+    # Create a real activity with similar distance (1% difference)
+    matching_activity = Activity.create!(
+      plan_id: plan.id,
+      user: plan.user,
+      distance: 5050.0,
       start_date_local: Time.current,
       activity_type: strava_activity.activity_type,
       description: ""
     )
 
-    score = job.send(:calculate_match_score, mock_activity, strava_activity)
-    assert score > 0.6  # Should exceed threshold
+    # Run the full job
+    MatchStravaActivityJob.perform_now(strava_activity.id)
+
+    # Verify it matched
+    strava_activity.reload
+    assert_equal "matched", strava_activity.match_status
+    assert_equal matching_activity.id, strava_activity.activity_id
   end
 
   test "prioritizes closest matches by score" do

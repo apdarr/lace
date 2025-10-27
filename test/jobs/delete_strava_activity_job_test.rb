@@ -21,8 +21,20 @@ class DeleteStravaActivityJobTest < ActiveJob::TestCase
   end
 
   test "only deletes activity for correct user" do
-    other_user = users(:two) || create_user
-    other_strava_activity = strava_activities(:two) || create_strava_activity(other_user)
+    # Create a second user and strava activity
+    other_user = User.create!(
+      email_address: "other@example.com",
+      firstname: "Other",
+      lastname: "User",
+      strava_id: 999999
+    )
+    other_strava_activity = StravaActivity.create!(
+      user: other_user,
+      strava_id: 999999999,
+      strava_athlete_id: 999999,
+      activity_type: "Run",
+      distance: 5000.0
+    )
 
     assert_no_difference "StravaActivity.count" do
       DeleteStravaActivityJob.perform_now(@user.id, other_strava_activity.strava_id)

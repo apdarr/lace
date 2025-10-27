@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_20_150000) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_22_210732) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -53,6 +53,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_20_150000) do
     t.datetime "start_date_local"
     t.binary "embedding"
     t.integer "plan_id"
+    t.integer "user_id"
+    t.index ["user_id"], name: "index_activities_on_user_id"
   end
 
   create_table "plans", force: :cascade do |t|
@@ -64,8 +66,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_20_150000) do
     t.string "processing_status", default: "idle"
     t.string "job_id"
     t.boolean "webhook_enabled", default: false, null: false
+    t.integer "user_id"
     t.index ["plan_type"], name: "index_plans_on_plan_type"
     t.index ["processing_status"], name: "index_plans_on_processing_status"
+    t.index ["user_id"], name: "index_plans_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -113,6 +117,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_20_150000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "activities", "users"
+  add_foreign_key "plans", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "strava_activities", "activities"
   add_foreign_key "strava_activities", "users"

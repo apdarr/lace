@@ -29,10 +29,7 @@ class MatchStravaActivityJob < ApplicationJob
   private
 
   def find_matching_workouts(user, strava_activity)
-    # Get all activities from user's plans
-    user_plan_activities = Activity.joins(:plan)
-                                    .where(plans: { user_id: user.id })
-                                    .where("start_date_local IS NOT NULL")
+    user_plan_activities = user.activities.where("start_date_local IS NOT NULL")
 
     matches = []
 
@@ -95,7 +92,15 @@ class MatchStravaActivityJob < ApplicationJob
 
   def calculate_description_similarity(planned_activity, strava_activity)
     planned_desc = (planned_activity.description || "").downcase.strip
-    strava_desc = (strava_activity.webhook_payload&.dig("description") || "").downcase.strip
+
+    # Handle webhook_payload that might be a string or hash
+    webhook_payload = strava_activity.webhook_payload
+    strava_payload_data = if webhook_payload.is_a?(String)
+                             JSON.parse(webhook_payload) rescue {}
+    else
+                             webhook_payload || {}
+    end
+    strava_desc = (strava_payload_data["description"] || "").downcase.strip
 
     return 0.0 if planned_desc.empty? && strava_desc.empty?
     return 0.0 if planned_desc.empty? || strava_desc.empty?

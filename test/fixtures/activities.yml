@@ -1,5 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 one: 
+  id: 1
+  user_id: 1
   distance: 6085.5
   elapsed_time: 2102
   activity_type: "Run"
@@ -11,6 +13,8 @@ one:
   start_date_local: 2021-11-06 13:40:37.000000000 +0000
 
 two:
+  id: 2
+  user_id: 1
   distance: 9694.5
   elapsed_time: 3516
   activity_type: "Run"
@@ -22,6 +26,8 @@ two:
   start_date_local: 2022-07-17 12:29:29.000000000 +0000
 
 three:
+  id: 3
+  user_id: 1
   distance: 140.9
   elapsed_time: 49
   activity_type: "Run"
@@ -33,6 +39,8 @@ three:
   start_date_local: 2023-05-10 11:26:01.000000000 +0000
 
 four:
+  id: 4
+  user_id: 1
   distance: 17726.2
   elapsed_time: 6176
   activity_type: "Run"
@@ -44,6 +52,8 @@ four:
   start_date_local: 2021-08-12 14:51:23.000000000 +0000
 
 five:
+  id: 5
+  user_id: 1
   distance: 21198.5
   elapsed_time: 8446
   activity_type: "Run"
