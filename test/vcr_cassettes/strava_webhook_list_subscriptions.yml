@@ -1,0 +1,75 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://www.strava.com/api/v3/push_subscriptions?client_id=<STRAVA_CLIENT_ID>&client_secret=<STRAVA_CLIENT_SECRET>
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Strava Ruby Client/2.2.0
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 22 Oct 2025 20:37:50 GMT
+      X-Envoy-Upstream-Service-Time:
+      - '36'
+      Server:
+      - istio-envoy
+      Status:
+      - 200 OK
+      X-Ratelimit-Usage:
+      - '1,1'
+      X-Ratelimit-Limit:
+      - '200,2000'
+      Vary:
+      - Accept, Origin
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Request-Id:
+      - 978b69c4-cc89-4ca0-989e-51165d4daf61
+      X-Readratelimit-Limit:
+      - '100,1000'
+      X-Download-Options:
+      - noopen
+      Etag:
+      - W/"57a783efff32988336c598713ef6839b"
+      X-Frame-Options:
+      - DENY
+      X-Readratelimit-Usage:
+      - '1,1'
+      X-Content-Type-Options:
+      - nosniff
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 d7cd7bbb5e691f063a58871257c8120e.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - ORD58-P4
+      X-Amz-Cf-Id:
+      - XsDeghA1BtIJtZ1L-_uT6AJAJgdJjX9leW2qmN4mqpO_850dhRIgJg==
+    body:
+      encoding: ASCII-8BIT
+      string: '[{"id":310806,"resource_state":2,"application_id":<STRAVA_CLIENT_ID>,"callback_url":"https://4eaab962dc06.ngrok-free.app/webhooks/strava","created_at":"2025-10-20T21:45:25+00:00","updated_at":"2025-10-20T21:45:25+00:00"}]'
+  recorded_at: Wed, 22 Oct 2025 20:37:50 GMT
+recorded_with: VCR 6.3.1

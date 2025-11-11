@@ -1,5 +1,8 @@
 class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
+  has_many :strava_activities, dependent: :destroy
+  has_many :activities, dependent: :destroy
+  has_many :plans, dependent: :destroy
 
   def self.find_or_create_from_strava(auth)
     user = find_by(strava_id: auth.uid)
