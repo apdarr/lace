@@ -2,7 +2,7 @@ require "test_helper"
 
 class Webhooks::StravaControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @verify_token = "lace_strava_webhook"
+    @verify_token = ENV["STRAVA_WEBHOOK_VERIFY_TOKEN"].presence || "lace_strava_webhook"
     @valid_challenge = "test_challenge_token"
   end
 
