@@ -31,8 +31,8 @@ class DeleteStravaWebhookJob < ApplicationJob
 
   def build_webhooks_client
     Strava::Webhooks::Client.new(
-      client_id: Rails.application.credentials.dig(:strava, :client_id),
-      client_secret: Rails.application.credentials.dig(:strava, :client_secret)
+      client_id: ENV["STRAVA_CLIENT_ID"].presence || Rails.application.credentials.dig(:strava, :client_id),
+      client_secret: ENV["STRAVA_CLIENT_SECRET"].presence || Rails.application.credentials.dig(:strava, :client_secret)
     )
   end
 end
