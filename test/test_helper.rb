@@ -61,12 +61,11 @@ VCR.configure do |config|
   end
 
   # Filter Strava credentials from cassettes
-  # Try ENV first (for CI), then fall back to credentials (for local dev)
   config.filter_sensitive_data("<STRAVA_CLIENT_ID>") do |interaction|
-    ENV["STRAVA_CLIENT_ID"].presence || Rails.application.credentials.dig(:strava, :client_id)&.to_s
+    Rails.application.credentials.dig(:strava, :client_id)&.to_s
   end
 
   config.filter_sensitive_data("<STRAVA_CLIENT_SECRET>") do |interaction|
-    ENV["STRAVA_CLIENT_SECRET"].presence || Rails.application.credentials.dig(:strava, :client_secret)&.to_s
+    Rails.application.credentials.dig(:strava, :client_secret)&.to_s
   end
 end

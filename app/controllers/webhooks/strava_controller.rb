@@ -1,5 +1,10 @@
 class Webhooks::StravaController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:verify, :event]
+  # CSRF protection must be disabled for webhook endpoints because external services
+  # (Strava) cannot obtain Rails CSRF tokens. Security is maintained through:
+  # 1. Verify token validation in the verify endpoint
+  # 2. Owner ID validation in the event endpoint (matches against known Strava user IDs)
+  # 3. Webhook subscriptions are created by authenticated users only
+  skip_before_action :verify_authenticity_token, only: [ :verify, :event ]
   skip_before_action :require_authentication
 
   # GET /webhooks/strava - Webhook verification endpoint
@@ -47,7 +52,7 @@ class Webhooks::StravaController < ApplicationController
   private
 
   def webhook_verify_token
-    # Use a consistent verify token from environment or generate one
-    ENV["STRAVA_WEBHOOK_VERIFY_TOKEN"] || Rails.application.credentials.dig(:strava, :webhook_verify_token) || "lace_strava_webhook"
+    # Use a consistent verify token from credentials or default
+    Rails.application.credentials.dig(:strava, :webhook_verify_token) || "lace_strava_webhook"
   end
 end

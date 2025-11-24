@@ -29,12 +29,12 @@ class RegisterStravaWebhookJob < ApplicationJob
 
   def build_webhooks_client
     Strava::Webhooks::Client.new(
-      client_id: ENV["STRAVA_CLIENT_ID"].presence || Rails.application.credentials.dig(:strava, :client_id),
-      client_secret: ENV["STRAVA_CLIENT_SECRET"].presence || Rails.application.credentials.dig(:strava, :client_secret)
+      client_id: Rails.application.credentials.dig(:strava, :client_id),
+      client_secret: Rails.application.credentials.dig(:strava, :client_secret)
     )
   end
 
   def webhook_verify_token
-    ENV["STRAVA_WEBHOOK_VERIFY_TOKEN"] || Rails.application.credentials.dig(:strava, :webhook_verify_token) || "lace_strava_webhook"
+    Rails.application.credentials.dig(:strava, :webhook_verify_token) || "lace_strava_webhook"
   end
 end
