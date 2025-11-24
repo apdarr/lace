@@ -2,10 +2,12 @@ require "test_helper"
 
 class PlanPhotoProcessorJobTest < ActiveJob::TestCase
   def setup
+    user = users(:one)
     @plan = Plan.create!(
       length: 12,
       race_date: 3.months.from_now,
-      plan_type: "custom"
+      plan_type: "custom",
+      user: user
     )
 
     # Use actual HEIC files from test/images directory
@@ -43,7 +45,8 @@ class PlanPhotoProcessorJobTest < ActiveJob::TestCase
     plan_without_photos = Plan.create!(
       length: 12,
       race_date: 3.months.from_now,
-      plan_type: "custom"
+      plan_type: "custom",
+      user: users(:one)
     )
 
     # Should not raise any errors and should exit early
@@ -118,7 +121,8 @@ class PlanPhotoProcessorJobTest < ActiveJob::TestCase
     plan = Plan.create!(
       length: 4,
       race_date: 2.months.from_now,
-      plan_type: "custom"
+      plan_type: "custom",
+      user: users(:one)
     )
 
     # Attach the real test images from test/images directory

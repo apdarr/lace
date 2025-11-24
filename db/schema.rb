@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_18_160700) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_22_210732) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -53,6 +53,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_160700) do
     t.datetime "start_date_local"
     t.binary "embedding"
     t.integer "plan_id"
+    t.integer "user_id"
+    t.index ["user_id"], name: "index_activities_on_user_id"
   end
 
   create_table "plans", force: :cascade do |t|
@@ -63,8 +65,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_160700) do
     t.string "plan_type", default: "template", null: false
     t.string "processing_status", default: "idle"
     t.string "job_id"
+    t.boolean "webhook_enabled", default: false, null: false
+    t.integer "user_id"
     t.index ["plan_type"], name: "index_plans_on_plan_type"
     t.index ["processing_status"], name: "index_plans_on_processing_status"
+    t.index ["user_id"], name: "index_plans_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -74,6 +79,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_160700) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "strava_activities", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "strava_id", null: false
+    t.integer "strava_athlete_id", null: false
+    t.string "activity_type"
+    t.float "distance"
+    t.datetime "start_date_local"
+    t.json "webhook_payload"
+    t.string "match_status", default: "unmatched", null: false
+    t.integer "activity_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activity_id"], name: "index_strava_activities_on_activity_id"
+    t.index ["user_id", "match_status"], name: "index_strava_activities_on_user_id_and_match_status"
+    t.index ["user_id", "strava_id"], name: "index_strava_activities_on_user_id_and_strava_id", unique: true
+    t.index ["user_id"], name: "index_strava_activities_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -87,10 +110,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_160700) do
     t.string "profile_picture_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "strava_webhook_subscription_id"
+    t.string "webhook_verify_token"
     t.index ["strava_id"], name: "index_users_on_strava_id", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "activities", "users"
+  add_foreign_key "plans", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "strava_activities", "activities"
+  add_foreign_key "strava_activities", "users"
 end

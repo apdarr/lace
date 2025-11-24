@@ -125,8 +125,8 @@ class PlanPhotoProcessorJob < ApplicationJob
       week["days"].each do |day|
         distance_val = day["distance"].to_f
         description_val = day["description"].presence || "Workout"
-        Activity.create(
-          plan_id: plan.id,
+        plan.activities.create(
+          user: plan.user,
           distance: distance_val,
           description: description_val,
           start_date_local: current_date

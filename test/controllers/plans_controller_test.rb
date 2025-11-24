@@ -46,15 +46,15 @@ class PlansControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get edit_workouts for custom plan" do
-    custom_plan = Plan.create!(length: 12, race_date: @race_date, plan_type: "custom")
+    custom_plan = Plan.create!(length: 12, race_date: @race_date, plan_type: "custom", user: @user)
     get edit_workouts_plan_url(custom_plan)
     assert_response :success
   end
 
   test "should update workouts" do
     # Always set race date in the future for tests
-    plan = Plan.create!(length: 12, race_date: @race_date, plan_type: "custom")
-    activity = Activity.create!(plan: plan, distance: 5.0, description: "Test run", start_date_local: Time.current)
+    plan = Plan.create!(length: 12, race_date: @race_date, plan_type: "custom", user: @user)
+    activity = Activity.create!(plan: plan, user: @user, distance: 5.0, description: "Test run", start_date_local: Time.current)
 
     patch update_workouts_plan_url(plan), params: {
       activities: {

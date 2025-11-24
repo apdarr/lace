@@ -59,4 +59,13 @@ VCR.configure do |config|
       end
     end
   end
+
+  # Filter Strava credentials from cassettes
+  config.filter_sensitive_data("<STRAVA_CLIENT_ID>") do |interaction|
+    Rails.application.credentials.dig(:strava, :client_id)&.to_s
+  end
+
+  config.filter_sensitive_data("<STRAVA_CLIENT_SECRET>") do |interaction|
+    Rails.application.credentials.dig(:strava, :client_secret)&.to_s
+  end
 end

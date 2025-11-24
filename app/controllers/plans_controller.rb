@@ -12,7 +12,7 @@ class PlansController < ApplicationController
 
   # GET /plans/new
   def new
-    @plan = Plan.new
+    @plan = Current.user.plans.build
   end
 
   # GET /plans/1/edit_workouts
@@ -55,7 +55,7 @@ class PlansController < ApplicationController
 
   # POST /plans or /plans.json
   def create
-    @plan = Plan.new(plan_params)
+    @plan = Current.user.plans.build(plan_params)
 
     respond_to do |format|
       if @plan.save
@@ -122,8 +122,8 @@ class PlansController < ApplicationController
       start_date = (@plan.race_date - @plan.length.weeks).beginning_of_week(:monday)
 
       (@plan.length * 7).times do |day_index|
-        Activity.create!(
-          plan_id: @plan.id,
+        @plan.activities.create!(
+          user: @plan.user,
           distance: 0.0,
           description: "Rest day",
           start_date_local: start_date + day_index.days

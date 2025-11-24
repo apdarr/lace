@@ -7,6 +7,8 @@ class Plan < ApplicationRecord
   has_many :activities, dependent: :destroy
   has_many_attached :photos
 
+  belongs_to :user
+
   validates :length, presence: true, numericality: { greater_than: 0 }
   validates :race_date, presence: true
   validate :race_date_in_future
