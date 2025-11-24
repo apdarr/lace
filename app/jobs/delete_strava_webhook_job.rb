@@ -17,7 +17,7 @@ class DeleteStravaWebhookJob < ApplicationJob
     # Clear subscription ID from user
     user.update!(strava_webhook_subscription_id: nil)
     Rails.logger.info "Strava webhook subscription deleted: #{subscription_id}"
-  rescue Faraday::ResourceNotFound => e
+  rescue Faraday::ResourceNotFound
     # Handle case where subscription was already deleted on Strava side
     user.update!(strava_webhook_subscription_id: nil)
     Rails.logger.info "Strava webhook subscription already deleted or not found: #{subscription_id}"
