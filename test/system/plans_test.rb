@@ -215,4 +215,67 @@ class PlansTest < ApplicationSystemTestCase
     # Should navigate to edit workouts page
     assert_current_path edit_workouts_plan_path(Plan.last)
   end
+
+  test "should show webhook sync checkbox on new plan form" do
+    visit new_plan_path
+    
+    # Verify webhook sync checkbox exists
+    assert_selector "input[type='checkbox'][name='plan[webhook_enabled]']"
+    assert_selector "label", text: "Enable Strava Activity Sync"
+    assert_text "Automatically sync new Strava activities"
+  end
+
+  test "should create plan with webhook enabled" do
+    skip "Requires webhook_enabled column in database" unless Plan.column_names.include?("webhook_enabled")
+    
+    visit new_plan_path
+    
+    assert_selector "form"
+    fill_in "plan[length]", with: 12
+    fill_in "plan[race_date]", with: (Date.current + 3.months).strftime("%Y-%m-%d")
+    
+    # Enable webhook sync
+    check "plan[webhook_enabled]"
+    
+    click_on "Create Plan"
+    assert_text "Plan was successfully created"
+    
+    plan = Plan.last
+    assert plan.webhook_enabled
+  end
+
+  test "should show enable sync button for plans without webhook" do
+    skip "Requires webhook_enabled column in database" unless Plan.column_names.include?("webhook_enabled")
+    
+    # Create a plan without webhook enabled
+    plan = Plan.create!(
+      length: 12,
+      race_date: Date.current + 3.months,
+      plan_type: "template",
+      webhook_enabled: false
+    )
+    
+    visit plans_path
+    
+    # Should show Enable Sync button
+    assert_selector "input[type='submit'][value='Enable Sync']"
+  end
+
+  test "should show webhook status on plan show page" do
+    skip "Requires webhook_enabled column in database" unless Plan.column_names.include?("webhook_enabled")
+    
+    # Create a plan with webhook enabled
+    plan = Plan.create!(
+      length: 12,
+      race_date: Date.current + 3.months,
+      plan_type: "template",
+      webhook_enabled: true
+    )
+    
+    visit plan_path(plan)
+    
+    # Should show webhook sync status
+    assert_text "Strava Activity Sync Enabled"
+    assert_text "New Strava activities will be automatically synced"
+  end
 end

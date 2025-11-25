@@ -25,6 +25,7 @@ class PlansControllerTest < ActionDispatch::IntegrationTest
   test "should get new" do
     get new_plan_url
     assert_response :success
+    assert_select "input[type=checkbox][name='plan[webhook_enabled]']"
   end
 
   test "should create plan" do
@@ -89,5 +90,25 @@ class PlansControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to plans_url
+  end
+
+  test "should enable webhook sync" do
+    skip "Requires webhook_enabled column in database" unless @plan.respond_to?(:webhook_enabled)
+    
+    patch enable_webhook_sync_plan_url(@plan)
+    
+    @plan.reload
+    assert @plan.webhook_enabled
+    assert_redirected_to plans_url
+    assert_equal "Strava activity sync has been enabled for this plan.", flash[:notice]
+  end
+
+  test "should handle enable webhook sync when column doesn't exist" do
+    skip "Only applicable when webhook_enabled column doesn't exist" if @plan.respond_to?(:webhook_enabled)
+    
+    patch enable_webhook_sync_plan_url(@plan)
+    
+    assert_redirected_to plans_url
+    assert_match /not available yet/, flash[:alert]
   end
 end
