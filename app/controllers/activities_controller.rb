@@ -20,8 +20,10 @@ class ActivitiesController < ApplicationController
   # GET /activities/new
   def new
     @activity = Activity.new
-    # If creating from plan with specific date, pre-populate
+    # If creating from plan with specific date, pre-populate Activity records
     if params[:plan_id].present? && params[:date].present?
+      # And provide the plan object for easy navigation back to the plan from views
+      @plan = Plan.find(params[:plan_id])
       @activity.plan_id = params[:plan_id]
       @activity.start_date_local = Date.parse(params[:date])
     end
