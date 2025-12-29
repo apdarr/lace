@@ -9,6 +9,7 @@ class StravaWebhookService
   # Automatically deletes any existing subscription first (Strava only allows one per app)
   def self.create_subscription(user, callback_url)
     # First, delete any existing subscription for the application
+    # TODO create an integration test that walks through creating a new test subscription, with a VCR cassette, and validates creds
     delete_existing_subscription
 
     RegisterStravaWebhookJob.perform_now(user.id, callback_url)
