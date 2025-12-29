@@ -57,4 +57,15 @@ Rails.application.configure do
 
   # Allow localhost, 127.0.0.1, www.example.com and ngrok URL for tests
   config.hosts = [ "localhost", "127.0.0.1", "::1", "www.example.com", "example.com", "4eaab962dc06.ngrok-free.app" ]
+
+  # Add ngrok hosts if present in credentials
+  ngrok_url = Rails.application.credentials.dig(:ngrok, :url)
+  if ngrok_url.present?
+    begin
+      ngrok_host = URI(ngrok_url).host
+      config.hosts << ngrok_host if ngrok_host.present?
+    rescue URI::InvalidURIError
+      # Ignore invalid ngrok URL
+    end
+  end
 end

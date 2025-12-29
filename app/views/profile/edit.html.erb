@@ -1,0 +1,42 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <% if alert = flash[:alert] %>
+    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
+  <% end %>
+
+  <% if notice = flash[:notice] %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl border border-slate-200 overflow-hidden shadow-sm mb-8">
+    <div class="bg-gradient-to-r from-blue-100 to-indigo-100 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">Profile Settings</h1>
+        <p class="text-slate-600 mt-1">Manage Strava live sync for new activities</p>
+      </div>
+      <%= link_to "← Back to profile", profile_path, class: "text-sm text-indigo-700 hover:text-indigo-900 font-medium" %>
+    </div>
+
+    <div class="p-6">
+      <%= form_with url: profile_path, method: :patch, scope: :profile_settings, local: true do |form| %>
+        <div class="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+          <div>
+            <h2 class="text-lg font-semibold text-slate-800 flex items-center">
+              <span class="text-xl mr-2">⚙️</span>
+              Strava live sync (webhooks)
+            </h2>
+            <p class="text-sm text-slate-600 mt-1">When enabled, new Strava activities will sync automatically and attempt to match your planned workouts.</p>
+          </div>
+          <div class="ml-4 flex items-center space-x-2">
+            <span class="text-sm text-slate-600"><%= @user.strava_webhook_subscription_id.present? ? "On" : "Off" %></span>
+            <%= form.check_box :enable_strava_webhooks, { checked: @user.strava_webhook_subscription_id.present?, class: "h-5 w-5 text-indigo-600 rounded border-slate-300" }, "1", "0" %>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center space-x-3">
+          <%= form.submit "Save settings", class: "inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm" %>
+          <%= link_to "Cancel", profile_path, class: "text-sm text-slate-600 hover:text-slate-800" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
