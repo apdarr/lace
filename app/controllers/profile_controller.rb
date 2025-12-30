@@ -34,13 +34,26 @@ class ProfileController < ApplicationController
   end
 
   def strava_webhook_callback_url
-    ngrok_url = Rails.application.credentials.dig(:ngrok, :url)
-    return "#{ngrok_url}/webhooks/strava" if ngrok_url.present?
+    url = if Rails.env.production?
+      # Production: Use configured host from action_mailer settings
+      url_options = Rails.application.config.action_mailer.default_url_options
+      raise StravaWebhookService::SubscriptionError, "Webhook host not configured in production" if url_options[:host].blank?
 
-    default_options = Rails.application.config.action_mailer.default_url_options || {}
-    host = default_options[:host] || "localhost"
-    port = default_options[:port]
+      Rails.application.routes.url_helpers.webhooks_strava_url(
+        host: url_options[:host],
+        protocol: url_options[:protocol] || "https"
+      )
+    else
+      # Development/test: Try ngrok first, fall back to localhost
+      ngrok_url = Rails.application.credentials.dig(:ngrok, :url)
+      if ngrok_url.present?
+        "#{ngrok_url}/webhooks/strava"
+      else
+        Rails.application.routes.url_helpers.webhooks_strava_url(host: "localhost", port: 3000)
+      end
+    end
 
-    Rails.application.routes.url_helpers.webhooks_strava_url(host: host, port: port)
+    Rails.logger.info("Strava webhook callback URL: #{url}")
+    url
   end
 end
