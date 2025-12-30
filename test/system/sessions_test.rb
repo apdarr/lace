@@ -30,7 +30,7 @@ class SessionsTest < ApplicationSystemTestCase
 
   test "visit the login page" do
     visit new_session_path
-    assert_selector "h1", text: "Welcome to lace.club"
+    assert_selector "h1", text: "Welcome to Lace"
     assert_button "Continue with Strava"
   end
 
