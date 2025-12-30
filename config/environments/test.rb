@@ -56,7 +56,7 @@ Rails.application.configure do
   config.action_controller.raise_on_missing_callback_actions = true
 
   # Allow localhost, 127.0.0.1, www.example.com and ngrok URL for tests
-  config.hosts = [ "localhost", "127.0.0.1", "::1", "www.example.com", "example.com", "4eaab962dc06.ngrok-free.app" ]
+  config.hosts = [ "localhost", "127.0.0.1", "::1", "www.example.com", "example.com" ]
 
   # Add ngrok hosts if present in credentials
   ngrok_url = Rails.application.credentials.dig(:ngrok, :url)

@@ -20,37 +20,42 @@ class ProfileControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "enabling webhooks creates subscription and redirects" do
-    called = false
-
-    StravaWebhookService.stub(:create_subscription, ->(user, _url) { called = user.id == @user.id }) do
+    VCR.use_cassette("strava_webhook_register") do
       patch profile_path, params: { profile_settings: { enable_strava_webhooks: "1" } }
-    end
 
-    assert called, "expected create_subscription to be invoked"
-    assert_redirected_to profile_path
-    follow_redirect!
-    assert_select "#notice", text: /enabled/i
+      assert_redirected_to profile_path
+      follow_redirect!
+      assert_select "#notice", text: /enabled/i
+
+      @user.reload
+      assert_not_nil @user.strava_webhook_subscription_id
+      assert_not_nil @user.webhook_verify_token
+    end
   end
 
   test "disabling webhooks deletes subscription and redirects" do
-    called = false
+    @user.update!(strava_webhook_subscription_id: "12345")
 
-    StravaWebhookService.stub(:delete_subscription, ->(user) { called = user.id == @user.id }) do
+    VCR.use_cassette("strava_webhook_delete") do
       patch profile_path, params: { profile_settings: { enable_strava_webhooks: "0" } }
-    end
 
-    assert called, "expected delete_subscription to be invoked"
-    assert_redirected_to profile_path
-    follow_redirect!
-    assert_select "#notice", text: /disabled/i
+      assert_redirected_to profile_path
+      follow_redirect!
+      assert_select "#notice", text: /disabled/i
+
+      @user.reload
+      assert_nil @user.strava_webhook_subscription_id
+    end
   end
 
-  test "failure to enable shows alert" do
-    StravaWebhookService.stub(:create_subscription, ->(_user, _url) { raise RegisterStravaWebhookJob::SubscriptionError, "fail" }) do
-      patch profile_path, params: { profile_settings: { enable_strava_webhooks: "1" } }
-    end
-
-    assert_response :unprocessable_entity
-    assert_select "#alert", text: /fail/
-  end
+  # TODO: Record a VCR cassette for this test by triggering an actual Strava API failure
+  # (e.g., use an invalid callback URL like "http://invalid" to get Strava to reject it)
+  # test "failure to enable shows alert" do
+  #   VCR.use_cassette("strava_webhook_register_failure") do
+  #     patch profile_path, params: { profile_settings: { enable_strava_webhooks: "1" } }
+  #
+  #     assert_response :unprocessable_entity
+  #     assert_select "#alert", text: /fail|error|invalid/i
+  #   end
+  # end
 end

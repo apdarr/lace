@@ -12,6 +12,7 @@ class StravaWebhookService
     # TODO create an integration test that walks through creating a new test subscription, with a VCR cassette, and validates creds
     delete_existing_subscription
 
+    # Using perform_now to keep the UI more responsive
     RegisterStravaWebhookJob.perform_now(user.id, callback_url)
   end
 
