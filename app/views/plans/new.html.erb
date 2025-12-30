@@ -1,24 +1,24 @@
-<div class="mx-auto md:w-2/3 w-full">
+<div class="max-w-4xl mx-auto px-4">
   <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+    <p class="mb-6 inline-flex items-center rounded-md bg-green-50 px-3 py-2 text-sm font-medium text-green-700 ring-1 ring-inset ring-green-200" id="notice"><%= notice %></p>
   <% end %>
 
-  <div class="text-center mb-8">
-    <h1 class="font-bold text-5xl text-slate-800 mb-4">Create New Plan</h1>
-    <p class="text-sm text-slate-600 mb-6 font-semibold">Build a personalized training schedule</p>
-  </div>
+  <div class="space-y-8">
+    <header class="text-center">
+      <h1 class="heading-page">Create New Plan</h1>
+      <p class="text-sm font-medium text-slate-500 mt-2">Build a personalized training schedule</p>
+    </header>
 
-  <div class="bg-gradient-to-r from-blue-100 to-purple-100 p-6 rounded-xl shadow-md mb-8">
-    <div class="mb-2">
-      <h2 class="font-semibold text-2xl text-slate-700 mb-4">Plan Details</h2>
-      
-      <div class="bg-white/60 rounded-lg p-5 shadow-sm">
+    <section class="card">
+      <div class="card-header">
+        <h2 class="card-title">Plan Details</h2>
+      </div>
+      <div class="card-section">
         <%= render "form", plan: @plan %>
       </div>
-    </div>
-    
-    <div class="flex gap-3 mt-6">
-      <%= link_to "Back to plans", plans_path, class: "rounded-lg py-3 px-5 bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition duration-300" %>
-    </div>
+      <div class="card-section border-t border-slate-200">
+        <%= link_to "Back to plans", plans_path, class: "text-blue-600 transition-colors font-bold underline text-lg" %>
+      </div>
+    </section>
   </div>
 </div>

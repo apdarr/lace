@@ -47,7 +47,7 @@
   .metric-value { @apply text-lg font-semibold text-slate-800; }
 
   /* Buttons */
-  .btn { @apply inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-slate-600 disabled:opacity-50 disabled:cursor-not-allowed; }
+  .btn { @apply inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-slate-600 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer; }
   .btn-primary { @apply btn bg-slate-900 text-white hover:bg-slate-800; }
   .btn-secondary { @apply btn bg-slate-700 text-white hover:bg-slate-600; }
   .btn-soft { @apply btn bg-slate-100 text-slate-800 hover:bg-slate-200; }

@@ -14,7 +14,7 @@ Rails.application.routes.draw do
     end
   end
   resources :activities
-  get "profile", to: "profile#show"
+  resource :profile, only: [ :show, :edit, :update ], controller: "profile"
 
   # Strava webhook endpoints
   namespace :webhooks do

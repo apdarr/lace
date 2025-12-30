@@ -72,4 +72,15 @@ Rails.application.configure do
 
   # Allow localhost and ngrok URL for webhook testing
   config.hosts = [ "localhost", "127.0.0.1", "::1", "4eaab962dc06.ngrok-free.app" ]
+
+  # Allow ngrok host if present in credentials
+  ngrok_url = Rails.application.credentials.dig(:ngrok, :url)
+  if ngrok_url.present?
+    begin
+      ngrok_host = URI(ngrok_url).host
+      config.hosts << ngrok_host if ngrok_host.present?
+    rescue URI::InvalidURIError
+      # Ignore invalid ngrok URL
+    end
+  end
 end

@@ -1,50 +1,77 @@
-<div class="mx-auto md:w-2/3 w-full">
+<div class="max-w-4xl mx-auto px-4">
   <% if alert = flash[:alert] %>
-    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
+    <p class="mb-4 inline-flex items-center rounded-md bg-red-50 px-3 py-2 text-sm font-medium text-red-700 ring-1 ring-inset ring-red-200" id="alert"><%= alert %></p>
   <% end %>
 
   <% if notice = flash[:notice] %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+    <p class="mb-4 inline-flex items-center rounded-md bg-green-50 px-3 py-2 text-sm font-medium text-green-700 ring-1 ring-inset ring-green-200" id="notice"><%= notice %></p>
   <% end %>
 
-  <div class="text-center mb-12">
-    <h1 class="font-bold text-5xl text-slate-800 mb-4">Welcome to lace.club</h1>
-    <h2 class="text-slate-600 mb-6 font-semibold">The hub for your next training block</h2>
-    <div class="bg-gradient-to-r from-blue-100 to-purple-100 p-6 rounded-xl shadow-md">
-      
-      <div class="space-y-4 mt-6">
-        <div class="flex items-center bg-white/60 rounded-lg p-3 shadow-sm transition duration-300 hover:scale-105 hover:shadow-lg hover:bg-white/80">
-          <span class="text-2xl mr-3">✨</span>
-          <p class="text-slate-800 font-medium text-left">Automatically <span class="text-indigo-600 font-bold">create training plans</span> based on a race date</p>
-        </div>
-        
-        <div class="flex items-center bg-white/60 rounded-lg p-3 shadow-sm transition duration-300 hover:scale-105 hover:shadow-lg hover:bg-white/80">
-          <span class="text-2xl mr-3">🛤️</span>
-          <p class="text-slate-800 font-medium text-left"><span class="text-indigo-600 font-bold">Re-use existing plans</span> for future races</p>
-        </div>
+  <div class="space-y-8">
+    <header class="text-center mt-12">
+      <h1 class="heading-page mb-3">Welcome to Lace</h1>
+      <p class="text-lg text-slate-600 font-medium">Your training companion for your next race</p>
+    </header>
 
-         <div class="flex items-center bg-white/60 rounded-lg p-3 shadow-sm transition duration-300 hover:scale-105 hover:shadow-lg hover:bg-white/80">
-          <span class="text-2xl mr-3">📎</span>
-          <p class="text-slate-800 font-medium text-left"><span class="text-indigo-600 font-bold">Attach Strava activities</span> to your training plan</p>
-        </div>
+    <section class="card">
+      <div class="card-section space-y-6">
+        <h2 class="heading-section text-center">Follow your favorite training plan, with superpowers 🍄</h2>
         
-        <div class="flex items-center bg-white/60 rounded-lg p-3 shadow-sm transition duration-300 hover:scale-105 hover:shadow-lg hover:bg-white/80">
-          <span class="text-2xl mr-3">📈</span>
-          <p class="text-slate-800 font-medium text-left"><span class="text-indigo-600 font-bold">Receive guidance on race readiness</span> based on your training data</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="flex items-start gap-3 p-4 rounded-lg border border-slate-200 bg-slate-50/50 transition-all hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-sm">
+            <span class="text-2xl flex-shrink-0">🔍</span>
+            <div class="text-left">
+              <p class="text-sm font-semibold text-slate-800 mb-1">Scan your training plan</p>
+              <p class="text-xs text-slate-600">Many runners have a favorite training plan from a book, website, etc. Upload photos or screenshots of your training plan, choose your race date, and Lace will let AI automatically schedule your workouts</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start gap-3 p-4 rounded-lg border border-slate-200 bg-slate-50/50 transition-all hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-sm">
+            <span class="text-2xl flex-shrink-0">🛤️</span>
+            <div class="text-left">
+              <p class="text-sm font-semibold text-slate-800 mb-1">Make easy adjustments</p>
+              <p class="text-xs text-slate-600">Drag and drop workouts to adjust your schedule as life happens</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 p-4 rounded-lg border border-slate-200 bg-slate-50/50 transition-all hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-sm">
+            <span class="text-2xl flex-shrink-0">📎</span>
+            <div class="text-left">
+              <p class="text-sm font-semibold text-slate-800 mb-1">Strava integration</p>
+              <p class="text-xs text-slate-600">Match completed Strava activities to your workouts, so you can easily cross-reference activities</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start gap-3 p-4 rounded-lg border border-slate-200 bg-slate-50/50 transition-all hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-sm">
+            <span class="text-2xl flex-shrink-0">📱</span>
+            <div class="text-left">
+              <p class="text-sm font-semibold text-slate-800 mb-1">Mobile support</p>
+              <p class="text-xs text-slate-600">Receive a notification the night before each workout so you're ahead of schedule</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 p-4 rounded-lg border border-slate-200 bg-slate-50/50 transition-all hover:border-blue-300 hover:bg-blue-50/50 hover:shadow-sm">
+            <span class="text-2xl flex-shrink-0">📅</span>
+            <div class="text-left">
+              <p class="text-sm font-semibold text-slate-800 mb-1">Google Calendar integration</p>
+              <p class="text-xs text-slate-600">Sync your training plan to a shared Google Calendar so friends and family know when you're headed out</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div class="divider mx-4"></div>
+
+      <div class="card-section">
+        <h3 class="font-semibold text-lg text-center text-slate-800 mb-4">Ready to start training?</h3>
+        
+        <%= button_to "/auth/strava", method: :post, data: { turbo: false }, class: "rounded-lg py-4 px-5 bg-[#FC4C02] text-white font-semibold cursor-pointer w-full flex items-center justify-center gap-3 hover:bg-[#e64500] transition-all shadow-sm hover:shadow-md" do %>
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7.01 13.828h4.172"/>
+          </svg>
+          Continue with Strava
+        <% end %>
+      </div>
+    </section>
   </div>
-
-  <h3 class="font-bold text-2xl text-center text-slate-700 mt-8 mb-4">Sign in to get started</h3>
-
-  <div class="mt-6">
-    <%= button_to "/auth/strava", method: :post, data: { turbo: false }, class: "rounded-lg py-4 px-5 bg-[#FC4C02] text-white font-medium cursor-pointer w-full flex items-center justify-center gap-3 hover:bg-[#e64500] transition-colors shadow-md" do %>
-      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7.01 13.828h4.172"/>
-      </svg>
-      Continue with Strava
-    <% end %>
-  </div>
-
 </div>

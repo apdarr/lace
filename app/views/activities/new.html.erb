@@ -1,24 +1,25 @@
 <div class="app-container-form">
-  <div class="stack-lg">
-    <header class="text-center stack-sm">
-      <div class="flex items-center justify-between mb-4">
-        <%= link_to "← Back", request.referer || plans_path, class: "btn-ghost text-sm" %>
-        <div></div>
-      </div>
-      <h1 class="heading-page">Add Workout</h1>
-      <% if params[:date].present? %>
-        <p class="text-sm font-medium text-slate-500">
-          Scheduled for <%= Date.parse(params[:date]).strftime('%A, %B %-d') %>
-        </p>
-      <% else %>
-        <p class="text-sm font-medium text-slate-500">Create a new training activity</p>
-      <% end %>
-    </header>
+  <div class="max-w-4xl mx-auto px-4 space-y-8">
 
-    <section class="card">
-      <div class="card-section">
-        <%= render "form", activity: @activity %>
-      </div>
-    </section>
-  </div>
+      <header class="text-center stack-sm">
+        <h1 class="heading-page">Add Workout</h1>
+        <% if params[:date].present? %>
+          <p class="text-sm font-medium text-slate-500">
+            Scheduled for <%= Date.parse(params[:date]).strftime('%A, %B %-d') %>
+          </p>
+        <% else %>
+          <p class="text-sm font-medium text-slate-500">Create a new training activity</p>
+        <% end %>
+      </header>
+
+      <section class="card">
+        <div class="card-section">
+          <%= link_to "Back to this plan", @plan, class: "text-blue-600 transition-colors font-bold underline text-lg" %>
+        </div>
+        <div class="divider"></div>
+        <div class="card-section">
+          <%= render "form", activity: @activity %>
+        </div>
+      </section>
+    </div>
 </div>

@@ -27,15 +27,15 @@ http_interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 20 Oct 2025 21:44:22 GMT
+      - Tue, 30 Dec 2025 18:40:55 GMT
       X-Envoy-Upstream-Service-Time:
-      - '38'
+      - '44'
       Server:
       - istio-envoy
       Status:
       - 400 Bad Request
       X-Ratelimit-Usage:
-      - '8,23'
+      - '4,7'
       X-Ratelimit-Limit:
       - '200,2000'
       Vary:
@@ -49,7 +49,7 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       X-Request-Id:
-      - bebfe937-9273-42b4-8442-7da1965c8131
+      - cce780cb-00ae-474a-a316-0796007e4bc6
       X-Readratelimit-Limit:
       - '100,1000'
       X-Download-Options:
@@ -57,19 +57,19 @@ http_interactions:
       X-Frame-Options:
       - DENY
       X-Readratelimit-Usage:
-      - '8,23'
+      - '4,7'
       X-Content-Type-Options:
       - nosniff
       X-Cache:
       - Error from cloudfront
       Via:
-      - 1.1 f449f4ea60d8c122ba96a995290f8ec0.cloudfront.net (CloudFront)
+      - 1.1 b3303b43ad528209e1d81e70b2fc5964.cloudfront.net (CloudFront)
       X-Amz-Cf-Pop:
       - ORD58-P4
       X-Amz-Cf-Id:
-      - NznQc2spMGiRIahkkNkiRpxIhoL98Jbsa7H5n99S7z5S6XI782EXIg==
+      - u9u53fktb2pjMICEPs_3twAMmOqKVZNq5-A7Mebh155gfzthWIvraQ==
     body:
       encoding: UTF-8
       string: '{"message":"Bad Request","errors":[{"resource":"PushSubscription","field":"bad","code":"request"}]}'
-  recorded_at: Mon, 20 Oct 2025 21:44:22 GMT
+  recorded_at: Tue, 30 Dec 2025 18:40:55 GMT
 recorded_with: VCR 6.3.1
