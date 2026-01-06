@@ -3,5 +3,5 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   provider :strava,
           Rails.application.credentials.dig(:strava, :client_id),
           Rails.application.credentials.dig(:strava, :client_secret),
-          scope: "read_all"
+          scope: "read,activity:read_all"
 end
