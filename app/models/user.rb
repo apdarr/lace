@@ -30,4 +30,39 @@ class User < ApplicationRecord
 
     user
   end
+
+  # Returns a valid access token, refreshing if expired
+  def fresh_access_token
+    return access_token if token_valid?
+
+    refresh_strava_token!
+    access_token
+  end
+
+  def token_valid?
+    token_expires_at.present? && token_expires_at > Time.current
+  end
+
+  def refresh_strava_token!
+    client = Strava::OAuth::Client.new(
+      client_id: Rails.application.credentials.dig(:strava, :client_id),
+      client_secret: Rails.application.credentials.dig(:strava, :client_secret)
+    )
+
+    response = client.oauth_token(
+      grant_type: "refresh_token",
+      refresh_token: refresh_token
+    )
+
+    update!(
+      access_token: response.access_token,
+      refresh_token: response.refresh_token,
+      token_expires_at: Time.at(response.expires_at)
+    )
+
+    Rails.logger.info "Refreshed Strava token for user #{id}"
+  rescue StandardError => e
+    Rails.logger.error "Failed to refresh Strava token for user #{id}: #{e.message}"
+    raise e
+  end
 end
