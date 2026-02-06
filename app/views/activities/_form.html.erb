@@ -42,8 +42,16 @@
     <%= form.hidden_field :plan_id, value: params[:plan_id] %>
   <% end %>
 
+  <% if @week.present? %>
+    <%= hidden_field_tag :week, @week %>
+  <% end %>
+
   <div class="flex gap-3 pt-4">
     <%= form.submit "Save Workout", class: "btn-primary flex-1" %>
-    <%= link_to "Cancel", request.referer || plans_path, class: "btn-outline flex-1 text-center" %>
+    <% if @plan %>
+      <%= link_to "Cancel", plan_path(@plan, week: @week), class: "btn-outline flex-1 text-center" %>
+    <% else %>
+      <%= link_to "Cancel", plans_path, class: "btn-outline flex-1 text-center" %>
+    <% end %>
   </div>
 <% end %>

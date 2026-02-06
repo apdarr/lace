@@ -8,6 +8,7 @@ class PlansController < ApplicationController
 
   # GET /plans/1 or /plans/1.json
   def show
+    @week = (params[:week] || 0).to_i
   end
 
   # GET /plans/new

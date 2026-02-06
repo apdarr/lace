@@ -121,8 +121,8 @@ class PlansTest < ApplicationSystemTestCase
 
     # Verify new calendar structure exists
     assert_selector "h2", text: "Training Calendar"
-    assert_selector "[data-week-selector-target='selector']" # Week dropdown selector
-    assert_selector "[data-week-selector-target='week']" # Week view container
+    assert_selector "select[name='week']" # Week dropdown selector
+    assert_selector ".week-view" # Week view container
 
     # Verify calendar functionality
     assert_text "Week 1"
@@ -135,11 +135,11 @@ class PlansTest < ApplicationSystemTestCase
     assert_text "Sunday"
 
     # Test week selector has multiple options
-    week_selector = find("[data-week-selector-target='selector']")
+    week_selector = find("select[name='week']")
     assert_operator week_selector.all("option").length, :>, 1, "Week selector should have multiple week options"
 
     # Test Add button exists for activities
-    assert_selector "button", text: "Add"
+    assert_selector "a", text: "Add"
   end
 
   test "should edit and update plan" do

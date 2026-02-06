@@ -20,6 +20,7 @@ class ActivitiesController < ApplicationController
   # GET /activities/new
   def new
     @activity = Activity.new
+    @week = params[:week]
     # If creating from plan with specific date, pre-populate Activity records
     if params[:plan_id].present? && params[:date].present?
       # And provide the plan object for easy navigation back to the plan from views
@@ -31,15 +32,18 @@ class ActivitiesController < ApplicationController
 
   # GET /activities/1/edit
   def edit
+    @week = params[:week]
+    @plan = @activity.plan
   end
 
   # POST /activities or /activities.json
   def create
     @activity = Activity.new(activity_params)
+    @week = params[:week]
 
     respond_to do |format|
       if @activity.save
-        format.html { redirect_to plan_path(@activity.plan), notice: "Activity was successfully created." }
+        format.html { redirect_to plan_path(@activity.plan, week: @week), notice: "Activity was successfully created." }
         format.json { render :show, status: :created, location: @activity }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -50,9 +54,10 @@ class ActivitiesController < ApplicationController
 
   # PATCH/PUT /activities/1 or /activities/1.json
   def update
+    @week = params[:week]
     respond_to do |format|
       if @activity.update(activity_params)
-        format.html { redirect_to plan_path(@activity.plan), notice: "Activity was successfully updated." }
+        format.html { redirect_to plan_path(@activity.plan, week: @week), notice: "Activity was successfully updated." }
         format.json { render :show, status: :ok, location: @activity }
       else
         format.html { render :edit, status: :unprocessable_entity }

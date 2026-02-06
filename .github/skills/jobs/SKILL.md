@@ -1,0 +1,607 @@
+---
+name: jobs
+description: Use when setting up background jobs, caching, or WebSockets - SolidQueue, SolidCache, SolidCable. Never use Sidekiq or Redis.
+---
+
+# Background Jobs (Solid Stack)
+
+Configure background job processing, caching, and WebSockets using Rails 8 defaults — SolidQueue, SolidCache, and SolidCable. Zero external dependencies, database-backed, production-ready.
+
+<when-to-use>
+- Background job processing
+- Application caching
+- WebSocket/ActionCable setup
+- Async job execution (sending emails, processing uploads, generating reports)
+- Real-time features via ActionCable
+- Migrating from Redis/Sidekiq to Solid Stack
+</when-to-use>
+
+<benefits>
+- **Zero External Dependencies** - No Redis, Memcached, or external services required
+- **Simpler Deployments** - Database-backed, persistent, survives restarts
+- **Rails 8 Convention** - Official defaults, production-ready out of the box
+- **Easier Monitoring** - Query databases directly for job and cache status
+- **Persistent Jobs** - Jobs survive server restarts, no lost work
+- **Integrated** - Works seamlessly with ActiveJob and ActionCable
+</benefits>
+
+<verification-checklist>
+Before completing job/cache/cable work:
+- ✅ SolidQueue used (NOT Sidekiq)
+- ✅ SolidCache used (NOT Redis)
+- ✅ SolidCable used (NOT Redis for ActionCable)
+- ✅ No redis gem in Gemfile
+- ✅ Jobs tested
+- ✅ All tests passing
+</verification-checklist>
+
+<standards>
+- Use Solid Stack (SolidQueue, SolidCache, SolidCable) — never Sidekiq, Redis, or Memcached
+- Use dedicated databases for queue, cache, and cable (separate from primary)
+- Configure separate migration paths for each database (db/queue_migrate, db/cache_migrate, db/cable_migrate)
+- Implement queue prioritization in production (critical, mailers, default)
+- Run migrations for ALL databases (primary, queue, cache, cable)
+- Monitor queue health (pending count, failed count, oldest pending age)
+- Set appropriate retry strategies for jobs
+- Always pass IDs (not objects) to jobs to avoid serialization issues
+</standards>
+
+---
+
+## SolidQueue
+
+SolidQueue is a database-backed Active Job adapter for background job processing with zero external dependencies.
+
+### Setup
+
+<pattern name="solidqueue-basic-setup">
+<description>Configure SolidQueue for background job processing</description>
+
+**Environment Configuration:**
+
+```ruby
+# config/environments/{development,production}.rb
+Rails.application.configure do
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
+end
+```
+
+**Database Configuration:**
+
+```yaml
+# config/database.yml
+default: &default
+  adapter: sqlite3
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+
+production:
+  primary:
+    <<: *default
+    database: storage/production.sqlite3
+  queue:
+    <<: *default
+    database: storage/production_queue.sqlite3
+    migrations_paths: db/queue_migrate
+```
+
+**Queue Configuration (Production Prioritization):**
+
+```yaml
+# config/queue.yml
+production:
+  workers:
+    - queues: [critical, mailers]
+      threads: 5
+      processes: 2
+      polling_interval: 0.1
+    - queues: [default]
+      threads: 3
+      processes: 2
+      polling_interval: 1
+```
+</pattern>
+
+### Mission Control Dashboard
+
+<pattern name="mission-control-setup">
+<description>Web dashboard for monitoring and managing jobs</description>
+
+```ruby
+# Gemfile
+gem "mission_control-jobs"
+
+# config/routes.rb
+Rails.application.routes.draw do
+  authenticate :user, ->(user) { user.admin? } do
+    mount MissionControl::Jobs::Engine, at: "/jobs"
+  end
+end
+
+# config/initializers/mission_control.rb (optional)
+MissionControl::Jobs.configure do |config|
+  config.finished_jobs_retention_period = 14.days
+  config.failed_jobs_retention_period = 90.days
+  config.filter_parameters = [:password, :token, :secret]
+end
+```
+
+**Dashboard Features:**
+- View all jobs across queues (pending, running, finished, failed)
+- Real-time status updates and queue performance metrics
+- Full error backtraces for failed jobs
+- Retry individual or bulk failed jobs
+- Pause/resume queues
+</pattern>
+
+### Basic Job
+
+<pattern name="basic-job">
+<description>Create and enqueue background jobs</description>
+
+**Job Definition:**
+
+```ruby
+# app/jobs/report_generation_job.rb
+class ReportGenerationJob < ApplicationJob
+  queue_as :default
+
+  def perform(user_id, report_type)
+    user = User.find(user_id)
+    report = ReportGenerator.generate(user, report_type)
+    ReportMailer.with(user: user, report: report).delivery.deliver_later
+  end
+end
+```
+
+**Enqueuing:**
+
+```ruby
+# Immediate enqueue
+ReportGenerationJob.perform_later(user.id, "monthly")
+
+# Delayed enqueue
+ReportGenerationJob.set(wait: 1.hour).perform_later(user.id, "monthly")
+
+# Specific queue
+ReportGenerationJob.set(queue: :critical).perform_later(user.id, "urgent")
+
+# With priority (higher = more important)
+ReportGenerationJob.set(priority: 10).perform_later(user.id, "important")
+```
+
+**Why:** Background jobs prevent blocking HTTP requests. Always pass IDs (not objects) to avoid serialization issues.
+</pattern>
+
+### Retry Strategy
+
+<pattern name="job-retry-strategy">
+<description>Configure retry behavior for failed jobs</description>
+
+```ruby
+class EmailDeliveryJob < ApplicationJob
+  queue_as :mailers
+
+  # Retry up to 5 times with exponential backoff
+  retry_on StandardError, wait: :exponentially_longer, attempts: 5
+
+  # Don't retry certain errors
+  discard_on ActiveJob::DeserializationError
+
+  # Custom retry logic
+  retry_on ApiError, wait: 5.minutes, attempts: 3 do |job, error|
+    Rails.logger.error("Job #{job.class} failed: #{error.message}")
+  end
+
+  def perform(user_id)
+    user = User.find(user_id)
+    SomeMailer.notification(user).deliver_now
+  end
+end
+```
+
+**Why:** Automatic retries with exponential backoff handle transient failures. Discard jobs that will never succeed (deserialization errors).
+</pattern>
+
+### Anti-pattern: Sidekiq/Redis
+
+<antipattern>
+<description>Using Sidekiq/Redis instead of Solid Stack</description>
+<reason>Adds external dependency complexity when database-backed alternatives are built into Rails 8</reason>
+
+**Bad Example:**
+
+```ruby
+# ❌ WRONG — adds unnecessary external dependencies
+gem 'sidekiq'
+gem 'redis'
+
+# config/environments/production.rb
+config.active_job.queue_adapter = :sidekiq
+config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] }
+
+# config/cable.yml
+production:
+  adapter: redis
+  url: <%= ENV['REDIS_URL'] %>
+```
+
+**Good Example:**
+
+```ruby
+# ✅ CORRECT — Solid Stack (built into Rails 8)
+# No additional gems needed
+
+# config/environments/production.rb
+config.active_job.queue_adapter = :solid_queue
+config.cache_store = :solid_cache_store
+config.solid_queue.connects_to = { database: { writing: :queue } }
+
+# config/cable.yml
+production:
+  adapter: solid_cable
+```
+
+**Why:** External Redis dependency adds complexity, deployment overhead, and another service to monitor. Solid Stack is production-ready, persistent, and simpler to operate.
+</antipattern>
+
+### Job Monitoring
+
+<pattern name="job-monitoring">
+<description>Monitor SolidQueue job status and health</description>
+
+**Rails Console:**
+
+```ruby
+SolidQueue::Job.pending.count  # => 42
+SolidQueue::Job.failed.count   # => 3
+SolidQueue::Job.failed.each { |job| puts "#{job.class_name}: #{job.error}" }
+
+# Retry failed job
+SolidQueue::Job.failed.first.retry_job
+
+# Clear old completed jobs
+SolidQueue::Job.finished.where("finished_at < ?", 7.days.ago).delete_all
+```
+
+**Health Check Endpoint:**
+
+```ruby
+# app/controllers/health_controller.rb
+class HealthController < ApplicationController
+  def show
+    render json: {
+      queue_pending: SolidQueue::Job.pending.count,
+      queue_failed: SolidQueue::Job.failed.count,
+      oldest_pending_minutes: oldest_pending_age
+    }
+  end
+
+  private
+
+  def oldest_pending_age
+    oldest = SolidQueue::Job.pending.order(:created_at).first
+    return 0 unless oldest
+    ((Time.current - oldest.created_at) / 60).round
+  end
+end
+```
+
+**Which monitoring approach?**
+
+| Approach | Best For | Access |
+|----------|----------|--------|
+| Mission Control | Production monitoring, team collaboration | Web UI at /jobs |
+| Rails Console | Quick debugging, one-off queries | Terminal/SSH |
+| Custom Endpoints | Programmatic monitoring, alerting | HTTP API |
+</pattern>
+
+---
+
+## SolidCache
+
+SolidCache is a database-backed cache store with zero external dependencies.
+
+<pattern name="solidcache-setup">
+<description>Configure SolidCache for application caching</description>
+
+**Configuration:**
+
+```ruby
+# config/environments/{development,production}.rb
+config.cache_store = :solid_cache_store
+
+# config/database.yml
+production:
+  cache:
+    <<: *default
+    database: storage/production_cache.sqlite3
+    migrations_paths: db/cache_migrate
+```
+
+**Usage:**
+
+```ruby
+# Simple caching
+Rails.cache.fetch("user_#{user.id}", expires_in: 1.hour) do
+  expensive_computation(user)
+end
+
+# Fragment caching in views
+<% cache @post do %>
+  <%= render @post %>
+<% end %>
+
+# Collection caching
+<% cache @posts do %>
+  <% @posts.each do |post| %>
+    <% cache post do %>
+      <%= render post %>
+    <% end %>
+  <% end %>
+<% end %>
+
+# Low-level operations
+Rails.cache.write("key", "value", expires_in: 1.hour)
+Rails.cache.read("key")  # => "value"
+Rails.cache.delete("key")
+Rails.cache.exist?("key")  # => false
+```
+
+**Migrations:**
+
+```bash
+rails db:migrate:cache
+```
+</pattern>
+
+<pattern name="cache-keys">
+<description>Use consistent cache key patterns</description>
+
+```ruby
+# Model-based cache keys (includes updated_at for auto-expiration)
+Rails.cache.fetch(["user", user.id, user.updated_at]) do
+  expensive_user_data(user)
+end
+
+# Or use cache_key helper
+Rails.cache.fetch(user.cache_key) do
+  expensive_user_data(user)
+end
+
+# Namespace cache keys by version
+Rails.cache.fetch(["v2", "user", user.id]) do
+  new_expensive_computation(user)
+end
+
+# Cache dependencies
+Rails.cache.fetch(["posts", "index", @posts.maximum(:updated_at)]) do
+  render_posts_expensive(@posts)
+end
+```
+
+**Why:** Including timestamps in cache keys provides automatic invalidation. Namespacing prevents cache collisions when changing logic.
+</pattern>
+
+---
+
+## SolidCable
+
+SolidCable is a database-backed Action Cable adapter for WebSocket connections.
+
+<pattern name="solidcable-setup">
+<description>Configure SolidCable for ActionCable/WebSockets</description>
+
+**Configuration:**
+
+```yaml
+# config/cable.yml
+production:
+  adapter: solid_cable
+
+# config/database.yml
+production:
+  cable:
+    <<: *default
+    database: storage/production_cable.sqlite3
+    migrations_paths: db/cable_migrate
+```
+
+**Channel Definition:**
+
+```ruby
+# app/channels/notifications_channel.rb
+class NotificationsChannel < ApplicationCable::Channel
+  def subscribed
+    stream_from "notifications_#{current_user.id}"
+  end
+
+  def unsubscribed
+    # Cleanup when channel is unsubscribed
+  end
+end
+```
+
+**Broadcasting:**
+
+```ruby
+# From anywhere in your application
+ActionCable.server.broadcast(
+  "notifications_#{user.id}",
+  { message: "New notification", type: "info" }
+)
+
+# From a model callback
+class Notification < ApplicationRecord
+  after_create_commit do
+    ActionCable.server.broadcast(
+      "notifications_#{user_id}",
+      { message: message, type: notification_type }
+    )
+  end
+end
+```
+
+**Client-side (Stimulus):**
+
+```javascript
+// app/javascript/controllers/notifications_controller.js
+import { Controller } from "@hotwired/stimulus"
+import consumer from "../channels/consumer"
+
+export default class extends Controller {
+  connect() {
+    this.subscription = consumer.subscriptions.create(
+      "NotificationsChannel",
+      {
+        received: (data) => {
+          this.displayNotification(data)
+        }
+      }
+    )
+  }
+
+  disconnect() {
+    this.subscription?.unsubscribe()
+  }
+
+  displayNotification(data) {
+    console.log("Received:", data)
+  }
+}
+```
+</pattern>
+
+---
+
+## Multi-Database Management
+
+<pattern name="multi-database-operations">
+<description>Manage migrations across all Solid Stack databases</description>
+
+**Setup:**
+
+```bash
+# Creates all databases (primary, queue, cache, cable)
+rails db:create
+
+# Migrates all databases
+rails db:migrate
+
+# Production: creates + migrates
+rails db:prepare
+```
+
+**Individual Operations:**
+
+```bash
+# Migrate specific database
+rails db:migrate:queue
+rails db:migrate:cache
+rails db:migrate:cable
+
+# Check migration status
+rails db:migrate:status:queue
+rails db:migrate:status:cache
+rails db:migrate:status:cable
+
+# Rollback specific database
+rails db:rollback:queue
+```
+
+**Why:** Each database has independent migration path, allowing separate versioning and rollback per component.
+</pattern>
+
+<antipattern>
+<description>Sharing database between primary and Solid Stack components</description>
+
+**Bad Example:**
+
+```yaml
+# ❌ WRONG - All on same database creates contention
+production:
+  primary:
+    database: storage/production.sqlite3
+  queue:
+    database: storage/production.sqlite3  # Same database!
+  cache:
+    database: storage/production.sqlite3  # Same database!
+```
+
+**Good Example:**
+
+```yaml
+# ✅ CORRECT - Separate databases for isolation
+production:
+  primary:
+    database: storage/production.sqlite3
+  queue:
+    database: storage/production_queue.sqlite3
+    migrations_paths: db/queue_migrate
+  cache:
+    database: storage/production_cache.sqlite3
+    migrations_paths: db/cache_migrate
+  cable:
+    database: storage/production_cable.sqlite3
+    migrations_paths: db/cable_migrate
+```
+
+**Why:** Sharing databases creates performance contention, makes it harder to scale, and couples concerns that should be isolated.
+</antipattern>
+
+---
+
+## Testing
+
+```ruby
+# test/jobs/sample_job_test.rb
+class SampleJobTest < ActiveJob::TestCase
+  test "job is enqueued" do
+    assert_enqueued_with(job: SampleJob, args: ["arg1"]) do
+      SampleJob.perform_later("arg1")
+    end
+  end
+
+  test "job is performed" do
+    perform_enqueued_jobs do
+      SampleJob.perform_later("test")
+    end
+    # Assert side effects
+  end
+
+  test "job retries on failure" do
+    assert_enqueued_with(job: SampleJob) do
+      SampleJob.perform_later("test")
+    end
+  end
+end
+
+# test/integration/solid_stack_test.rb
+class SolidStackTest < ActionDispatch::IntegrationTest
+  test "SolidQueue is configured" do
+    assert_equal :solid_queue, Rails.configuration.active_job.queue_adapter
+  end
+
+  test "cache read/write works" do
+    Rails.cache.write("test_key", "test_value")
+    assert_equal "test_value", Rails.cache.read("test_key")
+  end
+end
+```
+
+---
+
+<resources>
+
+**Official Documentation:**
+- [Rails Guides - Active Job Basics](https://guides.rubyonrails.org/active_job_basics.html)
+- [Rails 8 Release Notes](https://edgeguides.rubyonrails.org/8_0_release_notes.html)
+
+**Gems & Libraries:**
+- [SolidQueue](https://github.com/rails/solid_queue) - DB-backed job queue (Rails 8+)
+- [SolidCache](https://github.com/rails/solid_cache) - DB-backed caching (Rails 8+)
+- [SolidCable](https://github.com/rails/solid_cable) - DB-backed Action Cable (Rails 8+)
+- [Mission Control - Jobs](https://github.com/rails/mission_control-jobs) - Web dashboard for monitoring jobs
+
+</resources>

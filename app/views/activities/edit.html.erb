@@ -2,7 +2,11 @@
   <div class="stack-lg">
     <header class="text-center stack-sm">
       <div class="flex items-center justify-between mb-4">
-        <%= link_to "← Back", request.referer || plans_path, class: "btn-ghost text-sm" %>
+        <% if @plan %>
+          <%= link_to "← Back", plan_path(@plan, week: @week), class: "btn-ghost text-sm" %>
+        <% else %>
+          <%= link_to "← Back", plans_path, class: "btn-ghost text-sm" %>
+        <% end %>
         <div></div>
       </div>
       <h1 class="heading-page">Edit Workout</h1>

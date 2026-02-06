@@ -44,7 +44,7 @@
         </div>
 
         <!-- Training Calendar -->
-        <div data-plan-processor-target="calendar" class="<%= @plan.processing_status.in?(%w[queued processing]) ? 'hidden' : '' %>" data-controller="week-selector">
+        <div data-plan-processor-target="calendar" class="<%= @plan.processing_status.in?(%w[queued processing]) ? 'hidden' : '' %>">
           <h2 class="heading-section mb-6">Training Calendar</h2>
           
           <% training_start_date = (@plan.race_date - @plan.length.weeks).beginning_of_week %>
@@ -53,52 +53,44 @@
           
           <!-- Week Selector -->
           <div class="mb-6">
-            <select class="form-input w-full" 
-                    data-week-selector-target="selector" 
-                    data-action="change->week-selector#selectorChanged">
-              <% @plan.length.times do |week| %>
-                <% week_start = training_start_date + (week * 7) %>
-                <% week_total = calculate_week_total_miles_from_collection(all_activities, week_start) %>
-                <option value="<%= week %>" <%= 'selected' if week == 0 %>>
-                  <%= week_start.strftime("%b %d") %> - <%= (week_start + 6.days).strftime("%b %d") %>
-                </option>
-              <% end %>
-            </select>
+            <%= form_with url: plan_path(@plan), method: :get, data: { turbo_action: "replace" } do %>
+              <select name="week" class="form-input w-full" onchange="this.form.requestSubmit()">
+                <% @plan.length.times do |week| %>
+                  <% week_start = training_start_date + (week * 7) %>
+                  <option value="<%= week %>" <%= 'selected' if week == @week %>>
+                    <%= week_start.strftime("%b %d") %> - <%= (week_start + 6.days).strftime("%b %d") %>
+                  </option>
+                <% end %>
+              </select>
+            <% end %>
           </div>
 
-          <!-- Training Days -->
-          <% @plan.length.times do |week| %>
-            <% week_start = training_start_date + (week * 7) %>
-            <% week_total = calculate_week_total_miles_from_collection(all_activities, week_start) %>
-            <div class="week-view space-y-4 <%= 'hidden' unless week == 0 %>" 
-                 data-week="<%= week %>" 
-                 data-week-selector-target="week">
-              
-              <!-- Week Header -->
-              <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                <h3 class="text-sm font-semibold text-slate-700">Week <%= week + 1 %></h3>
-                <div class="text-sm font-medium text-slate-600">
-                  <span class="text-xs text-slate-500">Total:</span> 
-                  <%= sprintf("%.1f", week_total) %> mi
-                </div>
+          <!-- Training Days (only render selected week) -->
+          <% week_start = training_start_date + (@week * 7) %>
+          <% week_total = calculate_week_total_miles_from_collection(all_activities, week_start) %>
+          <div class="week-view space-y-4">
+            
+            <!-- Week Header -->
+            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+              <h3 class="text-sm font-semibold text-slate-700">Week <%= @week + 1 %></h3>
+              <div class="text-sm font-medium text-slate-600">
+                <span class="text-xs text-slate-500">Total:</span> 
+                <%= sprintf("%.1f", week_total) %> mi
               </div>
-              
-              <!-- Draggable Day List -->
-              <div class="space-y-3">
-                <% 7.times do |day| %>
-                  <% current_date = week_start + day.days %>
-                  <div class="day-container">
+            </div>
+            
+            <!-- Draggable Day List -->
+            <div class="space-y-3">
+              <% 7.times do |day| %>
+                <% current_date = week_start + day.days %>
+                <div class="day-container">
                     <!-- Fixed Day Header -->
                     <div class="flex items-center justify-between mb-2 px-1">
                       <div>
                         <div class="text-base font-semibold text-slate-900"><%= current_date.strftime('%A') %></div>
                         <div class="text-xs text-slate-500"><%= current_date.strftime('%b %-d') %></div>
                       </div>
-                      <button type="button"
-                              class="calendar-edit-btn"
-                              onclick="window.location.href='/activities/new?date=<%= current_date.to_s %>&plan_id=<%= @plan.id %>'">
-                        Add
-                      </button>
+                      <%= link_to "Add", new_activity_path(date: current_date, plan_id: @plan.id, week: @week), class: "calendar-edit-btn" %>
                     </div>
                     
                     <!-- Droppable Workout Area -->
@@ -140,11 +132,7 @@
                                 </div>
                                 <p class="text-xs text-slate-700 leading-snug"><%= activity.description %></p>
                               </div>
-                              <button type="button"
-                                      class="calendar-edit-btn ml-2"
-                                      onclick="window.location.href='/activities/<%= activity.id %>/edit'">
-                                Edit
-                              </button>
+                            <%= link_to "Edit", edit_activity_path(activity, week: @week), class: "calendar-edit-btn ml-2" %>
                             </div>
                           </div>
                         <% end %>
@@ -158,7 +146,6 @@
                 <% end %>
               </div>
             </div>
-          <% end %>
         </div>
       </div>
       <section class="card-section flex flex-col md:flex-row md:items-center gap-4">
