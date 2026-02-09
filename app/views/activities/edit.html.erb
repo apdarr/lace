@@ -1,20 +1,15 @@
-<div class="app-container-form">
-  <div class="stack-lg">
-    <header class="text-center stack-sm">
-      <div class="flex items-center justify-between mb-4">
-        <% if @plan %>
-          <%= link_to "← Back", plan_path(@plan, week: @week), class: "btn-ghost text-sm" %>
-        <% else %>
-          <%= link_to "← Back", plans_path, class: "btn-ghost text-sm" %>
-        <% end %>
-        <div></div>
-      </div>
+<div class="max-w-4xl mx-auto px-4">
+  <div class="space-y-6">
+    <header class="text-center">
       <h1 class="heading-page">Edit Workout</h1>
-      <p class="text-sm font-medium text-slate-500">Update your training activity</p>
+      <p class="text-sm font-medium text-slate-500 mt-1">Update your training activity</p>
     </header>
 
+
     <section class="card">
-      <div class="card-section">
+      <div class="card-section stack-md">
+        <%= link_to "Back to this plan", plan_path(@plan, week: @week), class: "text-blue-600 transition-colors font-bold underline text-lg" %>
+        <div class="divider"></div>
         <%= render "form", activity: @activity %>
       </div>
     </section>
