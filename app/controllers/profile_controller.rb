@@ -9,6 +9,12 @@ class ProfileController < ApplicationController
 
   def update
     @user = Current.user
+
+    unless @user.strava_connected?
+      redirect_to edit_profile_path, alert: "Connect your Strava account before enabling activity sync."
+      return
+    end
+
     enable_webhooks = profile_settings_params[:enable_strava_webhooks] == "1"
 
     begin

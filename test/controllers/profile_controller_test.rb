@@ -19,6 +19,32 @@ class ProfileControllerTest < ActionDispatch::IntegrationTest
     assert_select "form[action='#{profile_path}'][method='post']"
   end
 
+  test "edit shows connect strava button for google-only user" do
+    google_user = users(:google_user)
+    sign_in_as(google_user)
+
+    get edit_profile_path
+    assert_response :success
+    assert_select "h2", text: /Connect Strava/
+    assert_select "form[action='/auth/strava']"
+  end
+
+  test "edit shows webhook toggle for strava-connected user" do
+    get edit_profile_path
+    assert_response :success
+    assert_select "h2", text: /Strava Activity Sync/
+  end
+
+  test "update rejects webhook toggle for google-only user" do
+    google_user = users(:google_user)
+    sign_in_as(google_user)
+
+    patch profile_path, params: { profile_settings: { enable_strava_webhooks: "1" } }
+    assert_redirected_to edit_profile_path
+    follow_redirect!
+    assert_match "Connect your Strava", response.body
+  end
+
   test "enabling webhooks creates subscription and redirects" do
     VCR.use_cassette("strava_webhook_register") do
       patch profile_path, params: { profile_settings: { enable_strava_webhooks: "1" } }

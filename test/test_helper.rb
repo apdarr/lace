@@ -68,4 +68,13 @@ VCR.configure do |config|
   config.filter_sensitive_data("<STRAVA_CLIENT_SECRET>") do |interaction|
     Rails.application.credentials.dig(:strava, :client_secret)&.to_s
   end
+
+  # Filter Google credentials from cassettes
+  config.filter_sensitive_data("<GOOGLE_CLIENT_ID>") do |interaction|
+    Rails.application.credentials.dig(:google, :client_id)&.to_s
+  end
+
+  config.filter_sensitive_data("<GOOGLE_CLIENT_SECRET>") do |interaction|
+    Rails.application.credentials.dig(:google, :client_secret)&.to_s
+  end
 end

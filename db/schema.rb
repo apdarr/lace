@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_22_210732) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_10_214202) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -112,6 +112,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_22_210732) do
     t.datetime "updated_at", null: false
     t.string "strava_webhook_subscription_id"
     t.string "webhook_verify_token"
+    t.string "google_uid"
+    t.string "google_access_token"
+    t.string "google_refresh_token"
+    t.datetime "google_token_expires_at"
+    t.index ["google_uid"], name: "index_users_on_google_uid", unique: true
     t.index ["strava_id"], name: "index_users_on_strava_id", unique: true
   end
 

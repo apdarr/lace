@@ -8,3 +8,29 @@ one:
   token_expires_at: <%= 1.week.from_now %>
   strava_id: 123456789
   profile_picture_url: "https://avatars.githubusercontent.com/u/92997159?v=4"
+
+google_user:
+  id: 2
+  email_address: googleuser@example.com
+  firstname: Google
+  lastname: User
+  google_uid: "100000000000000000001"
+  google_access_token: google_token_abc
+  google_refresh_token: google_refresh_xyz
+  google_token_expires_at: <%= 1.week.from_now %>
+  profile_picture_url: "https://lh3.googleusercontent.com/photo.jpg"
+
+linked_user:
+  id: 3
+  email_address: linked@example.com
+  firstname: Linked
+  lastname: User
+  strava_id: 987654321
+  access_token: strava_token_linked
+  refresh_token: strava_refresh_linked
+  token_expires_at: <%= 1.week.from_now %>
+  google_uid: "100000000000000000002"
+  google_access_token: google_token_linked
+  google_refresh_token: google_refresh_linked
+  google_token_expires_at: <%= 1.week.from_now %>
+  profile_picture_url: "https://example.com/linked.jpg"
