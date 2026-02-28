@@ -28,5 +28,8 @@ module Lace
 
     # Configure Active Storage to use ImageMagick for image processing (better HEIC support)
     config.active_storage.variant_processor = :mini_magick
+
+    # Allow reading existing unencrypted data while migrating to encrypted attributes
+    config.active_record.encryption.support_unencrypted_data = true
   end
 end

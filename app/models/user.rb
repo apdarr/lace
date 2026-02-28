@@ -4,6 +4,11 @@ class User < ApplicationRecord
   has_many :activities, dependent: :destroy
   has_many :plans, dependent: :destroy
 
+  encrypts :access_token
+  encrypts :refresh_token
+  encrypts :google_access_token
+  encrypts :google_refresh_token
+
   def self.find_or_create_from_strava(auth)
     user = find_by(strava_id: auth.uid)
 
