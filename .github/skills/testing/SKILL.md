@@ -754,7 +754,7 @@ class SessionsTest < ApplicationSystemTestCase
     click_button "Continue with Strava"
 
     assert_current_path root_path
-    assert_text "Successfully signed in with Strava!"
+    assert_text "Successfully signed in!"
 
     click_button "Sign out"
     assert_current_path root_path

@@ -34,7 +34,7 @@ class PlansTest < ApplicationSystemTestCase
       click_button "Continue with Strava"
 
       assert_current_path root_path
-      assert_text "Successfully signed in with Strava!"
+      assert_text "Successfully signed in!"
       assert_equal session_count + 1, Session.count
 
       visit activities_path
