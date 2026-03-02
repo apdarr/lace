@@ -39,16 +39,18 @@ class FetchAndMatchStravaActivityJob < ApplicationJob
   def match_to_activity(user_id, strava_activity_id, distance, start_date_local)
     # Convert Strava's default meters to miles
     distance = distance.to_f / 1609.34
+    activity_date = start_date_local.to_date
 
-    # For now, we just matched if the activity is within 0.5 miles, and we grab the first one we find
+    # Match on same date and within 0.5 miles of distance
     matched_activity = Activity.where(user_id: user_id)
+                               .where(start_date_local: activity_date.beginning_of_day..activity_date.end_of_day)
                                .where("distance BETWEEN ? AND ?", distance - 0.5, distance + 0.5)
                                .first
 
     strava_activity = StravaActivity.find(strava_activity_id)
 
     if matched_activity
-      matched_activity.update(strava_activity_id: strava_activity.id)
+      strava_activity.update!(activity_id: matched_activity.id, match_status: "matched")
       Rails.logger.info "Matched Strava activity #{strava_activity_id} to Activity #{matched_activity.id}"
     else
       Rails.logger.info "No matching Activity found for Strava activity #{strava_activity_id}"

@@ -9,6 +9,11 @@ class SessionsController < ApplicationController
   def create
     auth = request.env["omniauth.auth"]
 
+    if auth.blank?
+      redirect_to new_session_path, alert: "Authentication failed. Please try again."
+      return
+    end
+
     if linking_strava?(auth)
       link_strava_account(auth)
     else
