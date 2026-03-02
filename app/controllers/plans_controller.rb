@@ -8,6 +8,10 @@ class PlansController < ApplicationController
 
   # GET /plans/1 or /plans/1.json
   def show
+    total_weeks = (@plan&.length || 0).to_i
+    max_week_index = [ total_weeks - 1, 0 ].max
+
+    @week = params.fetch(:week, 0).to_i.clamp(0, max_week_index)
   end
 
   # GET /plans/new

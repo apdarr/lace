@@ -18,24 +18,38 @@
         
         <div class="divider"></div>
 
-        <%= form_with url: profile_path, method: :patch, scope: :profile_settings, local: true do |form| %>
+        <% if @user.strava_connected? %>
+          <%= form_with url: profile_path, method: :patch, scope: :profile_settings, local: true do |form| %>
+            <div>
+              <h2 class="heading-section mb-4">Strava Activity Sync</h2>
+              <p class="text-sm text-slate-600 mb-4">When enabled, new Strava activities will sync automatically and attempt to match your planned workouts.</p>
+              
+              <label class="flex items-center gap-3 cursor-pointer">
+                <%= form.check_box :enable_strava_webhooks, { checked: @user.strava_webhook_subscription_id.present?, class: "h-5 w-5 text-blue-600 rounded border-slate-300 flex-shrink-0" }, "1", "0" %>
+                <span class="text-sm font-medium text-slate-700">
+                  Enable webhook sync (<%= @user.strava_webhook_subscription_id.present? ? "currently on" : "currently off" %>)
+                </span>
+              </label>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="flex items-center gap-3">
+              <%= form.submit "Save settings", class: "btn-primary" %>
+              <%= link_to "Cancel", profile_path, class: "btn-soft" %>
+            </div>
+          <% end %>
+        <% else %>
           <div>
-            <h2 class="heading-section mb-4">Strava Activity Sync</h2>
-            <p class="text-sm text-slate-600 mb-4">When enabled, new Strava activities will sync automatically and attempt to match your planned workouts.</p>
-            
-            <label class="flex items-center gap-3 cursor-pointer">
-              <%= form.check_box :enable_strava_webhooks, { checked: @user.strava_webhook_subscription_id.present?, class: "h-5 w-5 text-blue-600 rounded border-slate-300 flex-shrink-0" }, "1", "0" %>
-              <span class="text-sm font-medium text-slate-700">
-                Enable webhook sync (<%= @user.strava_webhook_subscription_id.present? ? "currently on" : "currently off" %>)
-              </span>
-            </label>
-          </div>
+            <h2 class="heading-section mb-4">Connect Strava</h2>
+            <p class="text-sm text-slate-600 mb-4">Connect your Strava account to enable automatic activity syncing and workout matching.</p>
 
-          <div class="divider"></div>
-
-          <div class="flex items-center gap-3">
-            <%= form.submit "Save settings", class: "btn-primary" %>
-            <%= link_to "Cancel", profile_path, class: "btn-soft" %>
+            <%= button_to "/auth/strava", method: :post, params: { origin: "link_strava" }, data: { turbo: false }, class: "rounded-lg py-3 px-5 bg-[#FC4C02] text-white font-semibold cursor-pointer inline-flex items-center gap-3 hover:bg-[#e64500] transition-all shadow-sm hover:shadow-md" do %>
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7.01 13.828h4.172"/>
+              </svg>
+              Connect Strava Account
+            <% end %>
           </div>
         <% end %>
       </div>

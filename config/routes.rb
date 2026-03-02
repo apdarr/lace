@@ -1,8 +1,12 @@
 Rails.application.routes.draw do
-  # Initial OAuth request (handled by OmniAuth middleware)
+  # Initial OAuth requests (handled by OmniAuth middleware)
   post "/auth/strava"
-  # OAuth callback (handled by our sessions#create)
+  post "/auth/google_oauth2"
+  # OAuth callbacks (handled by our sessions#create)
   get "/auth/strava/callback", to: "sessions#create"
+  get "/auth/google_oauth2/callback", to: "sessions#create"
+  # OAuth failure
+  get "/auth/failure", to: "sessions#failure"
   root to: "plans#index" # Updated to use the correct root path syntax
   resource :session
   resources :plans do
