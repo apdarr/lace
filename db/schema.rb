@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_10_214202) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_06_123719) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -54,6 +54,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_214202) do
     t.binary "embedding"
     t.integer "plan_id"
     t.integer "user_id"
+    t.string "google_calendar_event_id"
     t.index ["user_id"], name: "index_activities_on_user_id"
   end
 
@@ -67,6 +68,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_214202) do
     t.string "job_id"
     t.boolean "webhook_enabled", default: false, null: false
     t.integer "user_id"
+    t.boolean "calendar_sync_enabled", default: false, null: false
     t.index ["plan_type"], name: "index_plans_on_plan_type"
     t.index ["processing_status"], name: "index_plans_on_processing_status"
     t.index ["user_id"], name: "index_plans_on_user_id"
@@ -116,6 +118,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_214202) do
     t.string "google_access_token"
     t.string "google_refresh_token"
     t.datetime "google_token_expires_at"
+    t.string "google_calendar_id"
     t.index ["google_uid"], name: "index_users_on_google_uid", unique: true
     t.index ["strava_id"], name: "index_users_on_strava_id", unique: true
   end

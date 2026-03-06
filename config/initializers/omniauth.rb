@@ -8,8 +8,9 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   provider :google_oauth2,
           Rails.application.credentials.dig(:google, :client_id),
           Rails.application.credentials.dig(:google, :client_secret),
-          scope: "email,profile,openid",
+          scope: "email,profile,openid,https://www.googleapis.com/auth/calendar",
           prompt: "select_account",
+          access_type: "offline",
           image_aspect_ratio: "square",
           image_size: 50
 end

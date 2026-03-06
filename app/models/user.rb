@@ -83,6 +83,22 @@ class User < ApplicationRecord
     strava_id.present?
   end
 
+  def google_connected?
+    google_uid.present?
+  end
+
+  def google_calendar_ready?
+    google_connected? && has_google_access_token?
+  end
+
+  def has_google_access_token?
+    # Use parameterized SQL to check for token presence without triggering ActiveRecord encryption
+    sql = self.class.sanitize_sql_array(
+      [ "SELECT 1 FROM users WHERE id = ? AND google_access_token IS NOT NULL AND google_access_token != ''", id ]
+    )
+    self.class.connection.select_value(sql).present?
+  end
+
   def link_strava!(auth)
     update!(
       strava_id: auth.uid,

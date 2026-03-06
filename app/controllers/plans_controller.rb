@@ -1,5 +1,5 @@
 class PlansController < ApplicationController
-  before_action :set_plan, only: %i[ show edit update destroy processing_status edit_workouts update_workouts create_blank_schedule ]
+  before_action :set_plan, only: %i[ show edit update destroy processing_status edit_workouts update_workouts create_blank_schedule toggle_calendar_sync ]
 
   # GET /plans or /plans.json
   def index
@@ -106,6 +106,20 @@ class PlansController < ApplicationController
     respond_to do |format|
       format.json { render json: { processing_status: @plan.processing_status, activities_count: @plan.activities.count } }
     end
+  end
+
+  # PATCH /plans/1/toggle_calendar_sync
+  def toggle_calendar_sync
+    unless Current.user.google_calendar_ready?
+      redirect_to @plan, alert: "Please connect your Google account first to enable calendar sync."
+      return
+    end
+
+    new_state = !@plan.calendar_sync_enabled?
+    @plan.update!(calendar_sync_enabled: new_state)
+
+    notice = new_state ? "Calendar sync enabled. Your workouts will be synced to Google Calendar." : "Calendar sync disabled."
+    redirect_to @plan, notice: notice
   end
 
   private

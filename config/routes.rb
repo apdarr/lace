@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       patch :update_workouts
       post :create_blank_schedule
       get :processing_status
+      patch :toggle_calendar_sync
     end
   end
   resources :activities

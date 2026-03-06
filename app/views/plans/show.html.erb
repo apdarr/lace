@@ -150,6 +150,15 @@
       </div>
       <section class="card-section flex flex-col md:flex-row md:items-center gap-4">
         <div class="flex flex-wrap gap-2 md:ml-auto">
+          <% if Current.user&.google_calendar_ready? %>
+            <%= button_to toggle_calendar_sync_plan_path(@plan),
+                method: :patch,
+                class: @plan.calendar_sync_enabled? ? "btn-soft" : "btn-outline" do %>
+              <span class="inline-flex items-center gap-1">
+                📅 <%= @plan.calendar_sync_enabled? ? "Calendar Synced ✓" : "Sync to Google Calendar" %>
+              </span>
+            <% end %>
+          <% end %>
           <%= link_to "Edit plan", edit_plan_path(@plan), class: "btn-soft" %>
           <% if @plan.custom? %>
             <%= link_to "Edit workouts", edit_workouts_plan_path(@plan), class: "btn-outline" %>
