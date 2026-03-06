@@ -35,9 +35,11 @@ class ActivityTest < ActiveSupport::TestCase
   test "enqueues UpdateCalendarEventJob when distance changes and calendar sync enabled" do
     user = users(:one)
     plan = plans(:one)
-    # Use raw SQL to set token without triggering ActiveRecord encryption
+    # Use parameterized SQL to set token without triggering ActiveRecord encryption
     ActiveRecord::Base.connection.execute(
-      "UPDATE users SET google_access_token = 'test_token', google_uid = 'test_uid' WHERE id = #{user.id}"
+      ActiveRecord::Base.sanitize_sql_array(
+        [ "UPDATE users SET google_access_token = ?, google_uid = ? WHERE id = ?", "test_token", "test_uid", user.id ]
+      )
     )
     plan.update_columns(user_id: user.id, calendar_sync_enabled: true)
     activity = activities(:one)
@@ -63,7 +65,10 @@ class ActivityTest < ActiveSupport::TestCase
     user = users(:one)
     plan = plans(:one)
     ActiveRecord::Base.connection.execute(
-      "UPDATE users SET google_access_token = 'test_token', google_uid = 'test_uid', google_calendar_id = 'test_cal' WHERE id = #{user.id}"
+      ActiveRecord::Base.sanitize_sql_array(
+        [ "UPDATE users SET google_access_token = ?, google_uid = ?, google_calendar_id = ? WHERE id = ?",
+          "test_token", "test_uid", "test_cal", user.id ]
+      )
     )
     plan.update_columns(user_id: user.id, calendar_sync_enabled: true)
     activity = activities(:one)

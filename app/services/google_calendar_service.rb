@@ -28,7 +28,7 @@ class GoogleCalendarService
     calendar = Google::Apis::CalendarV3::Calendar.new(
       summary: CALENDAR_SUMMARY,
       description: CALENDAR_DESCRIPTION,
-      time_zone: "America/New_York"
+      time_zone: "Etc/UTC"
     )
 
     result = @service.insert_calendar(calendar)

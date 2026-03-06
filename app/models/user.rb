@@ -92,11 +92,11 @@ class User < ApplicationRecord
   end
 
   def has_google_access_token?
-    # Use raw SQL to check for token presence without triggering ActiveRecord encryption
-    result = self.class.connection.select_value(
-      "SELECT 1 FROM users WHERE id = #{self.class.connection.quote(id)} AND google_access_token IS NOT NULL AND google_access_token != ''"
+    # Use parameterized SQL to check for token presence without triggering ActiveRecord encryption
+    sql = self.class.sanitize_sql_array(
+      [ "SELECT 1 FROM users WHERE id = ? AND google_access_token IS NOT NULL AND google_access_token != ''", id ]
     )
-    result.present?
+    self.class.connection.select_value(sql).present?
   end
 
   def link_strava!(auth)
