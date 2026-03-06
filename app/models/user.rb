@@ -83,6 +83,14 @@ class User < ApplicationRecord
     strava_id.present?
   end
 
+  def google_connected?
+    google_uid.present?
+  end
+
+  def google_calendar_ready?
+    google_connected? && google_access_token.present?
+  end
+
   def link_strava!(auth)
     update!(
       strava_id: auth.uid,

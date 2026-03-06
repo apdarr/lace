@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "3.4.6"
+ruby file: ".ruby-version"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.3"
@@ -20,6 +20,8 @@ gem "stimulus-rails"
 gem "jbuilder"
 # API wrapper for Strava
 gem "strava-ruby-client"
+# Google Calendar API
+gem "google-apis-calendar_v3"
 # Vector support for SQLite
 gem "sqlite-vec"
 # OpenAI wrapper

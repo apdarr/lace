@@ -1,5 +1,6 @@
 class Plan < ApplicationRecord
   after_create :process_uploaded_photos
+  after_update :sync_calendar_if_enabled
 
   enum :plan_type, { template: "template", custom: "custom" }
   enum :processing_status, { idle: "idle", queued: "queued", processing: "processing", completed: "completed", failed: "failed" }
@@ -30,13 +31,21 @@ class Plan < ApplicationRecord
     end
   end
 
-  private
-
   def process_uploaded_photos
     # Note that right now this is being called for all after_create calls
     return unless photos.attached?
 
     job = PlanPhotoProcessorJob.perform_later(self)
     update!(processing_status: "queued", job_id: job.job_id)
+  end
+
+  def sync_calendar_if_enabled
+    return unless saved_change_to_calendar_sync_enabled?
+
+    if calendar_sync_enabled?
+      SyncPlanToCalendarJob.perform_later(id)
+    else
+      RemovePlanCalendarEventsJob.perform_later(id)
+    end
   end
 end
