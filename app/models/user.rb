@@ -88,7 +88,15 @@ class User < ApplicationRecord
   end
 
   def google_calendar_ready?
-    google_connected? && google_access_token.present?
+    google_connected? && has_google_access_token?
+  end
+
+  def has_google_access_token?
+    # Use raw SQL to check for token presence without triggering ActiveRecord encryption
+    result = self.class.connection.select_value(
+      "SELECT 1 FROM users WHERE id = #{self.class.connection.quote(id)} AND google_access_token IS NOT NULL AND google_access_token != ''"
+    )
+    result.present?
   end
 
   def link_strava!(auth)

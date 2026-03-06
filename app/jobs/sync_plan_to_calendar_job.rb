@@ -5,7 +5,7 @@ class SyncPlanToCalendarJob < ApplicationJob
     plan = Plan.find(plan_id)
     user = plan.user
 
-    unless user.google_access_token.present?
+    unless user.has_google_access_token?
       Rails.logger.warn "User #{user.id} has no Google credentials, skipping calendar sync"
       return
     end

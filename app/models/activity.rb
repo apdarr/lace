@@ -17,7 +17,7 @@ class Activity < ApplicationRecord
 
   def calendar_sync_needed?
     return false unless plan&.calendar_sync_enabled?
-    return false unless plan&.user&.google_access_token.present?
+    return false unless plan&.user&.has_google_access_token?
 
     saved_change_to_distance? || saved_change_to_description? || saved_change_to_start_date_local?
   end
@@ -31,7 +31,7 @@ class Activity < ApplicationRecord
     return unless plan&.calendar_sync_enabled?
 
     user = plan&.user
-    return unless user&.google_access_token.present?
+    return unless user&.has_google_access_token?
     return unless user&.google_calendar_id.present?
 
     DeleteCalendarEventJob.perform_later(user.id, user.google_calendar_id, google_calendar_event_id)

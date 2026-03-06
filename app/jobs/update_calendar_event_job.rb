@@ -8,7 +8,7 @@ class UpdateCalendarEventJob < ApplicationJob
     return unless plan&.calendar_sync_enabled?
 
     user = plan.user
-    return unless user.google_access_token.present?
+    return unless user.has_google_access_token?
 
     service = GoogleCalendarService.new(user)
     service.update_event(activity)

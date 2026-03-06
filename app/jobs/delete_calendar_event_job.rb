@@ -4,7 +4,7 @@ class DeleteCalendarEventJob < ApplicationJob
   def perform(user_id, calendar_id, event_id)
     user = User.find(user_id)
 
-    return unless user.google_access_token.present?
+    return unless user.has_google_access_token?
     return if calendar_id.blank? || event_id.blank?
 
     service = GoogleCalendarService.new(user)

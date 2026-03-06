@@ -96,6 +96,27 @@ class UserTest < ActiveSupport::TestCase
     assert_not users(:google_user).strava_connected?
   end
 
+  test "google_connected? returns true when google_uid is present" do
+    assert users(:google_user).google_connected?
+    assert users(:linked_user).google_connected?
+  end
+
+  test "google_connected? returns false when google_uid is absent" do
+    assert_not users(:one).google_connected?
+  end
+
+  test "google_calendar_ready? returns false when google_uid is absent" do
+    user = users(:one)
+    user.update_columns(google_uid: nil, google_access_token: nil)
+    assert_not user.google_calendar_ready?
+  end
+
+  test "google_calendar_ready? returns false when google_access_token is absent" do
+    user = users(:one)
+    user.update_columns(google_uid: "some_uid", google_access_token: nil)
+    assert_not user.google_calendar_ready?
+  end
+
   test "link_strava! sets strava credentials on user" do
     user = users(:google_user)
     auth = OmniAuth::AuthHash.new({
